@@ -18,22 +18,14 @@ class AuthService {
 
     // ==================== REGISTER ====================
     static Future<void> register( String email,  String password,  String passwordConfirmation ) async {
-
         final url = Uri.parse('$baseUrl/auth/register');
-
         try{
-            final response = await 
-              http.post( 
-                url,
-                headers: { 'Accept': 'application/json', }, 
-                body: { 'email': email, 'password': password, 'password_confirmation': passwordConfirmation, } 
-                );
+            final response = await http.post( url, headers: { 'Accept': 'application/json', }, body: { 'email': email, 'password': password, 'password_confirmation': passwordConfirmation, } );
             debugPrint('Ответ API | (status ${response.statusCode}): ${response.body}' );
 
             if (response.statusCode >= 200 && response.statusCode < 300) {
                 final data = jsonDecode(response.body);
-                if (data.containsKey('token') &&
-                    data['token'] != null) {
+                if (data.containsKey('token') && data['token'] != null) {
                     await storage.write( key: 'token', value: data['token'] );
                 }
                 return;
@@ -50,4 +42,34 @@ class AuthService {
             rethrow;
         }
     }
+
+
+    // ==================== LOGIN ====================
+    static Future<void> login(String email, String password) async {
+        final url = Uri.parse('$baseUrl/auth/login');
+        try { 
+            final response = await http.post( url, headers: {'Accept': 'application/json'}, body: {'email': email, 'password': password}, );
+            debugPrint('Ответ API (login) | (status ${response.statusCode}): ${response.body}');
+
+            if (response.statusCode >= 200 && response.statusCode < 300) {
+                final data = jsonDecode(response.body);
+                if (data.containsKey('token') && data['token'] != null) {
+                    await storage.write(key: 'token', value: data['token']);
+                }
+      return;
+    } else if (response.statusCode == 422) {
+      // Laravel возвращает ошибки в формате { "errors": { "field": ["message"] } }
+      final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
+      final firstError = errors.values.first;
+      final message = firstError is List ? firstError.first : firstError.toString();
+      throw Exception(message);
+    } else {
+      throw Exception('Ошибка входа: ${response.body}');
+    }
+  } catch (e) {
+    debugPrint('Ошибка запроса к API (login): $e');
+    rethrow;
+  }
+}
+
 }
