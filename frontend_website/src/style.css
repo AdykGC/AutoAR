@@ -1,79 +1,44 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary: #FF6B6B;
+  --primary-gradient: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  --secondary: #4ECDC4;
+  --secondary-gradient: linear-gradient(135deg, #4ECDC4, #45B7AF);
+  --accent1: #FFE66D;
+  --accent2: #7F8CFF;
+  --accent3: #FF9F68;
+  --background: #1A1B1E;
+  --text: #E0E1E2;
+  --card-bg: #2A2B2E;
+  --border: #3A3B3E;
+  --hover-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
-a:hover {
-  color: #535bf2;
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
 }
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  /*     text-align: center;     */
 }
