@@ -1,15 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Profile from '../views/ProfilePage.vue'
+import GeneratedCv from '../views/GeneratedCvPage.vue'
+import test from '../views/Test.vue'
 
 const routes = [
   // { path: '/', name: 'Home', component: Home },
   { path: '/profile', name: 'Profile', component: Profile },
-  // { path: '/about', name: 'About', component: About },
-  // { path: '/about', name: 'About', component: About },
-  // { path: '/about', name: 'About', component: About },
-  // { path: '/about', name: 'About', component: About },
-  // { path: '/about', name: 'About', component: About },
-  // { path: '/about', name: 'About', component: About },
+  { path: '/gen-cv', name: 'GeneratedCv', component: GeneratedCv },
+  { path: '/test', name: 'test', component: test },
 ]
 
 const router = createRouter({
