@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls), # python manage.py createsuperuser   |   A A@gmail.com A
 
 
     path('api/', include('api.urls')),   # подключаем маршруты приложения api
