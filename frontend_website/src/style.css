@@ -7,7 +7,11 @@
   --accent2: #7F8CFF;
   --accent3: #FF9F68;
   --background: #1A1B1E;
+  --background2: #ffffff;
   --text: #E0E1E2;
+  --text2: #333;
+  --text3: #666;
+  --text-black: #000000;
   --card-bg: #2A2B2E;
   --border: #3A3B3E;
   --hover-shadow: 0 8px 20px rgba(0,0,0,0.3);
@@ -32,13 +36,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--background);
+  background: var(--background2);
   color: var(--text);
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  /*     text-align: center;     */
-}
+
