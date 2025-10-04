@@ -14,7 +14,7 @@
 `Cross-Origin Resource Sharing (CORS) : django-cors-headers`
 
 ### Database:
-`Sqlite3`
+`PostgreSql`
 
 # Установка и запуск
 
