@@ -2,7 +2,10 @@
 
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from api.views import toggle_like
+
+# IMPORT VIEWS
+from .views.user_api.like import toggle_like
+# from api.views import toggle_like
 # from .views import ItemViewSet, ollama_message, openai_message
 
 router = DefaultRouter()
@@ -16,3 +19,10 @@ urlpatterns = [
 
 # Добавляем маршруты из роутера (ItemViewSet)
 urlpatterns += router.urls
+
+
+
+
+#    curl -X POST http://127.0.0.1:8000/api/projects/2/like/ \
+#         -H "Content-Type: application/json" \
+#         -d '{"user_id": 1}'
