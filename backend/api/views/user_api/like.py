@@ -1,7 +1,11 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
+# ---------- MODEL ---------- 
 from api.models import User, User_Project
+
+
 
 @api_view(['POST'])
 def toggle_like(request, project_id):

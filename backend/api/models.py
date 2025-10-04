@@ -38,7 +38,7 @@ class User_Project(models.Model):
     likes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
 
-    # 👇 Пользователи, поставившие лайк
+    # Пользователи, поставившие лайк
     liked_by = models.ManyToManyField('User', related_name='liked_projects', blank=True)
 
     def __str__(self):
