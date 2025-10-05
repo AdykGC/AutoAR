@@ -20,9 +20,9 @@ router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
-    #path('projects/<int:project_id>/like/', toggle_like),
+    path('chat/ollama/', ollama_generate_cv, name='ollama_generate_cv'),
+    # path('projects/<int:project_id>/like/', toggle_like),
     # path('users/<int:pk>/', UserDetailAPIView.as_view(), name='user-detail'),
-    # path('chat/ollama/', ollama_message, name='ollama_message'),
     # path('chat/openai/', openai_message, name='openai_message'),
 ]
 
