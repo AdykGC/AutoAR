@@ -1,0 +1,21 @@
+
+/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|
+СБРОС МИГРАЦИЙ ПОД 0
+/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|
+
+python manage.py migrate api zero
+python manage.py migrate
+
+
+
+
+
+
+
+Email:
+Nickname:
+Password:
+User name:
+User surname:
+
+Lewis Garrett

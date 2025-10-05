@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 ]
 
 # ХУЙНЯ КОТОРУЮ ПОРЕКОМЕНДОВАЛ ИИ, ЕСЛИ ЕСТЬ ПРОБЛЕМЫ УДАЛИ ЕЕ
-AUTH_USER_MODEL = 'api.User'
+# AUTH_USER_MODEL = 'api.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

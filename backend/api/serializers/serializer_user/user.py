@@ -1,17 +1,16 @@
 from rest_framework import serializers
 
 # ---------- MODEL ---------- 
-from api.models import User, User_Info, User_Stats, User_Project
+from api.models import *
 
 # ---------- SERIALIZER ---------- 
-from api.serializers.serializer_user.user_info import User_Info_Serializer
+from api.serializers.serializer_user.user_project import User_Project_Serializer
 
 
 
 # ---------- METHOD ---------- 
 class User_Serializer(serializers.ModelSerializer):
-    info = User_Info_Serializer(read_only=True)  # related_name='info' в OneToOneField
-
+    projects = User_Project_Serializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'account', 'email', 'info')
+        fields = ('id', 'email', 'nickname', 'user_name', 'user_surname', 'projects')
