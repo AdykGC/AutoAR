@@ -4,18 +4,9 @@
 /|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|/|\|
 
 python manage.py migrate api zero
-python manage.py migrate
+python manage.py showmigrations api
+python manage.py migrate api zero
 
 
 
 
-
-
-
-Email:
-Nickname:
-Password:
-User name:
-User surname:
-
-Lewis Garrett

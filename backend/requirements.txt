@@ -7,3 +7,5 @@ django-cors-headers
 python-dotenv
 gunicorn
 psycopg2-binary
+
+pip install djangorestframework djoser djangorestframework-simplejwt

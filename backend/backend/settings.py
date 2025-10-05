@@ -39,14 +39,36 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'api',
     'corsheaders',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+DJOSER = {
+    "USER_ID_FIELD": "id",
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user_create": "api.serializers.serializer_user.user_auth.User_Create_Serializer",
+        "user": "api.serializers.serializer_user.user_auth.Current_User_Serializer",
+        "current_user": "api.serializers.serializer_user.user_auth.Current_User_Serializer",
+    },
+    "PERMISSIONS": {
+        "user_create": ["rest_framework.permissions.AllowAny"],
+        "user": ["rest_framework.permissions.IsAuthenticated"],
+        "user_list": ["rest_framework.permissions.IsAdminUser"],
+    },
+}
+
 # ХУЙНЯ КОТОРУЮ ПОРЕКОМЕНДОВАЛ ИИ, ЕСЛИ ЕСТЬ ПРОБЛЕМЫ УДАЛИ ЕЕ
-# AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'api.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
