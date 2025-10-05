@@ -1,0 +1,15 @@
+API в Django REST Framework
+
+ViewSets + Routers
+
+
+
+
+
+Function-Based Views (FBV)
+ - @api_view(...)
+
+Class-Based Views (CBV)
+ - APIView
+ - GenericAPIView
+ - ViewSet
