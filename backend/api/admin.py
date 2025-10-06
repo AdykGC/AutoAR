@@ -1,5 +1,6 @@
 from django.contrib import admin
-
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
 # ---------- MODEL ---------- 
 from api.models import *
 
@@ -9,9 +10,24 @@ from api.models import *
 
 
 # ---------- METHOD ---------- 
-class User_Admin(admin.ModelAdmin):
-    list_display = [field.name for field in User._meta.fields]
-admin.site.register(User, User_Admin)
+@admin.register(User)
+class User_Admin(BaseUserAdmin):
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal info'), {'fields': ('nickname', 'user_name', 'user_surname')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'nickname', 'password1', 'password2'),
+        }),
+    )
+    list_display = ('email', 'nickname', 'is_staff', 'is_superuser')
+    search_fields = ('email', 'nickname')
+    ordering = ('email',)
+    filter_horizontal = ('groups', 'user_permissions')
 
 class User_Project_Admin(admin.ModelAdmin):
     list_display = [field.name for field in User_Project._meta.fields]

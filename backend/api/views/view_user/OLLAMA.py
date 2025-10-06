@@ -3,6 +3,10 @@ from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+# ---------- AUTH ---------- 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+
 # ---------- MODEL ---------- 
 from api.models import *
 
@@ -18,7 +22,6 @@ import ollama
 logger = logging.getLogger(__name__)
 
 
-
 """
 Обработчик POST-запроса к локальной LLM через Ollama
     | Ожидает JSON с CV пользователя
@@ -26,6 +29,7 @@ logger = logging.getLogger(__name__)
     | Возвращает JSON с сгенерированным и подкорректированным CV
 """
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def ollama_generate_cv(request):
 
     user_cv = request.data.get('user_cv')

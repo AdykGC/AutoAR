@@ -13,4 +13,4 @@ class User_Serializer(serializers.ModelSerializer):
     projects = User_Project_Serializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'email', 'nickname', 'user_name', 'user_surname', 'projects')
+        fields = ('id', 'email', 'nickname', 'user_name', 'user_surname', 'projects', 'cv')
