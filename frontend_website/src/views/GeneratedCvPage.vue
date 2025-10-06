@@ -19,4 +19,9 @@ import education from '../components/GeneratedCv/education.vue';
 </script>
 
 <style scoped>
+.resume-container{
+    width: 100%;
+    height: 100%;
+    background: var(--background2);
+}
 </style>
