@@ -1,0 +1,1 @@
+Имплеменитировать это https://github.com/DHTMLX/gantt
