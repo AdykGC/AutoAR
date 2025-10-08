@@ -12,9 +12,9 @@ import AuthLogin from '../components/Auth/LoginCard.vue';
 
 <style scoped>
 #profile {
-  max-width: 1280px;
+  max-width: 380px;
   margin: 0 auto;
-  padding: 4rem;
+  padding: 15% 4rem 4rem 4rem;
   /*
   text-align: center;
   margin: 0 auto;
