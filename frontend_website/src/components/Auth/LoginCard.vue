@@ -15,7 +15,7 @@
                 <button type="submit" class="btn">Login</button>
                 <div class="extra-links">
                     <a href="#">Forgot Password?</a>
-                    <a href="#">Create Account</a>
+                    <a href="/register">Create Account</a>
                 </div>
             </form>
 
@@ -176,19 +176,19 @@ export default {
             };
         },
     methods: {
-    handleLogin() {
-        Auth_Service.login(this.email, this.password)
-            .then(response => {
-                Auth_Service.saveToken(response.data);
-                console.log("Login successful", response.data);
-                // редирект на защищённую страницу, например:
-                this.$router.push("/profile");
-            })
-            .catch(error => {
-                console.error("Login failed", error);
-                alert("Invalid email or password");
-            });
+        handleLogin() {
+            Auth_Service.login(this.email, this.password)
+                .then(response => {
+                    Auth_Service.saveToken(response.data);
+                    console.log("Login successful", response.data);
+                    // редирект на защищённую страницу, например:
+                    this.$router.push("/profile");
+                })
+                .catch(error => {
+                    console.error("Login failed", error);
+                    alert("Invalid email or password");
+                });
         }
     }
-    };
+};
 </script>

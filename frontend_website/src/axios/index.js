@@ -2,7 +2,13 @@ import http from "./http-common";
 
 class Auth_Service {
 
-    login(email, password) {
+    register( email, nickname, password ) {
+        return http.post("/auth/users/", {
+            email, nickname, password
+        });
+    }
+
+    login( email, password ) {
         return http.post("/auth/jwt/create/", {
             email, password
         });

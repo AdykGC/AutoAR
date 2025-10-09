@@ -4,6 +4,7 @@
         <button class="tab" data-tab="likes">Likes</button>
         <button class="tab" data-tab="following">Following</button>
         <button class="tab" data-tab="followers">Followers</button>
+        <button class="tab" data-tab="logout" @click="handleLogout">Logout</button>
     </div>
 </template>
 
@@ -40,3 +41,16 @@
     font-weight: 500;
 }
 </style>
+
+<script scoped>
+import Auth_Service from "../../axios/index.js";
+
+export default {
+    methods: {
+        handleLogout() {
+            Auth_Service.logout();
+            this.$router.push("/test");
+        }
+    }
+}
+</script>
