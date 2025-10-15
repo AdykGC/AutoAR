@@ -37,3 +37,12 @@ class Company(models.Model):
     @property
     def employees_count(self):
         return self.employees.count()
+
+    # добавить пользователя в компанию
+    def add_employee(self, user):
+        if user != self.owner:
+            self.employees.add(user)
+
+    # удалить пользователя из компании
+    def remove_employee(self, user):
+        self.employees.remove(user)
