@@ -14,6 +14,16 @@ class Auth_Service {
         });
     }
 
+    refreshToken() {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user.refresh) {
+            return axios.post("/auth/jwt/refresh/", {
+                refresh: user.refresh,
+            });
+        }
+        return Promise.reject("No refresh token found");
+    }
+
     logout() {
         localStorage.removeItem("user");
     }
@@ -27,6 +37,12 @@ class Auth_Service {
         return user?.access;
     }
 
+    getCurrentUser() {
+        const token = this.getToken();
+        return http.get("/auth/users/me/", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
 /*
     getAll() {
         return http.get("/tutorials");

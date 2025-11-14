@@ -11,6 +11,8 @@ import Auth_Service from "../axios/index";
 
 const routes = [
   // { path: '/', name: 'Home', component: Home },
+  { path: "/login", name: "Login", component: Login },
+  { path: "/register", name: "Register", component: Register },
   {
     path: "/",
     alias: "/profile",
@@ -21,17 +23,8 @@ const routes = [
   {
     path: "/gen-cv",
     name: "GeneratedCv",
-    component: GeneratedCv
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: Login
-  },
-  {
-    path: "/register",
-    name: "Register",
-    component: Register
+    component: GeneratedCv,
+    meta: { requiresAuth: true },
   },
   { path: "/test", name: "test", component: test },
 ];

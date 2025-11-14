@@ -24,7 +24,8 @@ class User_Project(models.Model):
     @property
     def likes_count(self):
         return self.liked_by.count()
-    
+
+
 class Company(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_companies')
     name = models.CharField(max_length=100)
