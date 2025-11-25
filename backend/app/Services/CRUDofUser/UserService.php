@@ -7,7 +7,6 @@ use Illuminate\Database\Seeder\RoleSeeder;
 
 use App\Models\{
     User,
-    Courses,
 };
 
 use Spatie\Permission\Models\Permission;
@@ -49,6 +48,20 @@ class UserService {
             ],
         ]);
     }
-    public function update(){}
-    public function delete(){}
+    public function update($request, $user){
+        if (empty($request->validated())) {
+            return response()->json([ 'message' => 'Нет данных для обновления.' ], 422);
+        }
+        $user->update($request->validated());
+        return response()->json([
+            'message' => 'Профиль успешно обновлён',
+            'student' => $user,
+        ]);
+    }
+    public function delete(){
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Вы вышли из системы',
+        ]);
+    }
 }
