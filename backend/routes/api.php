@@ -1,4 +1,5 @@
-<?php use GuzzleHttp\Promise\Create;
+<?php 
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -8,4 +9,7 @@ use App\Http\Controllers\CRUDofUser\{
 
 use Illuminate\Support\Facades\Request;
 
-Route::post('/register',                  [CRUDofUserController::class, 'Create']);
+Route::post('/register',                  [CRUDofUserController::class, 'create']);
+Route::post('/login',                     [CRUDofUserController::class, 'read']);
+Route::post('/3',                  [CRUDofUserController::class, 'update']);
+Route::post('/4',                  [CRUDofUserController::class, 'delete']);

@@ -9,7 +9,7 @@ class readUserRequest extends FormRequest {
     /** * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
     public function rules(): array {
         return [
-            'email'             =>  'required|email|unique:users,email',
+            'email'             =>  'required|email',
             'password'          =>  'required|string|min:8',
         ];
     }
