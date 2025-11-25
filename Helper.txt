@@ -1,0 +1,17 @@
+|||||||||||||||||||| Download Spatie ||||||||||||||||||||||
+composer require spatie/laravel-permission
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan migrate
+
+
+|||||||||||||||||||| Download Backpack ||||||||||||||||||||||
+composer require backpack/crud
+
+
+|||||||||||||||||||| Download Sanctum ||||||||||||||||||||||
+composer require laravel/sanctum
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+php artisan make:model Company -m
