@@ -2,6 +2,7 @@
   <div id="profile">
     <UserCard />
     <UserNavCard />
+    <ProjectCard />
   </div>
 </template>
 
@@ -9,6 +10,7 @@
 
 import UserCard from '../components/Profile/UserCard.vue';
 import UserNavCard from '../components/Profile/UserNavCard.vue';
+import ProjectCard from '../components/Profile/ProjectCard.vue';
 
 </script>
 

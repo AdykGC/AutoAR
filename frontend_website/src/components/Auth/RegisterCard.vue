@@ -1,140 +1,198 @@
 <template>
-    <div id="header">
-        <div id="avatar-container">
-            <img id="avatar" alt="Profile avatar" src="https://images.websim.ai/avatar/${user.username}">
-        </div>
-        <div id="profile-info">
-            <h1 id="username">
-                ADILKHAN
-            </h1>
-            <p id="description">
-                Hello world
-            </p>
-            <div id="stats">
-                <div class="stat">
-                    <span id="total-likes">10</span>
-                    <label>Likes</label>
+    <div class="">
+        <div class="login-container">
+            <h1>Welcome Back</h1>
+
+            <form @submit.prevent="handleRegister">
+                <div class="input-group">
+                    <input v-model="email" type="email" id="email" placeholder=" " required>
+                    <label for="username">Email</label>
                 </div>
-                <div class="stat">
-                    <span id="total-views">124</span>
-                    <label>Views</label>
+                <div class="input-group">
+                    <input v-model="nickname" type="nickname" id="nickname" placeholder=" " required>
+                    <label for="nickname">Nickname</label>
                 </div>
-                <div class="stat">
-                    <span id="following-count">7</span>
-                    <label>Following</label>
+                <div class="input-group">
+                    <input v-model="password" type="password" id="password" placeholder=" " required>
+                    <label for="password">Password</label>
                 </div>
-                <div class="stat">
-                    <span id="followers-count">2</span>
-                    <label>Followers</label>
+                <button type="submit" class="btn">Register</button>
+                <div class="extra-links">
+                    <a href="/login">I have account</a>
                 </div>
-            </div>
+            </form>
+
         </div>
     </div>
-
 </template>
 
 
 <style scoped>
-#header {
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+.login-container {
     display: flex;
-    align-items: flex-start;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    font-family: 'Space Grotesk', sans-serif;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     background: var(--card-bg);
     padding: 2rem;
     border-radius: 20px;
     box-shadow: var(--card-shadow);
-    animation: float 3s ease-in-out infinite;
 }
 
-#avatar-container {
-    flex-shrink: 0;
+.input-group {
     position: relative;
-    animation: pulse 2s ease-in-out infinite;
+    margin-bottom: 1.5rem;
 }
 
-#avatar-container::after {
+.input-group input {
+    width: 300px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 3px solid var(--secondary);
+    box-shadow: 0 5px 15px rgba(15, 206, 255, 0.2);
+}
+
+.input-group label {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: var(--light);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
+    transform: translateY(-26px);
+    font-size: 0.8rem;
+    opacity: 1;
+    color: var(--secondary);
+}
+
+
+.btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, var(--primary), var(--tertiary));
+    color: var(--light);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(174, 13, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(174, 13, 255, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn::before {
     content: '';
     position: absolute;
-    top: -8px;
-    left: -8px;
-    right: -8px;
-    bottom: -8px;
-    background: var(--primary-gradient);
-    border-radius: 50%;
-    z-index: -1;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to bottom right,
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.3));
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+    opacity: 0;
 }
 
-#avatar {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid white;
+.btn:hover::before {
+    animation: shine 1.5s ease;
 }
 
-#profile-info {
-    flex-grow: 1;
+@keyframes shine {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
 }
 
-#username {
-    margin: 0;
-    font-size: 2.5rem;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-#description {
-    margin: 0.5rem 0;
-    color: #666;
-    font-size: 1.1rem;
-}
-
-#stats {
+.extra-links {
     display: flex;
-    gap: 2rem;
-    margin: 1.5rem 0;
-}
-
-.stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 15px;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.2s;
-    /*     animation: jump 2s ease-in-out infinite;     */
-}
-
-.stat:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.stat:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.stat:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-.stat:nth-child(4) {
-    animation-delay: 0.6s;
-}
-
-.stat span {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.stat label {
+    justify-content: space-between;
+    margin-top: 1.5rem;
     font-size: 0.9rem;
-    color: #666;
-    margin-top: 0.3rem;
+}
+
+.extra-links a {
+    color: var(--light);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.extra-links a:hover {
+    color: var(--secondary);
+    opacity: 1;
+    text-decoration: underline;
 }
 </style>
+
+<script scoped>
+import Auth_Service from "../../axios/index.js";
+
+export default {
+    data() {
+        return {
+            email: "",
+            nickname: "",
+            password: ""
+            };
+        },
+    methods: {
+        handleRegister() {
+            Auth_Service.register(this.email, this.nickname, this.password)
+                .then(response => {
+                    Auth_Service.saveToken(response.data);
+                    console.log("Register successful", response.data);
+                    // редирект на защищённую страницу, например:
+                    this.$router.push("/login");
+                })
+                .catch(error => {
+                    console.error("Register failed", error);
+                    alert("Invalid email or password");
+                });
+        }
+    }
+};
+</script>
