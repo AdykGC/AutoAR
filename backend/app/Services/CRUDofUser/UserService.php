@@ -20,8 +20,7 @@ class UserService {
             'phone'              => $request->phone,
             'password'           => Hash::make($request->password),
         ]);
-        
-        $role = $validated['role'] ?? 'Slave';
+        $role = $request->role ?? 'Slave';
         $data->assignRole($role);
         $data->load('roles.permissions');
 
