@@ -14,6 +14,7 @@ class createUserRequest extends FormRequest {
             'email'             =>  'required|email|unique:users,email',
             'phone'             =>  'required|string|max:25',
             'password'          =>  'required|string|min:8|confirmed',
+            'role'              =>  'sometimes|string|in:Owner,Ceo,Admin,Lawyer,HR,Counter,Manager,Seller'
         ];
     }
 }

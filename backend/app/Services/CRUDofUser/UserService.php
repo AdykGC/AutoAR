@@ -20,10 +20,17 @@ class UserService {
             'phone'              => $request->phone,
             'password'           => Hash::make($request->password),
         ]);
+        
+        $role = $validated['role'] ?? 'Slave';
+        $data->assignRole($role);
+        $data->load('roles.permissions');
 
         return response()->json([
             'message' => 'Пользователь успешно зарегистрирован',
-            'user' => $data 
+            'user' => $data,
+            'role' => $role,
+            'permissions' => $data->getAllPermissions()->pluck('name'),
+            
         ]);
     }
     public function read($request){
@@ -49,13 +56,21 @@ class UserService {
         ]);
     }
     public function update($request, $user){
-        if (empty($request->validated())) {
+        $validatedData = $request->validated();
+        if (empty($validatedData)) {
             return response()->json([ 'message' => 'Нет данных для обновления.' ], 422);
         }
-        $user->update($request->validated());
+
+        // Обновляем роль если она передана
+        if (isset($validatedData['role'])) {
+            $user->syncRoles([$validatedData['role']]);
+            unset($validatedData['role']);
+        }
+        $user->update($validatedData);
         return response()->json([
             'message' => 'Профиль успешно обновлён',
-            'student' => $user,
+            'user' => $user,
+            'new-role' => $user->roles->pluck("name","id"),
         ]);
     }
     public function delete(){

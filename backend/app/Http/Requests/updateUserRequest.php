@@ -12,6 +12,7 @@ class updateUserRequest extends FormRequest {
             'name'              =>  'sometimes|string|max:255',
             'surname'           =>  'sometimes|string|max:255',
             'phone'             =>  'sometimes|string|max:25',
+            'role'              =>  'sometimes|string|in:Owner,Ceo,Admin,Lawyer,HR,Counter,Manager,Seller,Slave',
         ];
     }
 }
