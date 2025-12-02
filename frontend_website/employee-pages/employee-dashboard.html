@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoAr - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen">
+<!-- SideNavBar -->
+<nav class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-slate-800 border-r border-slate-200">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+
+<div class="flex gap-3 items-center px-2">
+  <div class="rounded-full size-10 flex items-center justify-center">
+    <svg class="text-primary h-12 w-12" fill="none" height="48" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+  
+  <div class="flex flex-col">
+    <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">AutoAr</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Automation Hub</p>
+  </div>
+</div>
+
+
+<div class="flex flex-col gap-2 pt-4">
+<a href="employee-dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">All Requests</p>
+</a>
+
+<a href="cv-generation.html" class="flex items-center gap-3 px-3 py-2 rounded-lg
+           hover:bg-slate-100 dark:hover:bg-slate-800 
+           text-slate-700 dark:text-slate-300
+           focus:outline-none focus:ring-0">
+  <span class="material-symbols-outlined">person</span>
+  <p class="text-sm font-medium leading-normal">CV</p>
+</a>
+
+
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Reports</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+
+</div>
+
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-10">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 flex border-none bg-background-light dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-background-light dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+<div class="flex flex-1 justify-end items-center gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 relative bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"></div>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 p-10">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-3">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Welcome back, Alex!</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Here's a summary of your activity. Today is Tuesday, 24 October.</p>
+</div>
+<!-- <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Submit New Request</span>
+</button> -->
+<button
+  class="group relative flex min-w-[84px] max-w-[480px] h-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg px-5
+         bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]
+         hover:bg-primary/90
+         focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark
+         transition-colors">
+  <span class="truncate">Submit New Request</span>
+</button>
+
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-8">
+<!-- Left Column -->
+<div class="xl:col-span-2 flex flex-col gap-8">
+<!-- Pending Requests -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Your Pending Requests</h2>
+<div class="mt-4">
+<div class="flex overflow-hidden">
+<table class="flex-1">
+<thead class="border-b border-slate-200 dark:border-slate-800">
+<tr>
+<th class="px-2 py-3 text-left text-slate-600 dark:text-slate-400 w-2/5 text-xs font-semibold uppercase tracking-wider">Request Type</th>
+<th class="px-2 py-3 text-left text-slate-600 dark:text-slate-400 w-1/5 text-xs font-semibold uppercase tracking-wider">Request ID</th>
+<th class="px-2 py-3 text-left text-slate-600 dark:text-slate-400 w-1/5 text-xs font-semibold uppercase tracking-wider">Date Submitted</th>
+<th class="px-2 py-3 text-left text-slate-600 dark:text-slate-400 w-1/5 text-xs font-semibold uppercase tracking-wider">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-slate-200 dark:border-slate-800">
+<td class="h-[72px] px-2 py-2 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal">PTO Request</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">#789123</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Oct 23, 2023</td>
+<td class="h-[72px] px-2 py-2 text-sm font-normal leading-normal">
+<div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400">
+<div class="h-2 w-2 rounded-full bg-orange-500"></div>
+                                                            Pending Approval
+                                                        </div>
+</td>
+</tr>
+<tr class="border-b border-slate-200 dark:border-slate-800">
+<td class="h-[72px] px-2 py-2 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal">Expense Report</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">#789122</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Oct 22, 2023</td>
+<td class="h-[72px] px-2 py-2 text-sm font-normal leading-normal">
+<div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+<div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                                                            Needs Information
+                                                        </div>
+</td>
+</tr>
+<tr class="">
+<td class="h-[72px] px-2 py-2 text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal">Hardware Request</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">#789120</td>
+<td class="h-[72px] px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Oct 20, 2023</td>
+<td class="h-[72px] px-2 py-2 text-sm font-normal leading-normal">
+<div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400">
+<div class="h-2 w-2 rounded-full bg-orange-500"></div>
+                                                            Pending Approval
+                                                        </div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Quick Links -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">What would you like to do?</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+<div class="flex flex-col items-center justify-center text-center p-4 gap-3 bg-background-light dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary cursor-pointer transition-colors duration-200">
+<div class="flex items-center justify-center size-12 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">event_available</span>
+</div>
+<p class="text-slate-800 dark:text-slate-200 text-sm font-semibold">Request Time Off</p>
+</div>
+<div class="flex flex-col items-center justify-center text-center p-4 gap-3 bg-background-light dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary cursor-pointer transition-colors duration-200">
+<div class="flex items-center justify-center size-12 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">receipt_long</span>
+</div>
+<p class="text-slate-800 dark:text-slate-200 text-sm font-semibold">Submit Expense</p>
+</div>
+<div class="flex flex-col items-center justify-center text-center p-4 gap-3 bg-background-light dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary cursor-pointer transition-colors duration-200">
+<div class="flex items-center justify-center size-12 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-2xl">computer</span>
+</div>
+<p class="text-slate-800 dark:text-slate-200 text-sm font-semibold">Request Hardware</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div class="xl:col-span-1 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Recent Activity</h2>
+<div class="mt-4 space-y-5">
+<div class="flex gap-4">
+<div class="flex items-center justify-center size-9 rounded-full bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-800 dark:text-slate-200 text-sm font-medium">Your PTO request #789121 was approved by <span class="font-bold">Jane Doe</span>.</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center justify-center size-9 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">cancel</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-800 dark:text-slate-200 text-sm font-medium">Your expense report #789115 was rejected.</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Yesterday</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center justify-center size-9 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">chat</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-800 dark:text-slate-200 text-sm font-medium"><span class="font-bold">John Smith</span> commented on your hardware request #789120.</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">3 days ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center justify-center size-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">campaign</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-800 dark:text-slate-200 text-sm font-medium">System announcement: The office will be closed on Friday.</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">4 days ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

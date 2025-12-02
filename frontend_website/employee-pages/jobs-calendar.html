@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoAr - Jobs Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen">
+<nav class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-slate-800 border-r border-slate-200">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-2">
+  <div class="rounded-full size-10 flex items-center justify-center">
+    <svg class="text-primary h-12 w-12" fill="none" height="48" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+  
+  <div class="flex flex-col">
+    <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">AutoAr</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Automation Hub</p>
+  </div>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="employee-dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">All Requests</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="cv-generation.html">
+<span class="material-symbols-outlined">person</span>
+<p class="text-sm font-medium leading-normal">CV</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="jobs-calendar.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-medium leading-normal">Jobs Calendar</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-10">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 flex border-none bg-background-light dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-background-light dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+<div class="flex flex-1 justify-end items-center gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 relative bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"></div>
+</button>
+</div>
+</header>
+<div class="flex-1 p-10">
+<div class="flex justify-between items-center mb-8">
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Jobs Calendar</h1>
+
+
+<div class="flex items-center gap-2">
+  <button id="prevMonthBtn" class="flex-none w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300" aria-label="Previous month">
+    <span class="material-symbols-outlined text-xl">chevron_left</span>
+  </button>
+
+  <span id="monthLabel" class="mx-2 text-slate-900 dark:text-white font-semibold text-lg text-center min-w-[11rem]">
+    October 2025
+  </span>
+
+  <button id="nextMonthBtn" class="flex-none w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300" aria-label="Next month">
+    <span class="material-symbols-outlined text-xl">chevron_right</span>
+  </button>
+</div>
+
+
+
+</div>
+<div class="grid grid-cols-1 gap-8">
+<div class="col-span-1">
+
+<!-- <div class="grid grid-cols-7 border-t border-l border-slate-200 dark:border-slate-800"> -->
+
+  <!-- КОНТЕЙНЕР ДЛЯ ДИНАМИЧЕСКОЙ СЕТКИ -->
+<div id="calendarGrid" class="grid grid-cols-7 border-t border-l border-slate-200 dark:border-slate-800"></div>
+
+
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script>
+(() => {
+  // ---------- Пример задач (поменяй / загрузи с бекэнда) ----------
+  const TASKS = {
+    "task-1": { id: "task-1", title: "Task 1", date: "2023-10-03", description: "Prepare initial setup and run tests.", reward: "5,000 Tenge", estTime: "2 Hours", complexity: "Low" },
+    "task-2": { id: "task-2", title: "Task 2", date: "2023-10-07", description: "On-site inspection and fixes.", reward: "8,000 Tenge", estTime: "3 Hours", complexity: "Medium" },
+    "task-3": { id: "task-3", title: "Task 3", date: "2023-10-12", description: "Analyze the quarterly sales data and create a report (PDF).", reward: "15,000 Tenge", estTime: "4 Hours", complexity: "Medium" },
+    "task-4": { id: "task-4", title: "Task 4", date: "2023-10-26", description: "Finalize deployment and document notes.", reward: "20,000 Tenge", estTime: "6 Hours", complexity: "High" }
+  };
+
+  // helper: группируем задачи по дате YYYY-MM-DD
+  function groupTasksByDate(tasksObj) {
+    const map = {};
+    Object.values(tasksObj).forEach(t => {
+      // нормализуем дату в YYYY-MM-DD (входные даты в примере уже в таком формате)
+      const key = t.date;
+      if (!map[key]) map[key] = [];
+      map[key].push(t);
+    });
+    return map;
+  }
+  const TASKS_BY_DATE = groupTasksByDate(TASKS);
+
+  // DOM refs
+  const grid = document.getElementById('calendarGrid');
+  const monthLabel = document.getElementById('monthLabel');
+  const prevBtn = document.getElementById('prevMonthBtn');
+  const nextBtn = document.getElementById('nextMonthBtn');
+
+  // details panel (ищем существующий контейнер Task Details)
+  const detailsRoot = document.querySelector('.bg-white.dark\\:bg-slate-900.p-6.rounded-xl') || document.querySelector('.task-details') || null;
+
+  // Текущий отображаемый месяц (год и месяц: 0-11)
+  let current = new Date(2025, 9, 1); // по умолчанию October 2023 (месяц 9)
+
+  // Форматирование названия месяца
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function formatMonthLabel(date) {
+    return `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
+  }
+
+  // Вспомогательные: получить количество дней в месяце
+  function daysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  
+  function renderWeekDays(startOfWeek = 0) {
+  // убедимся, что перед grid есть контейнер для заголовков
+  let header = document.getElementById('calendarHeader');
+  if (!header) {
+    header = document.createElement('div');
+    header.id = 'calendarHeader';
+    // вставим header перед grid
+    grid.parentNode.insertBefore(header, grid);
+  }
+  // задаём классы (7 колонок)
+  header.className = 'grid grid-cols-7 text-center text-sm font-semibold text-slate-600 dark:text-slate-400 mb-0';
+
+  const WEEK_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  header.innerHTML = ''; // очистка
+
+  // если startOfWeek === 1 (понедельник), смещаем массив
+  for (let i = 0; i < 7; i++) {
+    const idx = (startOfWeek + i) % 7;
+    const dayName = WEEK_NAMES[idx];
+    const el = document.createElement('div');
+    el.className = 'py-2 border-b border-r border-slate-200 dark:border-slate-800';
+    el.textContent = dayName;
+    header.appendChild(el);
+  }
+}
+
+// Обновлённый renderMonth — рендерит ровно 5 строк x 7 колонок и выравнивает числа по заголовкам
+function renderMonth(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  monthLabel.textContent = formatMonthLabel(date);
+
+  // сначала отрисуем/обновим заголовки (startOfWeek = 0 -> Sunday first)
+  renderWeekDays(0);
+
+  // очистка
+  grid.innerHTML = '';
+
+  // гарантируем 7 столбцов
+  grid.classList.remove('grid-cols-5');
+  grid.classList.add('grid-cols-7');
+
+  const totalDays = daysInMonth(year, month);
+  const firstOfMonth = new Date(year, month, 1);
+  const firstWeekday = firstOfMonth.getDay(); // 0..6, 0 = Sunday
+
+  // Количество ведущих дней из предыдущего месяца = firstWeekday
+  const prevMonthLast = new Date(year, month, 0);
+  const prevTotal = prevMonthLast.getDate();
+
+  // Начнём от (prevTotal - firstWeekday + 1)
+  const startDay = prevTotal - firstWeekday + 1;
+
+  // Всегда рендерим ровно 35 ячеек (5 недель * 7 дней)
+  const totalCells = 35;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'h-28 p-2 border-b border-r border-slate-200 dark:border-slate-800 text-left flex flex-col';
+    cell.tabIndex = 0;
+    cell.setAttribute('role', 'button');
+
+    const absoluteDay = startDay + i;
+
+    let cellDateObj, isCurrentMonth;
+    if (absoluteDay <= prevTotal) {
+      // предыдущий месяц
+      cellDateObj = new Date(year, month - 1, absoluteDay);
+      isCurrentMonth = false;
+    } else if (absoluteDay > prevTotal + totalDays) {
+      // следующий месяц
+      const nextDay = absoluteDay - (prevTotal + totalDays);
+      cellDateObj = new Date(year, month + 1, nextDay);
+      isCurrentMonth = false;
+    } else {
+      // текущий месяц
+      const currDay = absoluteDay - prevTotal;
+      cellDateObj = new Date(year, month, currDay);
+      isCurrentMonth = true;
+    }
+
+    const yyyy = cellDateObj.getFullYear().toString().padStart(4,'0');
+    const mm = (cellDateObj.getMonth() + 1).toString().padStart(2,'0');
+    const dd = cellDateObj.getDate().toString().padStart(2,'0');
+    const isoDate = `${yyyy}-${mm}-${dd}`;
+
+    // номер дня
+    const numberDiv = document.createElement('div');
+    numberDiv.className = 'text-sm font-medium';
+    if (!isCurrentMonth) {
+      numberDiv.classList.add('text-slate-400','dark:text-slate-600'); // тусклая цифра соседних месяцев
+    } else {
+      numberDiv.classList.add('text-slate-900','dark:text-white');
+    }
+    numberDiv.textContent = cellDateObj.getDate();
+    cell.appendChild(numberDiv);
+
+    // бейджи — показываем только для текущего месяца
+    if (isCurrentMonth) {
+      const tasksForDate = TASKS_BY_DATE[isoDate] || [];
+      if (tasksForDate.length > 0) {
+        const badgesWrap = document.createElement('div');
+        badgesWrap.className = 'mt-1 space-y-1';
+        tasksForDate.slice(0,3).forEach((t) => {
+          const badge = document.createElement('div');
+          const bgClass = (t.complexity === 'High') ? 'bg-red-500/10 text-red-600' : (t.complexity === 'Medium') ? 'bg-amber-500/10 text-amber-600' : 'bg-green-500/10 text-green-600';
+          badge.className = `task-badge text-xs font-semibold p-1 rounded ${bgClass} cursor-pointer inline-block`;
+          badge.setAttribute('data-task-id', t.id);
+          badge.setAttribute('tabindex', 0);
+          badge.setAttribute('role', 'link');
+          badge.textContent = t.title;
+          badgesWrap.appendChild(badge);
+        });
+        if (tasksForDate.length > 3) {
+          const more = document.createElement('div');
+          more.className = 'text-xs text-slate-500 dark:text-slate-400 mt-1';
+          more.textContent = `+${tasksForDate.length - 3} more`;
+          badgesWrap.appendChild(more);
+        }
+        cell.appendChild(badgesWrap);
+      }
+    }
+
+    cell.classList.add('day');
+    cell.setAttribute('data-date', isoDate);
+    if (!isCurrentMonth) cell.classList.add('day--muted-month');
+
+    grid.appendChild(cell);
+  }
+
+  // прикрепим обработчики
+  attachCalendarHandlers();
+}
+
+
+  // Прикрепляем обработчики для дней и бейджей
+  function attachCalendarHandlers() {
+    // click на бейдж
+    document.querySelectorAll('.task-badge').forEach(b => {
+      b.removeEventListener('click', onTaskBadgeClick);
+      b.addEventListener('click', onTaskBadgeClick);
+      b.removeEventListener('keydown', onTaskBadgeKeyDown);
+      b.addEventListener('keydown', onTaskBadgeKeyDown);
+    });
+
+    // click на пустой день (чтобы выделять)
+    document.querySelectorAll('.day').forEach(d => {
+      d.removeEventListener('click', onDayClick);
+      d.addEventListener('click', onDayClick);
+      d.removeEventListener('keydown', onDayKeyDown);
+      d.addEventListener('keydown', onDayKeyDown);
+    });
+  }
+
+  // Handlers
+  async function onTaskBadgeClick(e) {
+    const taskId = this.getAttribute('data-task-id');
+    const dayEl = this.closest('.day');
+    openTaskDetails(taskId, dayEl);
+  }
+  function onTaskBadgeKeyDown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  }
+  function onDayClick(e) {
+    const date = this.getAttribute('data-date');
+    openDay(date, this);
+  }
+  function onDayKeyDown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
+  // Открыть день без задач (показываем сообщение) или выделить
+  function openDay(date, dayEl) {
+    markSelectedDay(dayEl);
+    if (!date) return;
+    const tasks = TASKS_BY_DATE[date] || [];
+    if (tasks.length === 0) {
+      // обновим panel details (если есть)
+      if (detailsRoot) {
+        clearTaskDetails();
+        const container = document.createElement('div');
+        container.className = 'task-details-content mt-4';
+        container.innerHTML = `<p class="text-sm text-slate-500 dark:text-slate-400">Selected: ${date}</p><p class="mt-2 text-sm text-slate-600 dark:text-slate-400">No tasks for this date.</p>`;
+        detailsRoot.appendChild(container);
+      }
+    } else {
+      // если есть задачи — откроем первую
+      openTaskDetails(tasks[0].id, dayEl);
+    }
+  }
+
+  // Открыть детали таски (ререндер панели)
+  function openTaskDetails(taskId, dayEl) {
+    const task = TASKS[taskId] || TASKS_BY_DATE[dayEl?.getAttribute('data-date')]?.find(t=>t.id===taskId) || null;
+    if (!task) {
+      if (detailsRoot) {
+        clearTaskDetails();
+        const c = document.createElement('div');
+        c.className = 'task-details-content mt-4';
+        c.innerHTML = `<p class="text-sm text-slate-500 dark:text-slate-400">Task not found</p>`;
+        detailsRoot.appendChild(c);
+      }
+      return;
+    }
+    // пометка выбранного дня
+    if (dayEl) markSelectedDay(dayEl);
+
+    // рендер деталей (упрощённо)
+    if (detailsRoot) {
+      clearTaskDetails();
+      const container = document.createElement('div');
+      container.className = 'task-details-content mt-4';
+      container.innerHTML = `
+        <h3 class="text-md font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(task.title)}</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Selected: ${escapeHtml(task.date)}</p>
+        <div class="mt-4 border-t border-slate-200 dark:border-slate-800 pt-4">
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">${escapeHtml(task.description)}</p>
+        </div>
+        <div class="mt-4 border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Reward</span>
+            <span class="text-sm font-semibold text-green-600 dark:text-green-500 bg-green-500/10 px-2 py-1 rounded-full">${escapeHtml(task.reward)}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estimated Time</span>
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(task.estTime)}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Complexity</span>
+            <span class="text-sm font-semibold ${task.complexity === 'High' ? 'text-red-600 dark:text-red-500' : task.complexity === 'Medium' ? 'text-amber-600 dark:text-amber-500' : 'text-green-600 dark:text-green-500'}">${escapeHtml(task.complexity)}</span>
+          </div>
+        </div>
+        <button class="mt-6 w-full accept-task-btn flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">Accept Task</span>
+        </button>
+      `;
+      detailsRoot.appendChild(container);
+
+      // attach accept handler (пример)
+      const accept = container.querySelector('.accept-task-btn');
+      accept?.addEventListener('click', () => {
+        if (confirm(`Accept task "${task.title}"?`)) {
+          accept.textContent = 'Accepted ✓';
+          accept.disabled = true;
+        }
+      });
+    }
+  }
+
+  // helper: очистка деталей
+  function clearTaskDetails() {
+    if (!detailsRoot) return;
+    const old = detailsRoot.querySelector('.task-details-content');
+    if (old) old.remove();
+  }
+
+  // helper: mark selected day
+  function markSelectedDay(dayEl) {
+    document.querySelectorAll('.day.day--selected').forEach(el => {
+      el.classList.remove('day--selected');
+      el.setAttribute('aria-pressed', 'false');
+    });
+    if (dayEl) {
+      dayEl.classList.add('day--selected');
+      dayEl.setAttribute('aria-pressed', 'true');
+      dayEl.focus({ preventScroll: true });
+    }
+  }
+
+  // безопасность вывода текста
+  function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  // Навигация месяцев
+  prevBtn.addEventListener('click', () => {
+    current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+    renderMonth(current);
+  });
+  nextBtn.addEventListener('click', () => {
+    current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    renderMonth(current);
+  });
+
+  // немного стилей для выделения (вставляем в head)
+  function injectSelectionStyles() {
+    const css = `
+      /* выделение дня */
+      .day:focus { outline: none; box-shadow: 0 0 0 3px rgba(19,91,236,0.12); }
+      .day.day--selected { background: rgba(19,91,236,0.05); border-radius: 0.5rem; }
+      .task-badge:focus { outline: none; box-shadow: 0 0 0 3px rgba(19,91,236,0.12); }
+    `;
+    const s = document.createElement('style');
+    s.appendChild(document.createTextNode(css));
+    document.head.appendChild(s);
+  }
+
+  // Инициализация при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    injectSelectionStyles();
+    renderMonth(current);
+
+    // при первой загрузке — если есть задачи, откроем первую найденную
+    const firstTask = Object.values(TASKS)[0];
+    if (firstTask) {
+      // если задача не в текущем месяце — ничего страшного, пользователь увидит пустой календарь. Можно расширить логику.
+      const dayEl = document.querySelector(`.day[data-date="${firstTask.date}"]`);
+      if (dayEl) openTaskDetails(firstTask.id, dayEl);
+    }
+  });
+
+})();
+</script>
+
+</body></html>
