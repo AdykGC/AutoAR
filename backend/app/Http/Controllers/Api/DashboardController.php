@@ -21,10 +21,6 @@ class DashboardController extends BaseController
     public function clientDashboard(): JsonResponse
     {
         try {
-            if (!$this->hasRole('Client') && !$this->hasRole('Client VIP')) {
-                return $this->error('Доступ запрещен', 403);
-            }
-
             $stats = $this->dashboardService->getClientStats(auth()->id());
             return $this->success($stats);
         } catch (\Exception $e) {
@@ -38,10 +34,6 @@ class DashboardController extends BaseController
     public function managerDashboard(): JsonResponse
     {
         try {
-            if (!$this->hasRole('Manager')) {
-                return $this->error('Доступ запрещен', 403);
-            }
-
             $stats = $this->dashboardService->getManagerStats(auth()->id());
             return $this->success($stats);
         } catch (\Exception $e) {
@@ -55,10 +47,6 @@ class DashboardController extends BaseController
     public function employeeDashboard(): JsonResponse
     {
         try {
-            if (!$this->hasRole('Employee')) {
-                return $this->error('Доступ запрещен', 403);
-            }
-
             $stats = $this->dashboardService->getEmployeeStats(auth()->id());
             return $this->success($stats);
         } catch (\Exception $e) {

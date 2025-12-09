@@ -41,6 +41,60 @@ class ClientTaskService
     }
 
     /**
+     * Получить все задачи (для менеджеров)
+     */
+    public function getAllTasks(array $filters = [])
+    {
+        $query = ClientTask::with(['client', 'manager', 'project'])
+            ->latest();
+
+        // Фильтрация по статусу
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Фильтрация по клиенту
+        if (isset($filters['client_id'])) {
+            $query->where('client_id', $filters['client_id']);
+        }
+
+        // Поиск
+        if (isset($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%")
+                  ->orWhereHas('client', function ($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        // Сортировка
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortOrder = $filters['sort_order'] ?? 'desc';
+        $query->orderBy($sortBy, $sortOrder);
+
+        return $query->paginate($filters['per_page'] ?? 20);
+    }
+
+    /**
+     * Получить задачи на рассмотрении (для менеджеров)
+     */
+    public function getPendingTasks(array $filters = [])
+    {
+        $query = ClientTask::where('status', 'pending')
+            ->with('client')
+            ->latest();
+
+        if (isset($filters['search'])) {
+            $query->where('title', 'LIKE', "%{$filters['search']}%");
+        }
+
+        return $query->paginate($filters['per_page'] ?? 20);
+    }
+
+    /**
      * Создать новую задачу
      */
     public function createTask(array $data): ClientTask
@@ -130,26 +184,61 @@ class ClientTaskService
     }
 
     /**
-     * Назначить менеджера на задачу
+     * Одобрить задачу и создать проект
      */
-    public function assignManager(ClientTask $task, User $manager): void
+    public function approveTask(ClientTask $task): ClientTask
     {
-        $task->assignToManager($manager);
+        return DB::transaction(function () use ($task) {
+            $oldStatus = $task->status;
+            
+            // Обновляем статус задачи
+            $task->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+                'manager_id' => auth()->id() // Назначаем текущего менеджера
+            ]);
+
+            // Создаем активность
+            Activity::log(auth()->user(), 'approved', 
+                "Задача одобрена: {$task->title} (был статус: {$oldStatus})", $task);
+
+            return $task->fresh();
+        });
     }
 
     /**
-     * Получить задачи на рассмотрении (для менеджеров)
+     * Отклонить задачу
      */
-    public function getPendingTasks(array $filters = [])
+    public function rejectTask(ClientTask $task, string $reason = null): ClientTask
     {
-        $query = ClientTask::where('status', 'pending')
-            ->with('client')
-            ->latest();
+        return DB::transaction(function () use ($task, $reason) {
+            $oldStatus = $task->status;
+            
+            $task->update([
+                'status' => 'rejected',
+                'rejected_at' => now(),
+                'rejection_reason' => $reason
+            ]);
 
-        if (isset($filters['search'])) {
-            $query->where('title', 'LIKE', "%{$filters['search']}%");
+            Activity::log(auth()->user(), 'rejected', 
+                "Задача отклонена: {$task->title} (был статус: {$oldStatus})", $task);
+
+            return $task->fresh();
+        });
+    }
+
+    /**
+     * Назначить менеджера на задачу
+     */
+    public function assignManager(ClientTask $task, int $managerId): void
+    {
+        $manager = User::findOrFail($managerId);
+        
+        // Проверяем, что пользователь является менеджером
+        if (!$manager->hasRole('Manager') && !$manager->hasRole('Admin')) {
+            throw new \Exception('Пользователь не является менеджером');
         }
 
-        return $query->paginate($filters['per_page'] ?? 20);
+        $task->assignToManager($manager);
     }
 }
