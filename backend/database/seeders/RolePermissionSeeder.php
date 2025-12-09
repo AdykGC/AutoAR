@@ -10,203 +10,146 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Сначала удаляем все существующие разрешения и роли (осторожно!)
-        Permission::query()->delete();
-        Role::query()->delete();
+        $this->command->info('🔐 Настройка ролей и разрешений...');
 
-        // Создаем ВСЕ разрешения которые могут понадобиться
-        $allPermissions = [
-            // === СИСТЕМНЫЕ ===
-            'system.settings', 'system.analytics', 'system.backup',
+        // 1. Создаем разрешения для MVP
+        $this->createPermissions();
+        
+        // 2. Создаем роли
+        $this->createRoles();
+        
+        // 3. Назначаем разрешения
+        $this->assignPermissions();
+    }
+
+    private function createPermissions(): void
+    {
+        $permissions = [
+            // Пользователи
+            'user.view', 'user.create', 'user.edit', 'user.delete',
             
-            // === ПОЛЬЗОВАТЕЛИ ===
-            'user.create', 'user.read', 'user.update', 'user.delete', 'user.manage',
+            // Задачи клиентов
+            'task.view', 'task.create', 'task.edit', 'task.delete', 'task.assign',
             
-            // === КЛИЕНТЫ ===
-            'client.create', 'client.read', 'client.update', 'client.delete', 'client.manage',
+            // Проекты
+            'project.view', 'project.create', 'project.edit', 'project.delete', 'project.manage',
             
-            // === КОМПАНИЯ ===
-            'company.read', 'company.update', 'company.delete', 'company.settings',
-            'company.analytics', 'company.export',
+            // Подзадачи
+            'subtask.view', 'subtask.create', 'subtask.edit', 'subtask.delete', 'subtask.complete',
             
-            // === ФИНАНСЫ ===
-            'budget.create', 'budget.read', 'budget.update', 'budget.delete', 'budget.approve',
-            'salary.create', 'salary.read', 'salary.update', 'salary.delete', 'salary.manage',
-            'salary.analytics', 'salary.export',
-            'invoice.create', 'invoice.read', 'invoice.update', 'invoice.delete', 'invoice.pay',
-            'expense.create', 'expense.read', 'expense.update', 'expense.delete', 'expense.approve',
+            // Команды
+            'team.view', 'team.create', 'team.edit', 'team.delete', 'team.member.manage',
             
-            // === ПРОЕКТЫ ===
-            'project.create', 'project.read', 'project.update', 'project.delete', 'project.manage',
-            'project.budget', 'project.timeline', 'project.analytics', 'project.export',
+            // Комментарии
+            'comment.create', 'comment.view', 'comment.delete',
             
-            // === ЦЕЛИ ===
-            'goal.create', 'goal.read', 'goal.update', 'goal.delete', 'goal.manage',
-            'goal.analytics', 'goal.export', 'goal.review',
-            
-            // === ЗАДАЧИ ===
-            'task.create', 'task.read', 'task.update', 'task.delete', 'task.manage',
-            'task.assign', 'task.complete', 'task.analytics',
-            
-            // === КОМАНДЫ ===
-            'team.create', 'team.read', 'team.update', 'team.delete', 'team.manage',
-            'team.member.add', 'team.member.remove',
-            
-            // === АКТИВНОСТИ ===
-            'activity.create', 'activity.read', 'activity.update', 'activity.delete',
-            'activity.manage', 'activity.analytics',
-            
-            // === КАЛЕНДАРЬ ===
-            'calendar.create', 'calendar.read', 'calendar.update', 'calendar.delete',
-            'calendar.manage',
-            
-            // === СООБЩЕНИЯ ===
-            'message.send', 'message.read', 'message.delete',
-            
-            // === ФАЙЛЫ ===
+            // Файлы
             'file.upload', 'file.download', 'file.delete',
             
-            // === РОЛИ И РАЗРЕШЕНИЯ ===
-            'role.manage', 'permission.manage',
+            // Дашборд
+            'dashboard.view',
         ];
 
-        $this->command->info('Creating permissions...');
-        
-        // Создаем разрешения
-        foreach ($allPermissions as $permission) {
-            Permission::create([
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => 'sanctum'
             ]);
-            $this->command->line("✓ Permission created: {$permission}");
         }
 
-        $this->command->info('Creating roles...');
+        $this->command->info('   ✅ Разрешения созданы: ' . count($permissions));
+    }
 
-        // Создаем роли
+    private function createRoles(): void
+    {
         $roles = [
             'Owner',
-            'Ceo', 
-            'Admin',
-            'Lawyer',
-            'HR',
-            'Counter',
             'Manager', 
-            'Seller',
-            'Slave',
             'Client',
-            'Client VIP'
+            'Client VIP',
+            'Employee', // Общая роль для всех сотрудников
+            'Slave',
+            'Seller',
+            'Counter',
+            'Lawyer', 
+            'HR',
         ];
 
         foreach ($roles as $role) {
-            Role::create([
+            Role::firstOrCreate([
                 'name' => $role,
                 'guard_name' => 'sanctum'
             ]);
-            $this->command->line("✓ Role created: {$role}");
         }
 
-        $this->command->info('Assigning permissions to roles...');
+        $this->command->info('   ✅ Роли созданы: ' . count($roles));
+    }
 
-        // Назначаем разрешения ролям (сначала получаем все роли)
+    private function assignPermissions(): void
+    {
+        // Owner - все права
         $owner = Role::where('name', 'Owner')->first();
-        $ceo = Role::where('name', 'Ceo')->first();
-        $admin = Role::where('name', 'Admin')->first();
-        $manager = Role::where('name', 'Manager')->first();
-        $hr = Role::where('name', 'HR')->first();
-        $counter = Role::where('name', 'Counter')->first();
-        $seller = Role::where('name', 'Seller')->first();
-        $slave = Role::where('name', 'Slave')->first();
-        $client = Role::where('name', 'Client')->first();
-        $clientVip = Role::where('name', 'Client VIP')->first();
-
-        // Владелец получает все права
         $owner->syncPermissions(Permission::all());
-        $this->command->info('✓ Owner got all permissions');
+        $this->command->info('   👑 Owner: все права');
 
-        // CEO - почти все права
-        $ceoPermissions = array_filter($allPermissions, function($perm) {
-            return !str_starts_with($perm, 'system.') && $perm !== 'role.manage' && $perm !== 'permission.manage';
-        });
-        $ceo->syncPermissions($ceoPermissions);
-        $this->command->info('✓ CEO permissions assigned');
-
-        // Админ - административные права
-        $admin->syncPermissions([
-            'user.create', 'user.read', 'user.update', 'user.delete', 'user.manage',
-            'client.create', 'client.read', 'client.update', 'client.manage',
-            'project.create', 'project.read', 'project.update', 'project.delete', 'project.manage',
-            'task.create', 'task.read', 'task.update', 'task.delete', 'task.manage',
-            'team.create', 'team.read', 'team.update', 'team.manage',
-            'goal.create', 'goal.read', 'goal.update', 'goal.manage',
-            'role.manage',
-        ]);
-        $this->command->info('✓ Admin permissions assigned');
-
-        // Менеджер
+        // Manager - управление проектами и задачами
+        $manager = Role::where('name', 'Manager')->first();
         $manager->syncPermissions([
-            'user.read', 'user.update',
-            'client.read', 'client.update',
-            'project.create', 'project.read', 'project.update', 'project.manage',
-            'task.create', 'task.read', 'task.update', 'task.delete', 'task.manage', 'task.assign',
-            'team.read', 'team.member.add', 'team.member.remove',
-            'goal.create', 'goal.read', 'goal.update', 'goal.manage',
-        ]);
-        $this->command->info('✓ Manager permissions assigned');
-
-        // HR
-        $hr->syncPermissions([
-            'user.create', 'user.read', 'user.update', 'user.manage',
-            'salary.create', 'salary.read', 'salary.update', 'salary.manage',
-            'team.manage',
-        ]);
-        $this->command->info('✓ HR permissions assigned');
-
-        // Бухгалтер
-        $counter->syncPermissions([
-            'budget.create', 'budget.read', 'budget.update',
-            'salary.create', 'salary.read', 'salary.update',
-            'invoice.create', 'invoice.read', 'invoice.update', 'invoice.pay',
-            'expense.create', 'expense.read', 'expense.update', 'expense.approve',
-        ]);
-        $this->command->info('✓ Counter permissions assigned');
-
-        // Продавец
-        $seller->syncPermissions([
-            'client.create', 'client.read', 'client.update',
-            'sale.create', 'sale.read', 'sale.update',
-        ]);
-        $this->command->info('✓ Seller permissions assigned');
-
-        // Обычный сотрудник (Slave)
-        $slave->syncPermissions([
-            'user.read', 'user.update',
-            'project.read',
-            'task.read', 'task.update',
-            'goal.read',
-        ]);
-        $this->command->info('✓ Slave permissions assigned');
-
-        // Клиент
-        $client->syncPermissions([
-            'project.read',
-            'task.read',
-            'goal.create', 'goal.read',
-            'message.send', 'message.read',
-            'file.upload',
-        ]);
-        $this->command->info('✓ Client permissions assigned');
-
-        // VIP Клиент
-        $clientVip->syncPermissions([
-            'project.create', 'project.read',
-            'task.create', 'task.read',
-            'goal.create', 'goal.read', 'goal.update',
-            'message.send', 'message.read',
+            'user.view',
+            'task.view', 'task.create', 'task.edit', 'task.delete', 'task.assign',
+            'project.view', 'project.create', 'project.edit', 'project.delete', 'project.manage',
+            'subtask.view', 'subtask.create', 'subtask.edit', 'subtask.delete',
+            'team.view', 'team.member.manage',
+            'comment.create', 'comment.view',
             'file.upload', 'file.download',
+            'dashboard.view',
         ]);
-        $this->command->info('✓ Client VIP permissions assigned');
+        $this->command->info('   👨‍💼 Manager: права управления');
 
-        $this->command->info('✅ All roles and permissions created successfully!');
+        // Client - базовые права
+        $client = Role::where('name', 'Client')->first();
+        $client->syncPermissions([
+            'task.view', 'task.create',
+            'project.view',
+            'subtask.view',
+            'comment.create', 'comment.view',
+            'file.upload',
+            'dashboard.view',
+        ]);
+        $this->command->info('   👤 Client: базовые права');
+
+        // Client VIP - больше прав
+        $clientVip = Role::where('name', 'Client VIP')->first();
+        $clientVip->syncPermissions([
+            'task.view', 'task.create', 'task.edit',
+            'project.view',
+            'subtask.view',
+            'comment.create', 'comment.view',
+            'file.upload', 'file.download',
+            'dashboard.view',
+        ]);
+        $this->command->info('   💎 Client VIP: расширенные права');
+
+        // Employee (общая роль для всех сотрудников)
+        $employee = Role::where('name', 'Employee')->first();
+        $employee->syncPermissions([
+            'task.view',
+            'project.view',
+            'subtask.view', 'subtask.edit', 'subtask.complete',
+            'comment.create', 'comment.view',
+            'file.upload', 'file.download',
+            'dashboard.view',
+        ]);
+        $this->command->info('   👷 Employee: права сотрудника');
+
+        // Наследуем Employee права для специализированных ролей
+        $specializedRoles = ['Slave', 'Seller', 'Counter', 'Lawyer', 'HR'];
+        foreach ($specializedRoles as $roleName) {
+            $role = Role::where('name', $roleName)->first();
+            $role->syncPermissions($employee->permissions);
+            $this->command->info("   🔧 {$roleName}: наследует Employee");
+        }
+
+        $this->command->info('   ✅ Назначение прав завершено');
     }
 }
