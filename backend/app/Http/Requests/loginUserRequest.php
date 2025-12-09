@@ -2,7 +2,7 @@
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class readUserRequest extends FormRequest {
+class loginUserRequest extends FormRequest {
     public function authorize(): bool {
         return true;
     }

@@ -11,13 +11,15 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Spatie\Permission\Traits\HasRoles;
 // Sanctum
 use Laravel\Sanctum\HasApiTokens;
+// Мягкое удаление
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     use CrudTrait;
     use HasApiTokens, HasFactory, Notifiable; 
     use HasRoles;
-
+    use SoftDeletes;
 
     protected $fillable = [
         'role',
@@ -35,4 +37,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+        protected $dates = ['deleted_at'];
 }

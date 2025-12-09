@@ -6,14 +6,33 @@ php artisan migrate
 php artisan make:seeder RolePermissionSeeder
 php artisan db:seed --class=RolePermissionSeeder
 
+
+
+
+
 |||||||||||||||||||| Download Backpack ||||||||||||||||||||||
 composer require backpack/crud
+
+
+
 
 
 |||||||||||||||||||| Download Sanctum ||||||||||||||||||||||
 composer require laravel/sanctum
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 php artisan make:model Company -m
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# Сбросим и запустим все заново
+php artisan migrate:fresh --seed
+php artisan db:seed --class=RolePermissionSeeder
