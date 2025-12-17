@@ -3,11 +3,10 @@ import Profile from "../views/ProfilePage.vue";
 import GeneratedCv from "../views/GeneratedCvPage.vue";
 import Login from "../views/AuthLoginPage.vue";
 import Register from "../views/AuthRegisterPage.vue";
-import test from "../views/Test.vue";
+import TestConnection from "../views/TestConnection.vue"
 
-import Auth_Service from "../axios/index";
-
-
+// Импортируем authService
+import authService from "../services/auth.service.js";
 
 const routes = [
   // { path: '/', name: 'Home', component: Home },
@@ -26,7 +25,12 @@ const routes = [
     component: GeneratedCv,
     meta: { requiresAuth: true },
   },
-  { path: "/test", name: "test", component: test },
+  { 
+    path: "/test", 
+    name: "TestConnection", 
+    component: TestConnection, 
+    meta: { requiresAuth: false },
+  }
 ];
 
 const router = createRouter({
@@ -34,19 +38,27 @@ const router = createRouter({
   routes,
 });
 
-// Вот здесь подключаем guard — после создания router
+// Guard для проверки аутентификации
 router.beforeEach((to, from, next) => {
-  const token = Auth_Service.getToken();
+  const token = authService.getToken();
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!token) { next("/login"); }
-    else { next(); }
+    if (!token) { 
+      next("/login"); 
+    } else { 
+      next(); 
+    }
   } 
   else if (to.path === "/login" || to.path === "/register") {
-    if (token) { next("/profile"); } 
-    else { next(); }
+    if (token) { 
+      next("/profile"); 
+    } else { 
+      next(); 
+    }
   } 
-  else { next(); }
+  else { 
+    next(); 
+  }
 });
 
 export default router;

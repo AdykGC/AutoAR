@@ -8,6 +8,21 @@ use App\Http\Controllers\Api\ProjectTaskController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\DashboardController;
 
+
+use App\Http\Controllers\TestController;
+
+// Тестовые маршруты (публичные)
+Route::get('/test', [TestController::class, 'test']);
+Route::get('/cors-test', [TestController::class, 'corsTest']);
+
+// CSRF для SPA
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->json([
+        'message' => 'CSRF cookie set successfully'
+    ]);
+});
+
+
 // ==================== ПУБЛИЧНЫЕ МАРШРУТЫ ====================
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

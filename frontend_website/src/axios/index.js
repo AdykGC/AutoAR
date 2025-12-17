@@ -1,73 +1,62 @@
-import http from "./http-common";
+import axios from 'axios'
 
-class Auth_Service {
+// Базовый URL API
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
-    register( email, nickname, password ) {
-        return http.post("/auth/users/", {
-            email, nickname, password
-        });
+// Создаем основной экземпляр axios для API
+const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest'
+  },
+  withCredentials: true, // ВАЖНО для работы с cookies
+})
+
+// Интерсептор для обработки запросов
+api.interceptors.request.use(
+  (config) => {
+    // Добавляем токен авторизации из localStorage
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
+    
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 
-    login( email, password ) {
-        return http.post("/auth/jwt/create/", {
-            email, password
-        });
-    }
-
-    refreshToken() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user.refresh) {
-            return axios.post("/auth/jwt/refresh/", {
-                refresh: user.refresh,
-            });
+// Интерсептор для обработки ответов
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    
+    // Если ошибка 401 (не авторизован) и мы еще не пытались обновить запрос
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      
+      try {
+        // Очищаем старый токен
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('user_data')
+        
+        // Перенаправляем на страницу логина
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
         }
-        return Promise.reject("No refresh token found");
+      } catch (refreshError) {
+        console.error('Token refresh error:', refreshError)
+      }
     }
+    
+    return Promise.reject(error)
+  }
+)
 
-    logout() {
-        localStorage.removeItem("user");
-    }
-
-    saveToken(data) {
-        localStorage.setItem("user", JSON.stringify(data));
-    }
-
-    getToken() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        return user?.access;
-    }
-
-    getCurrentUser() {
-        const token = this.getToken();
-        return http.get("/auth/users/me/", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-    }
-/*
-    getAll() {
-        return http.get("/tutorials");
-    }
-
-    get(id) {
-        return http.get(`/tutorials/${id}`);
-    }
-
-
-    update(id, data) {
-        return http.put(`/tutorials/${id}`, data);
-    }
-
-    delete(id) {
-        return http.delete(`/tutorials/${id}`);
-    }
-
-    deleteAll() {
-        return http.delete(`/tutorials`);
-    }
-
-    findByTitle(title) {
-        return http.get(`/tutorials?title=${title}`);
-    }
-*/
-}
-export default new Auth_Service();
+// Экспортируем экземпляр api по умолчанию
+export default api
