@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\ClientTask;
 use App\Models\Activity;
 use App\Models\User;
+use App\Models\Team;
+use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 
 class ClientTaskService
@@ -148,19 +150,14 @@ class ClientTaskService
     /**
      * Обновить задачу
      */
-    public function updateTask(ClientTask $task, array $data): ClientTask
-    {
+    public function updateTask(ClientTask $task, array $data): ClientTask {
         $oldData = $task->toArray();
-
         $task->update($data);
-
-        // Логируем изменения
-        $changes = array_diff_assoc($task->toArray(), $oldData);
-        if (!empty($changes)) {
-            Activity::log(auth()->user(), 'updated', 
-                "Задача обновлена: {$task->title}", $task, $oldData, $changes);
-        }
-
+        // Простое логирование без передачи массивов
+        Activity::log(auth()->user(), 'updated', 
+            "Задача обновлена: {$task->title}. Изменены поля: " . implode(', ', array_keys($data)),
+            $task
+        );
         return $task->fresh();
     }
 
@@ -198,6 +195,9 @@ class ClientTaskService
                 'manager_id' => auth()->id() // Назначаем текущего менеджера
             ]);
 
+            // СОЗДАЕМ ПРОЕКТ АВТОМАТИЧЕСКИ
+            $this->createProjectForTask($task);
+
             // Создаем активность
             Activity::log(auth()->user(), 'approved', 
                 "Задача одобрена: {$task->title} (был статус: {$oldStatus})", $task);
@@ -207,8 +207,102 @@ class ClientTaskService
     }
 
     /**
-     * Отклонить задачу
+     * Создать проект для одобренной задачи
      */
+    private function createProjectForTask(ClientTask $task): void {
+        // Ищем первую команду
+        $team = Team::first();
+
+        if (!$team) {
+            // Создаем команду по умолчанию если нет
+            $team = Team::create([
+                'name' => 'Команда по умолчанию',
+                'description' => 'Автоматически созданная команда',
+                'leader_id' => auth()->id(),
+                'department' => 'Разработка'
+            ]);
+        }
+
+        // Создаем проект
+        $project = Project::create([
+            'name' => "Проект: {$task->title}",
+            'description' => $task->description,
+            'client_task_id' => $task->id,
+            'manager_id' => auth()->id(),
+            'team_id' => $team->id,
+            'status' => 'planning',
+            'start_date' => now(),
+            'deadline' => $task->deadline ?? now()->addDays(30)
+        ]);
+
+        // Создаем стандартные подзадачи
+        $this->createDefaultProjectTasks($project, $task);
+
+        Activity::log(auth()->user(), 'created', 
+            "Создан проект: {$project->name} для задачи: {$task->title}", $project);
+    }
+
+
+    /**
+    * Создать стандартные подзадачи для проекта
+    */
+    private function createDefaultProjectTasks(Project $project, ClientTask $task): void
+    {
+        $defaultTasks = [
+            [
+                'title' => 'Анализ требований',
+                'description' => 'Изучить требования задачи: ' . $task->title,
+                'estimated_hours' => 8,
+                'priority' => '1',
+                'status' => 'todo'
+            ],
+            [
+                'title' => 'Планирование',
+                'description' => 'Создать план проекта',
+                'estimated_hours' => 4,
+                'priority' => '2',
+                'status' => 'todo'
+            ],
+            [
+                'title' => 'Разработка',
+                'description' => 'Выполнить основную работу по проекту',
+                'estimated_hours' => 40,
+                'priority' => '1',
+                'status' => 'todo'
+            ],
+            [
+                'title' => 'Тестирование',
+                'description' => 'Проверить качество работы',
+                'estimated_hours' => 8,
+                'priority' => '2',
+                'status' => 'todo'
+            ],
+            [
+                'title' => 'Сдача проекта',
+                'description' => 'Подготовить документацию и сдать проект клиенту',
+                'estimated_hours' => 4,
+                'priority' => '3',
+                'status' => 'todo'
+            ]
+        ];
+
+        foreach ($defaultTasks as $index => $taskData) {
+            $project->projectTasks()->create([
+                'title' => $taskData['title'],
+                'description' => $taskData['description'],
+                'project_id' => $project->id,
+                'creator_id' => auth()->id(),
+                'estimated_hours' => $taskData['estimated_hours'],
+                'priority' => $taskData['priority'],
+                'status' => $taskData['status'],
+                'order' => $index + 1,
+                'due_date' => now()->addDays($index * 3 + 1) // Каждая задача через 3 дня
+            ]);
+        }
+    }
+    /**
+    * Отклонить задачу
+    */
     public function rejectTask(ClientTask $task, string $reason = null): ClientTask
     {
         return DB::transaction(function () use ($task, $reason) {

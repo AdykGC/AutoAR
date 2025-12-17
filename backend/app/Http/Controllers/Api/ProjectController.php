@@ -12,11 +12,9 @@ class ProjectController extends BaseController
 {
     protected $projectService;
 
-    public function __construct(ProjectService $projectService)
-    {
+    public function __construct(ProjectService $projectService) {
         $this->projectService = $projectService;
         $this->middleware('auth:sanctum');
-        $this->middleware('role:Manager|Admin|Owner|CEO')->except(['myProjects', 'show']);
     }
 
     /**

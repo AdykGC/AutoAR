@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -103,22 +104,21 @@ class Project extends Model
     }
 
     // Создать стандартные подзадачи
-    public function createDefaultTasks()
-    {
+    public function createDefaultTasks() {
         $defaultTasks = [
-            ['title' => 'Анализ требований', 'estimated_hours' => 8],
-            ['title' => 'Планирование', 'estimated_hours' => 16],
-            ['title' => 'Разработка', 'estimated_hours' => 40],
-            ['title' => 'Тестирование', 'estimated_hours' => 16],
-            ['title' => 'Сдача проекта', 'estimated_hours' => 4],
+            ['title' => 'Анализ требований', 'estimated_hours' => 8, 'priority' => 'high'],
+            ['title' => 'Планирование', 'estimated_hours' => 16, 'priority' => 'medium'],
+            ['title' => 'Разработка', 'estimated_hours' => 40, 'priority' => 'high'],
+            ['title' => 'Тестирование', 'estimated_hours' => 16, 'priority' => 'medium'],
+            ['title' => 'Сдача проекта', 'estimated_hours' => 4, 'priority' => 'low'],
         ];
 
-        foreach ($defaultTasks as $taskData) {
+        foreach ($defaultTasks as $index => $taskData) {
             $this->projectTasks()->create(array_merge($taskData, [
-                'creator_id' => $this->manager_id,
+                'creator_id' => $this->manager_id ?? Auth::id(),
                 'status' => 'todo',
-                'due_date' => $this->deadline,
-                'priority' => count($this->projectTasks) + 1
+                'due_date' => $this->deadline ?? now()->addDays(30),
+                'order' => $index + 1
             ]));
         }
     }
