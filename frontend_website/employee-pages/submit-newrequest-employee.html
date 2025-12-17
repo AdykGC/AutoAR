@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoAr - New Request Submission</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen">
+<nav class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-slate-800 border-r border-slate-200">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+
+<div class="flex gap-3 items-center px-2">
+  <div class="rounded-full size-10 flex items-center justify-center">
+    <svg class="text-primary h-12 w-12" fill="none" height="48" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+  
+  <div class="flex flex-col">
+    <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">AutoAr</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Automation Hub</p>
+  </div>
+</div>
+
+<div class="flex flex-col gap-2 pt-4">
+<a href="employee-dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a href="all-requests-employee.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">All Requests</p>
+</a>
+
+<a href="cv-generation.html" class="flex items-center gap-3 px-3 py-2 rounded-lg
+           hover:bg-slate-100 dark:hover:bg-slate-800 
+           text-slate-700 dark:text-slate-300
+           focus:outline-none focus:ring-0">
+  <span class="material-symbols-outlined">person</span>
+  <p class="text-sm font-medium leading-normal">CV</p>
+</a>
+
+
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="jobs-calendar.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-medium leading-normal">Jobs Calendar</p>
+</a>
+</a>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-10">
+<h1 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">New Request Submission</h1>
+<div class="flex flex-1 justify-end items-center gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 relative bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"></div>
+</button>
+
+</div>
+</header>
+<div class="flex-1 p-10">
+<div class="max-w-4xl mx-auto bg-white dark:bg-background-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="p-8">
+<form class="flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="request-type">Request Type <span class="text-red-500">*</span></label>
+<div class="relative">
+<select class="form-select w-full h-12 px-4 text-sm rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-primary focus:border-primary text-slate-900 dark:text-white" id="request-type" required="">
+<option>Job Request</option>
+<option>Time-Off Request</option>
+<option>Report Request</option>
+</select>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="submitted-by">Submitted By <span class="text-red-500">*</span></label>
+<div class="flex items-center gap-3 h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCWjviukgd6T1ZmYboweR2U4WJ4xrPZ7IlxrVvHv44uvu2KQNUbgZR78J2kmcLls5IgiQHA3hAKIjxzcTEvoNCCna8rw95LjPKOrK4i1Q4i3DwPL48IWzWZAgsnanpvCmjjJYGbLKzEKpC8Y-HIPGv3CpIvREIM3-MrZcqbGo6RYsyIXuKMtkHMj2kzV4waf9mVOny-tiW6OH2yu3il-sKZyonwt8KbwQr4c0K1K-PeoX64lBZpjPScwVyQdwcbP9qYpgU5aeb_jn68");'></div>
+<span class="text-sm text-slate-900 dark:text-white">Alex Johnson</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="start-date">Start Date <span class="text-red-500">*</span></label>
+<input class="form-input w-full h-12 px-4 text-sm rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-primary focus:border-primary text-slate-900 dark:text-white" id="start-date" required="" type="date"/>
+</div>
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="end-date">End Date <span class="text-red-500">*</span></label>
+<input class="form-input w-full h-12 px-4 text-sm rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-primary focus:border-primary text-slate-900 dark:text-white" id="end-date" required="" type="date"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="reason">Reason for Request <span class="text-red-500">*</span></label>
+<textarea class="form-textarea w-full px-4 py-3 text-sm rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-primary focus:border-primary text-slate-900 dark:text-white" id="reason" placeholder="Please provide a brief reason for your request..." required="" rows="4"></textarea>
+</div>
+<div>
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block" for="attachment">Attach File <span class="text-red-500">*</span></label>
+<div class="flex items-center justify-center w-full">
+<label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:hover:bg-slate-800/60 dark:bg-slate-800 hover:bg-slate-100" for="dropzone-file">
+<div class="flex flex-col items-center justify-center pt-5 pb-6">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">cloud_upload</span>
+<p class="mb-2 text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">PDF, PNG, JPG or DOCX (MAX. 10MB)</p>
+</div>
+<input class="hidden" id="dropzone-file" required="" type="file"/>
+</label>
+</div>
+</div>
+<div class="flex justify-end gap-4 pt-4">
+<a 
+  href="employee-dashboard.html" 
+  class="flex items-center gap-2 h-11 px-6 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
+>
+  <span>Cancel</span>
+</a>
+
+<button class="flex items-center gap-2 h-11 px-6 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90" type="submit">
+<span class="material-symbols-outlined text-base">send</span>
+<span>Submit Request</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

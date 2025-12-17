@@ -65,11 +65,11 @@
 
 
 <div class="flex flex-col gap-2 pt-4">
-<a href="employee-dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<a href="employee-dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
 <span class="material-symbols-outlined">dashboard</span>
 <p class="text-sm font-medium leading-normal">Dashboard</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
+<a href="all-requests-employee.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
 <span class="material-symbols-outlined">folder</span>
 <p class="text-sm font-medium leading-normal">All Requests</p>
 </a>
@@ -83,13 +83,10 @@
 </a>
 
 
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
-<span class="material-symbols-outlined">bar_chart</span>
-<p class="text-sm font-medium leading-normal">Reports</p>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="jobs-calendar.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-medium leading-normal">Jobs Calendar</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="#">
-<span class="material-symbols-outlined">settings</span>
-<p class="text-sm font-medium leading-normal">Settings</p>
 </a>
 </div>
 
@@ -122,19 +119,22 @@
 <div class="flex flex-wrap justify-between items-center gap-3">
 <div class="flex min-w-72 flex-col gap-2">
 <p class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Welcome back, Alex!</p>
-<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Here's a summary of your activity. Today is Tuesday, 24 October.</p>
+<p id="date" class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
+  Here's a summary of your activity. Today is <span id="today"></span>.
+</p>
 </div>
-<!-- <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
-<span class="truncate">Submit New Request</span>
-</button> -->
-<button
+
+<a
+  href="submit-newrequest-employee.html"
   class="group relative flex min-w-[84px] max-w-[480px] h-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg px-5
          bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]
          hover:bg-primary/90
          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark
-         transition-colors">
+         transition-colors"
+>
   <span class="truncate">Submit New Request</span>
-</button>
+</a>
+
 
 </div>
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-8">
@@ -201,7 +201,7 @@
 <div class="flex items-center justify-center size-12 rounded-full bg-primary/20 text-primary">
 <span class="material-symbols-outlined text-2xl">event_available</span>
 </div>
-<p class="text-slate-800 dark:text-slate-200 text-sm font-semibold">Request Time Off</p>
+<p class="text-slate-800 dark:text-slate-200 text-sm font-semibold">My Tasks</p>
 </div>
 <div class="flex flex-col items-center justify-center text-center p-4 gap-3 bg-background-light dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary cursor-pointer transition-colors duration-200">
 <div class="flex items-center justify-center size-12 rounded-full bg-primary/20 text-primary">
@@ -265,4 +265,11 @@
 </main>
 </div>
 </div>
-</body></html>
+</body>
+<script>
+  const todaySpan = document.getElementById("today");
+
+  const options = { weekday: 'long', day: 'numeric', month: 'long' };
+  const today = new Date();
+  todaySpan.textContent = today.toLocaleDateString('en-US', options);
+</script></html>
