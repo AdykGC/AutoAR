@@ -22,7 +22,6 @@ Route::get('/sanctum/csrf-cookie', function () {
     ]);
 });
 
-
 // ==================== ПУБЛИЧНЫЕ МАРШРУТЫ ====================
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -30,13 +29,18 @@ Route::prefix('auth')->group(function () {
 });
 
 // ==================== ЗАЩИЩЕННЫЕ МАРШРУТЫ (ТОЛЬКО АУТЕНТИФИКАЦИЯ) ====================
-Route::middleware('auth:sanctum')->group(function () {
 
+Route::middleware('auth:sanctum')->group(function () {
     // ---------- АУТЕНТИФИКАЦИЯ ----------
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
     });
+
+
+
+
+
 
     // ---------- ДАШБОРДЫ ----------
     Route::prefix('dashboard')->group(function () {
@@ -44,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/manager', [DashboardController::class, 'managerDashboard']);
         Route::get('/employee', [DashboardController::class, 'employeeDashboard']);
     });
+
+
+
 
     // ---------- ЗАДАЧИ КЛИЕНТОВ (ClientTask) ----------
     Route::prefix('client-tasks')->group(function () {
@@ -63,7 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/reject', [ClientTaskController::class, 'reject']);
         Route::post('/{id}/assign-manager', [ClientTaskController::class, 'assignManager']);
     });
-    
+
+
+
     // ---------- ПРОЕКТЫ (Project) ----------
     Route::prefix('projects')->group(function () {
         Route::get('/', [ProjectController::class, 'index']);

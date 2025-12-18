@@ -1,54 +1,90 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import Profile from "../views/ProfilePage.vue";
-import GeneratedCv from "../views/GeneratedCvPage.vue";
-
-// API
-import TestConnection from "../views/TestConnection.vue"
-
-// Auth
-import Login from "../views/Auth/AuthLoginPage.vue";
-import Register from "../views/Auth/AuthRegisterPage.vue";
-import Forgot from "../views/Auth/AuthForgotPage.vue";
-import Logout from "../views/Auth/AuthLogoutPage.vue";
-
-// Dashborad
-import Dashborad from "../views/Dashboard/DashboardPage.vue";
-import AllRequests from "../views/Dashboard/AllRequestsPage.vue";
-import JobsCalendar from "../views/Dashboard/JobsCalendarPage.vue";
-import NewRequest from "../views/Dashboard/NewRequestPage.vue";
-import CVGeneration from "../views/Dashboard/CVGenerationPage.vue";
-
-
-
-// Импортируем authService
-import authService from "../services/auth.service.js";
+import authService from "@/services/auth.service.js";
 
 const routes = [
-  // { path: '/', name: 'Home', component: Home },
-  // { path: "/", alias: "/profile", name: "Profile", component: Profile, meta: { requiresAuth: true }, },
-  { path: "/", alias: "/login", name: "Login", component: Login, meta: { requiresAuth: false }},
-  { path: "/register", name: "Register", component: Register, meta: { requiresAuth: false }},
-  { path: "/forgot", name: "Forgot", component: Forgot, meta: { requiresAuth: false }},
-  { path: "/logout", name: "Logout", component: Logout, meta: { requiresAuth: false }},
-
-  { path: "/dashboard", name: "Dashborad", component: Dashborad, meta: { requiresAuth: false }},
-  { path: "/requests", name: "AllRequests", component: AllRequests, meta: { requiresAuth: false }},
-  { path: "/calendar", name: "JobsCalendar", component: JobsCalendar, meta: { requiresAuth: false }},
-  { path: "/new-request", name: "NewRequest", component: NewRequest, meta: { requiresAuth: false }},
-  { path: "/cv-generation", name: "CVGeneration", component: CVGeneration, meta: { requiresAuth: false }},
-
-  {
-    path: "/gen-cv",
-    name: "GeneratedCv",
-    component: GeneratedCv,
-    meta: { requiresAuth: true },
+  // Auth
+  { 
+    path: "/", 
+    alias: "/login", 
+    name: "Login", 
+    component: () => import('@/views/Auth/AuthLoginPage.vue'), 
+    meta: { requiresAuth: false }
   },
+  { 
+    path: "/register", 
+    name: "Register", 
+    component: () => import('@/views/Auth/AuthRegisterPage.vue'), 
+    meta: { requiresAuth: false }
+  },
+  { 
+    path: "/forgot", 
+    name: "Forgot", 
+    component: () => import('@/views/Auth/AuthForgotPage.vue'), 
+    meta: { requiresAuth: false }
+  },
+  { 
+    path: "/logout", 
+    name: "Logout", 
+    component: () => import('@/views/Auth/AuthLogoutPage.vue'), 
+    meta: { requiresAuth: true }
+  },
+  
+  // Тестовая страница
   { 
     path: "/test", 
     name: "TestConnection", 
-    component: TestConnection, 
-    meta: { requiresAuth: false },
-  }
+    component: () => import('@/views/TestConnection.vue'), 
+    meta: { requiresAuth: false }
+  },
+
+  // Дашборды
+  { 
+    path: '/dashboard', 
+    redirect: (to) => {
+      // Определяем дашборд по роли
+      const userRole = authService.getUserRole()
+      
+      if (userRole === 'Client' || userRole === 'Client VIP') {
+        return '/dashboard/client'
+      } else if (userRole === 'Manager' || userRole === 'Admin' || userRole === 'Owner' || userRole === 'CEO') {
+        return '/dashboard/manager'
+      } else if (userRole === 'Employee') {
+        return '/dashboard/employee'
+      }
+      
+      return '/dashboard/client' // По умолчанию
+    },
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/dashboard/client', 
+    name: 'DashboardClient',
+    component: () => import('@/views/Dashboard/DashboardClientPage.vue'),
+    meta: { 
+      requiresAuth: true, 
+      allowedRoles: ['Client', 'Client VIP']
+    }
+  },
+  { 
+    path: '/dashboard/manager', 
+    name: 'DashboardManager',
+    component: () => import('@/views/Dashboard/DashboardManagerPage.vue'),
+    meta: { 
+      requiresAuth: true, 
+      allowedRoles: ['Manager', 'Admin', 'Owner', 'CEO']
+    }
+  },
+  { 
+    path: '/dashboard/employee', 
+    name: 'DashboardEmployee',
+    component: () => import('@/views/Dashboard/DashboardEmployeePage.vue'),
+    meta: { 
+      requiresAuth: true, 
+      allowedRoles: ['Employee']
+    }
+  },
+  
+  // Остальные маршруты остаются как есть...
 ];
 
 const router = createRouter({
@@ -56,37 +92,91 @@ const router = createRouter({
   routes
 });
 
-// Guard для проверки аутентификации
+// Функция для проверки доступа по ролям
+const checkRoleAccess = (allowedRoles, userRole) => {
+  if (!allowedRoles || allowedRoles.length === 0) {
+    return true // Если роли не указаны, доступ открыт
+  }
+  
+  if (!userRole) {
+    return false // Если у пользователя нет роли, доступ запрещен
+  }
+  
+  // Проверяем совпадение роли
+  return allowedRoles.includes(userRole)
+}
+
+// Guard для проверки аутентификации и ролей
 router.beforeEach((to, from, next) => {
   const isAuthenticated = authService.isAuthenticated()
   const userData = authService.getUserData()
+  const userRole = authService.getUserRole()
 
   console.log('🔒 Router Guard:', {
     to: to.path,
-    requiresAuth: to.matched.some(record => record.meta.requiresAuth),
+    requiresAuth: to.meta.requiresAuth || false,
+    allowedRoles: to.meta.allowedRoles || [],
     isAuthenticated: isAuthenticated,
+    userRole: userRole,
     user: userData?.email || 'No user'
   })
 
   // Страницы требующие авторизации
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.meta.requiresAuth) {
     if (!isAuthenticated) {
       console.log('➡️ Redirecting to login (not authenticated)')
       next("/login")
     } else {
-      console.log('✅ Access granted to protected route')
-      next()
+      // Проверяем доступ по ролям
+      const allowedRoles = to.meta.allowedRoles || []
+      
+      if (checkRoleAccess(allowedRoles, userRole)) {
+        console.log('✅ Access granted to protected route')
+        next()
+      } else {
+        console.log('⛔ Access denied: role mismatch')
+        
+        // Перенаправляем на правильный дашборд по роли
+        let redirectPath = '/dashboard'
+        
+        if (userRole === 'Client' || userRole === 'Client VIP') {
+          redirectPath = '/dashboard/client'
+        } else if (['Manager', 'Admin', 'Owner', 'CEO'].includes(userRole)) {
+          redirectPath = '/dashboard/manager'
+        } else if (userRole === 'Employee') {
+          redirectPath = '/dashboard/employee'
+        }
+        
+        next(redirectPath)
+      }
     }
   } 
   // Страницы логина/регистрации - если уже авторизован, перенаправляем
   else if (to.path === "/login" || to.path === "/register" || to.path === "/forgot") {
     if (isAuthenticated) {
       console.log('➡️ Already authenticated, redirecting to dashboard')
-      next("/dashboard")
+      
+      // Перенаправляем на правильный дашборд по роли
+      let redirectPath = '/dashboard'
+      
+      if (userRole === 'Client' || userRole === 'Client VIP') {
+        redirectPath = '/dashboard/client'
+      } else if (['Manager', 'Admin', 'Owner', 'CEO'].includes(userRole)) {
+        redirectPath = '/dashboard/manager'
+      } else if (userRole === 'Employee') {
+        redirectPath = '/dashboard/employee'
+      }
+      
+      next(redirectPath)
     } else {
       next()
     }
   } 
+  // Тестовая страница - доступ для всех
+  else if (to.path === "/test") {
+    next()
+  }
+  // Все остальные маршруты
   else {
     next()
   }

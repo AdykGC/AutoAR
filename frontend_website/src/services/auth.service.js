@@ -158,6 +158,73 @@ class AuthService {
       localStorage.removeItem('auth_token_timestamp')
     }
   }
+
+    // ... существующие методы ...
+  
+  // Получить роль пользователя
+  getUserRole() {
+    const user = this.getUserData()
+    
+    if (!user) return null
+    
+    // Если roles - это массив объектов
+    if (Array.isArray(user.roles) && user.roles.length > 0) {
+      return user.roles[0].name || null
+    }
+    
+    // Если roles - это строка
+    if (typeof user.roles === 'string') {
+      return user.roles
+    }
+    
+    // Если role - это свойство объекта user
+    if (user.role) {
+      return user.role
+    }
+    
+    return null
+  }
+  
+  // Получить все роли пользователя
+  getUserRoles() {
+    const user = this.getUserData()
+    
+    if (!user) return []
+    
+    if (Array.isArray(user.roles)) {
+      return user.roles.map(role => role.name || role)
+    }
+    
+    if (typeof user.roles === 'string') {
+      return [user.roles]
+    }
+    
+    return []
+  }
+  
+  // Проверить есть ли у пользователя определенная роль
+  hasRole(role) {
+    const userRoles = this.getUserRoles()
+    return userRoles.includes(role)
+  }
+  
+  // Проверить является ли пользователь клиентом
+  isClient() {
+    const userRole = this.getUserRole()
+    return userRole === 'Client' || userRole === 'Client VIP'
+  }
+  
+  // Проверить является ли пользователь менеджером
+  isManager() {
+    const userRole = this.getUserRole()
+    return ['Manager', 'Admin', 'Owner', 'CEO'].includes(userRole)
+  }
+  
+  // Проверить является ли пользователь сотрудником
+  isEmployee() {
+    const userRole = this.getUserRole()
+    return userRole === 'Employee'
+  }
 }
 
 // Экспортируем экземпляр
