@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -16,6 +16,9 @@
               "primary": "#135bec",
               "background-light": "#f6f6f8",
               "background-dark": "#101622",
+              "sidebar-bg": "#1e293b",
+              "card-bg": "#ffffff",
+              "card-dark": "#1e293b",
             },
             fontFamily: {
               "display": ["Manrope", "system-ui", "sans-serif"]
@@ -26,6 +29,9 @@
               "xl": "0.75rem", 
               "full": "9999px"
             },
+            spacing: {
+              'sidebar': '280px',
+            }
           },
         },
       }
@@ -38,14 +44,76 @@
     <title>AutoAr CRM</title>
     
     <style>
-      .material-symbols-outlined {
-        font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24
-      }
-    </style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+    }
+    
+    /* Кастомные стили для sidebar и таблиц */
+    .sidebar {
+      transition: all 0.3s ease;
+    }
+    
+    .navlink.active {
+      background-color: rgba(19, 91, 236, 0.1);
+      color: #135bec;
+      border-left: 3px solid #135bec;
+    }
+    
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status.pending {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+    
+    .status.info {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 8px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    tr:hover td {
+      background-color: #f9fafb;
+    }
+  </style>
   </head>
   <body class="font-display bg-background-light dark:bg-background-dark text-[#0d121b] dark:text-gray-200">
     <div id="app"></div>

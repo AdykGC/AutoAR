@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import AuthLogin from "../components/Auth/LoginCard.vue";
+import AuthLogin from "../../components/Auth/LoginCard.vue";
 </script>

@@ -104,22 +104,51 @@
                   </div>
                 </label>
 
-                <!-- Position -->
+                <!-- Phone (необязательный) -->
                 <label class="flex flex-col flex-1">
                   <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                    Position
+                    Phone (optional)
                   </p>
                   <div class="relative flex w-full flex-1 items-stretch">
                     <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
-                      <span class="material-symbols-outlined text-xl">work</span>
+                      <span class="material-symbols-outlined text-xl">phone</span>
                     </div>
                     <input 
-                      v-model="registerForm.position"
+                      v-model="registerForm.phone"
                       class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal"
-                      placeholder="e.g. Product Manager"
-                      type="text"
+                      placeholder="+1 (555) 123-4567"
+                      type="tel"
                     />
                   </div>
+                </label>
+
+                <!-- Role (обязательный) -->
+                <label class="flex flex-col flex-1">
+                  <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    Role *
+                  </p>
+                  <div class="relative flex w-full flex-1 items-stretch">
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                      <span class="material-symbols-outlined text-xl">badge</span>
+                    </div>
+                    <select 
+                      v-model="registerForm.role"
+                      class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-10 text-base font-normal leading-normal appearance-none"
+                      required
+                    >
+                      <option value="" disabled selected>Select your role</option>
+                      <option value="Client">Client</option>
+                      <option value="Client VIP">Client VIP</option>
+                      <option value="Employee">Employee</option>
+                      <option value="Manager">Manager</option>
+                    </select>
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center pr-4">
+                      <span class="material-symbols-outlined text-xl">arrow_drop_down</span>
+                    </div>
+                  </div>
+                  <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                    Available roles: Client, Client VIP, Employee, Manager
+                  </p>
                 </label>
 
                 <!-- Password -->
@@ -213,10 +242,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../../axios/index.js'
-import authService from '../../services/auth.service.js'
+import authService from '../../services/auth.service.js' // Используем ваш authService
 
 const router = useRouter()
 
@@ -226,51 +254,92 @@ const error = ref('')
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-// Форма регистрации
+// Правильная форма регистрации
 const registerForm = reactive({
   name: '',
   surname: '',
   email: '',
-  position: '',
+  phone: '',
   password: '',
-  password_confirmation: ''
+  password_confirmation: '',
+  role: ''
 })
 
-// Регистрация
+// Автозаполнение для тестирования
+onMounted(() => {
+  const randomNum = Math.floor(Math.random() * 10000)
+  registerForm.name = 'John'
+  registerForm.surname = 'Doe'
+  registerForm.email = `test${randomNum}@example.com`
+  registerForm.phone = ''
+  registerForm.password = 'password123'
+  registerForm.password_confirmation = 'password123'
+  registerForm.role = 'Employee'
+})
+
+// Регистрация с использованием authService
 const handleRegister = async () => {
   try {
     loading.value = true
     error.value = ''
 
-    // Проверка паролей
-    if (registerForm.password !== registerForm.password_confirmation) {
-      error.value = 'Passwords do not match'
+    // Валидация
+    if (!registerForm.name || !registerForm.email || !registerForm.password || !registerForm.role) {
+      error.value = 'Please fill all required fields'
+      loading.value = false
       return
     }
 
-    // Получаем CSRF токен
-    await fetch('http://localhost:8000/sanctum/csrf-cookie', {
-      method: 'GET',
-      credentials: 'include'
-    })
+    if (registerForm.password !== registerForm.password_confirmation) {
+      error.value = 'Passwords do not match'
+      loading.value = false
+      return
+    }
 
-    // Отправляем запрос на регистрацию
-    const response = await api.post('/auth/register', registerForm)
+    if (registerForm.password.length < 8) {
+      error.value = 'Password must be at least 8 characters'
+      loading.value = false
+      return
+    }
+
+    // Подготовка данных для отправки
+    const requestData = {
+      name: registerForm.name,
+      surname: registerForm.surname || null,
+      email: registerForm.email,
+      phone: registerForm.phone || null,
+      password: registerForm.password,
+      password_confirmation: registerForm.password_confirmation,
+      role: registerForm.role
+    }
+
+    console.log('📤 Attempting registration...')
+
+    // Используем authService для регистрации
+    const response = await authService.register(requestData)
     
-    // Сохраняем токен
-    if (response.data.token) {
-      authService.setToken(response.data.token)
-      if (response.data.user) {
-        authService.setUser(response.data.user)
-      }
+    console.log('✅ Registration successful via authService')
+    
+    // Проверяем, что пользователь сохранен
+    const userData = authService.getUserData()
+    const token = authService.getToken()
+    
+    if (token && userData) {
+      console.log('✅ Token and user data saved after registration')
+      console.log('- User:', userData.email)
+      console.log('- Role:', userData.roles?.[0]?.name)
       
-      // Перенаправляем на профиль
-      router.push('/profile')
+      alert('Registration successful!')
+      
+      // Перенаправляем на дашборд
+      router.push('/dashboard')
+    } else {
+      error.value = 'Registration successful but data not saved properly'
     }
     
   } catch (err) {
-    error.value = err.response?.data?.message || 'Registration failed. Please try again.'
-    console.error('Registration error:', err)
+    console.error('❌ Registration error:', err.message)
+    error.value = err.message || 'Registration failed. Please try again.'
   } finally {
     loading.value = false
   }

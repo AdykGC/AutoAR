@@ -103,9 +103,9 @@
 
               <div class="flex items-center justify-end">
                 <div class="text-sm">
-                  <a class="font-medium text-primary hover:text-primary/80 cursor-pointer">
+                  <router-link to="/forgot" class="font-medium text-primary hover:text-primary/80">
                     Forgot Password?
-                  </a>
+                  </router-link>
                 </div>
               </div>
 
@@ -144,8 +144,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../../axios/index.js'
-import authService from '../../services/auth.service.js'
+import authService from '../../services/auth.service.js' // Используем ваш authService
 
 const router = useRouter()
 
@@ -160,42 +159,52 @@ const loginForm = reactive({
   password: ''
 })
 
-// При монтировании
+// Автозаполнение для тестирования
 onMounted(() => {
-  // Автозаполнение тестовых данных
-  loginForm.email = 'test@example.com'
-  loginForm.password = 'password'
+  // Используйте существующие данные
+  loginForm.email = 'register@crm.test3'
+  loginForm.password = 'password123'
 })
 
-// Логин
+// Логин с использованием authService
 const handleLogin = async () => {
   try {
     loading.value = true
     error.value = ''
 
-    // Получаем CSRF токен
-    await fetch('http://localhost:8000/sanctum/csrf-cookie', {
-      method: 'GET',
-      credentials: 'include'
-    })
+    // Базовая валидация
+    if (!loginForm.email || !loginForm.password) {
+      error.value = 'Please enter email and password'
+      loading.value = false
+      return
+    }
 
-    // Отправляем запрос на логин
-    const response = await api.post('/auth/login', loginForm)
+    console.log('📤 Attempting login...')
+
+    // Используем authService для логина
+    const response = await authService.login(loginForm.email, loginForm.password)
     
-    // Сохраняем токен
-    if (response.data.token) {
-      authService.setToken(response.data.token)
-      if (response.data.user) {
-        authService.setUser(response.data.user)
-      }
+    console.log('✅ Login successful via authService')
+    
+    // Проверяем, что пользователь сохранен
+    const userData = authService.getUserData()
+    const token = authService.getToken()
+    
+    if (token && userData) {
+      console.log('✅ Token and user data saved')
+      console.log('- User:', userData.email)
+      console.log('- Role:', userData.roles?.[0]?.name)
+      console.log('- Token (first 20 chars):', token.substring(0, 20) + '...')
       
-      // Перенаправляем на профиль
-      router.push('/profile')
+      // Перенаправляем на дашборд
+      router.push('/dashboard')
+    } else {
+      error.value = 'Login successful but data not saved properly'
     }
     
   } catch (err) {
-    error.value = err.response?.data?.message || 'Login failed. Please check your credentials.'
-    console.error('Login error:', err)
+    console.error('❌ Login error:', err.message)
+    error.value = err.message || 'Login failed. Please try again.'
   } finally {
     loading.value = false
   }

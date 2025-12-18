@@ -13,8 +13,7 @@ class AuthService
     /**
      * Регистрация пользователя с ролью
      */
-    public function register(array $data): User
-    {
+    public function register(array $data): array {
         return DB::transaction(function () use ($data) {
             // Создаем пользователя
             $user = User::create([
@@ -32,10 +31,17 @@ class AuthService
                 $user->assignRole($role);
             }
 
+            // СОЗДАЕМ ТОКЕН ДЛЯ НОВОГО ПОЛЬЗОВАТЕЛЯ
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             // Логируем регистрацию (БЕЗ ПЕРЕДАЧИ МОДЕЛИ)
             Activity::log($user, 'registered', "Пользователь {$user->email} зарегистрирован");
 
-            return $user;
+            return [
+                'user' => $user->load('roles'),
+                'token' => $token,
+                'permissions' => $user->getAllPermissions()->pluck('name')
+            ];
         });
     }
 

@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import AuthRegister from '../components/Auth/RegisterCard.vue';
+import AuthRegister from '../../components/Auth/RegisterCard.vue';
 </script>

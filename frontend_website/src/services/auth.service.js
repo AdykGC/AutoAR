@@ -8,12 +8,17 @@ class AuthService {
   // Получить данные пользователя
   getUserData() {
     const userData = localStorage.getItem('user_data')
-    return userData ? JSON.parse(userData) : null
+    try {
+      return userData ? JSON.parse(userData) : null
+    } catch {
+      return null
+    }
   }
   
   // Установить токен
   setToken(token) {
     localStorage.setItem('auth_token', token)
+    localStorage.setItem('auth_token_timestamp', Date.now().toString())
   }
   
   // Установить данные пользователя
@@ -34,27 +39,13 @@ class AuthService {
   // Проверить аутентификацию
   isAuthenticated() {
     const token = this.getToken()
-    if (!token) return false
-    
-    // Простая проверка срока действия (24 часа)
-    const tokenAge = localStorage.getItem('auth_token_timestamp')
-    if (tokenAge) {
-      const age = Date.now() - parseInt(tokenAge)
-      const twentyFourHours = 24 * 60 * 60 * 1000
-      if (age > twentyFourHours) {
-        this.removeToken()
-        this.removeUser()
-        return false
-      }
-    }
-    
     return !!token
   }
   
   // Получить роль пользователя
   getUserRole() {
     const user = this.getUserData()
-    return user?.role || null
+    return user?.roles?.[0]?.name || null
   }
   
   // Проверить роль
@@ -76,7 +67,7 @@ class AuthService {
     return user?.email || ''
   }
   
-  // Логин (альтернативный метод)
+  // Логин (исправленный под вашу структуру)
   async login(email, password) {
     const response = await fetch('http://localhost:8000/api/auth/login', {
       method: 'POST',
@@ -88,22 +79,62 @@ class AuthService {
       credentials: 'include'
     })
     
+    const data = await response.json()
+    
     if (!response.ok) {
-      throw new Error('Login failed')
+      throw new Error(data.message || 'Login failed')
     }
+    
+    // Ваша структура: data.success, data.data.token, data.data.user
+    if (data.success && data.data) {
+      const token = data.data.token
+      const user = data.data.user
+      
+      if (token) {
+        this.setToken(token)
+        if (user) {
+          this.setUser(user)
+        }
+        return data
+      }
+    }
+    
+    throw new Error(data.message || 'Login failed')
+  }
+  
+  // Регистрация
+  async register(userData) {
+    const response = await fetch('http://localhost:8000/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(userData),
+      credentials: 'include'
+    })
     
     const data = await response.json()
     
-    if (data.token) {
-      this.setToken(data.token)
-      if (data.user) {
-        this.setUser(data.user)
-      }
-      // Сохраняем время создания токена
-      localStorage.setItem('auth_token_timestamp', Date.now().toString())
+    if (!response.ok) {
+      throw new Error(data.message || 'Registration failed')
     }
     
-    return data
+    // Та же структура: data.success, data.data.token, data.data.user
+    if (data.success && data.data) {
+      const token = data.data.token
+      const user = data.data.user
+      
+      if (token) {
+        this.setToken(token)
+        if (user) {
+          this.setUser(user)
+        }
+        return data
+      }
+    }
+    
+    throw new Error(data.message || 'Registration failed')
   }
   
   // Выход
@@ -131,13 +162,5 @@ class AuthService {
 
 // Экспортируем экземпляр
 const authService = new AuthService()
-
-// Инициализация при загрузке
-if (typeof window !== 'undefined') {
-  // Проверяем аутентификацию при загрузке
-  if (authService.isAuthenticated()) {
-    console.log('User is authenticated')
-  }
-}
 
 export default authService
