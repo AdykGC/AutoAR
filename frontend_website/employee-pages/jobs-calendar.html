@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoAr - Jobs Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen">
+<nav class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-slate-800 border-r border-slate-200">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-2">
+  <div class="rounded-full size-10 flex items-center justify-center">
+    <svg class="text-primary h-12 w-12" fill="none" height="48" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+  
+  <div class="flex flex-col">
+    <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">AutoAr</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Automation Hub</p>
+  </div>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="employee-dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a href="all-requests-employee.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">All Requests</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="cv-generation.html">
+<span class="material-symbols-outlined">person</span>
+<p class="text-sm font-medium leading-normal">CV</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="jobs-calendar.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-medium leading-normal">Jobs Calendar</p>
+</a>
+
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-10">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 flex border-none bg-background-light dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-background-light dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+<div class="flex flex-1 justify-end items-center gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 relative bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"></div>
+</button>
+</div>
+</header>
+<div class="flex-1 p-10">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">
+      Jobs Calendar
+    </h1>
+
+    <div class="flex items-center gap-2">
+      <button id="prevMonthBtn"
+        class="flex-none w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+        <span class="material-symbols-outlined text-xl">chevron_left</span>
+      </button>
+
+      <span id="monthLabel"
+        class="mx-2 text-slate-900 dark:text-white font-semibold text-lg text-center min-w-[11rem]">
+      </span>
+
+      <button id="nextMonthBtn"
+        class="flex-none w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+        <span class="material-symbols-outlined text-xl">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- CALENDAR -->
+    <div id="calendarWrapper" class="lg:col-span-2">
+      <div class="grid grid-cols-1 gap-8">
+        <div class="col-span-1">
+          <div id="calendarGrid"
+               class="grid grid-cols-7 border-t border-l border-slate-200 dark:border-slate-800">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASK DETAILS -->
+    <div id="taskDetails"
+  class="hidden bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 self-start relative">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-start">
+    <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+      Task Details
+    </h2>
+
+    <button id="closeDetails"
+      class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-xl leading-none">
+      ✕
+    </button>
+  </div>
+
+  <p id="td-date" class="text-sm text-slate-500 dark:text-slate-400 mt-1"></p>
+
+  <div class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6">
+    <h3 class="font-semibold text-slate-800 dark:text-slate-200">
+      What you should do:
+    </h3>
+    <p id="td-desc"
+       class="mt-2 text-sm text-slate-600 dark:text-slate-400"></p>
+  </div>
+
+  <div class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Reward</span>
+      <span id="td-reward"
+        class="text-sm font-semibold text-green-600 dark:text-green-500 bg-green-500/10 px-2 py-1 rounded-full"></span>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estimated Time</span>
+      <span id="td-time"
+        class="text-sm font-semibold text-slate-800 dark:text-slate-200"></span>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Complexity</span>
+      <span id="td-complexity"
+        class="text-sm font-semibold"></span>
+    </div>
+
+    <div class="mt-6 flex justify-between items-center">
+  <button id="prevTaskBtn"
+    class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+    ← Previous
+  </button>
+  <span id="taskIndexLabel" class="text-sm text-slate-500 dark:text-slate-400"></span>
+  <button id="nextTaskBtn"
+    class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+    Next →
+  </button>
+</div>
+
+  </div>
+
+  <button
+    class="mt-8 w-full h-10 bg-primary text-white rounded-lg font-bold">
+    Accept Task
+  </button>
+</div>
+
+
+  </div>
+</div>
+
+</div>
+</main>
+</div>
+</div>
+<script>
+
+const TASKS = {
+  "2025-12-05": [
+    {
+      title: "Server health check",
+      description: "Check CPU, memory usage, disk space and running services.",
+      reward: "6,000 ₸",
+      time: "1.5 hours",
+      complexity: "Low"
+    },
+    {
+      title: "Monitor check",
+      description: "Check monitors",
+      reward: "8,000 ₸",
+      time: "1 hour",
+      complexity: "High"
+    },
+    {
+      title: "Cake",
+      description: "Eat cake",
+      reward: "7,000 ₸",
+      time: "0.5 hours",
+      complexity: "Medium"
+    },
+    {
+      title: "Sleep",
+      description: "Eat cake",
+      reward: "7,000 ₸",
+      time: "0.5 hours",
+      complexity: "Medium"
+    }
+  ],
+  "2025-12-12": [
+    {
+      title: "Deploy new API version",
+      description: "Deploy v2 of REST API and run smoke tests.",
+      reward: "25,000 ₸",
+      time: "6 hours",
+      complexity: "High"
+    }
+  ]
+};
+
+
+(() => {
+
+  
+
+
+  // DOM
+  const grid = document.getElementById('calendarGrid');
+  const monthLabel = document.getElementById('monthLabel');
+  const prevBtn = document.getElementById('prevMonthBtn');
+  const nextBtn = document.getElementById('nextMonthBtn');
+
+  let current = new Date(); // ← СЕГОДНЯШНИЙ МЕСЯЦ
+  current.setDate(1);
+
+  const MONTH_NAMES = [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
+  ];
+
+  function daysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  function renderWeekDays() {
+    let header = document.getElementById('calendarHeader');
+    if (!header) {
+      header = document.createElement('div');
+      header.id = 'calendarHeader';
+      grid.parentNode.insertBefore(header, grid);
+    }
+
+    header.className =
+      'grid grid-cols-7 text-center text-sm font-semibold text-slate-600 dark:text-slate-400';
+
+    const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    header.innerHTML = '';
+
+    names.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'py-2 border-b border-r border-slate-200 dark:border-slate-800';
+      el.textContent = d;
+      header.appendChild(el);
+    });
+  }
+
+function renderMonth(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  monthLabel.textContent = `${MONTH_NAMES[month]} ${year}`;
+  renderWeekDays();
+
+  grid.innerHTML = '';
+  grid.className = 'grid grid-cols-7';
+
+  const totalDays = daysInMonth(year, month);
+  const firstDay = new Date(year, month, 1).getDay();
+  const prevMonthDays = new Date(year, month, 0).getDate();
+
+  const totalCells = 35;
+  const startDay = prevMonthDays - firstDay + 1;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className =
+      'h-28 p-2 border-b border-r border-slate-200 dark:border-slate-800 cursor-pointer';
+    cell.tabIndex = 0;
+
+    const dayNumber = startDay + i;
+    let day, isCurrent;
+
+    if (dayNumber <= prevMonthDays) {
+      day = dayNumber;
+      isCurrent = false;
+    } else if (dayNumber > prevMonthDays + totalDays) {
+      day = dayNumber - (prevMonthDays + totalDays);
+      isCurrent = false;
+    } else {
+      day = dayNumber - prevMonthDays;
+      isCurrent = true;
+    }
+
+    const num = document.createElement('div');
+    num.textContent = day;
+    num.className = isCurrent
+      ? 'text-slate-900 dark:text-white font-medium'
+      : 'text-slate-400 dark:text-slate-600';
+
+    cell.appendChild(num);
+
+    // ✅ ISO DATE ТОЛЬКО ДЛЯ ТЕКУЩЕГО МЕСЯЦА
+    if (isCurrent) {
+      const yyyy = year;
+      const mm = String(month + 1).padStart(2, '0');
+      const dd = String(day).padStart(2, '0');
+      const isoDate = `${yyyy}-${mm}-${dd}`;
+      cell.dataset.date = isoDate;
+
+      // 🔵 подсветка дней с тасками
+
+if (TASKS[isoDate] && Array.isArray(TASKS[isoDate])) {
+    const dayTasks = TASKS[isoDate].slice(0, 2);
+    const taskContainer = document.createElement('div');
+    taskContainer.className = 'mt-[2px] flex flex-col gap-[2px]';
+
+    dayTasks.forEach(task => {
+        let bgColor, textColor;
+        if (task.complexity === 'High') {
+            bgColor = 'bg-red-100';
+            textColor = 'text-red-600';
+        } else if (task.complexity === 'Medium') {
+            bgColor = 'bg-amber-100';
+            textColor = 'text-amber-600';
+        } else {
+            bgColor = 'bg-green-100';
+            textColor = 'text-green-600';
+        }
+
+        const taskBlock = document.createElement('div');
+        // taskBlock.className = `text-xs font-semibold p-1 rounded ${bgColor} ${textColor} truncate`;
+        taskBlock.className = `text-[10px] font-semibold p-[2px] rounded ${bgColor} ${textColor} truncate`;
+        taskBlock.title = task.title; // подсказка при наведении
+        taskBlock.textContent = task.title;
+
+        taskContainer.appendChild(taskBlock);
+    });
+
+    // если задач больше 2
+    if (TASKS[isoDate].length > 2) {
+  const moreBlock = document.createElement('div');
+  moreBlock.className = 'text-[10px] font-semibold p-[2px] rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+  moreBlock.textContent = `+${TASKS[isoDate].length - 2} more`;
+  taskContainer.appendChild(moreBlock);
+}
+
+    cell.appendChild(taskContainer);
+}
+
+
+
+      cell.addEventListener('click', () => {
+        selectDay(cell);
+        onDayClick(isoDate);
+      });
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+
+  function selectDay(dayEl) {
+    document.querySelectorAll('.day--selected').forEach(d =>
+      d.classList.remove('day--selected')
+    );
+    dayEl.classList.add('day--selected');
+  }
+
+  function injectStyles() {
+    const css = `
+      .day--selected {
+        background: rgba(59,130,246,0.08);
+        border-radius: 0.5rem;
+      }
+      .day--selected:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+      }
+    `;
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  prevBtn.onclick = () => {
+    current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+    renderMonth(current);
+  };
+
+  nextBtn.onclick = () => {
+    current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    renderMonth(current);
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    injectStyles();
+    renderMonth(current);
+  });
+})();
+
+let selectedTasks = [];
+let currentTaskIndex = 0;
+
+function onDayClick(date) {
+  const tasks = TASKS[date];
+  if (!tasks || tasks.length === 0) return;
+
+  selectedTasks = tasks;
+  currentTaskIndex = 0;
+  showTaskDetails(date, selectedTasks[currentTaskIndex]);
+  updateTaskIndexLabel();
+}
+
+function showTaskDetails(date, task) {
+  const panel = document.getElementById('taskDetails');
+  document.getElementById('td-date').textContent = `Selected: ${date}`;
+  document.getElementById('td-desc').textContent = task.description;
+  document.getElementById('td-reward').textContent = task.reward;
+  document.getElementById('td-time').textContent = task.time;
+
+  const complexityEl = document.getElementById('td-complexity');
+  complexityEl.textContent = task.complexity;
+  complexityEl.className =
+    task.complexity === 'High'
+      ? 'text-sm font-semibold text-red-600'
+      : task.complexity === 'Medium'
+      ? 'text-sm font-semibold text-amber-600'
+      : 'text-sm font-semibold text-green-600';
+
+  panel.classList.remove('hidden');
+}
+
+function updateTaskIndexLabel() {
+  const label = document.getElementById('taskIndexLabel');
+  label.textContent = `${currentTaskIndex + 1} of ${selectedTasks.length}`;
+}
+
+document.getElementById('prevTaskBtn').addEventListener('click', () => {
+  if (currentTaskIndex > 0) {
+    currentTaskIndex--;
+    showTaskDetails(
+      document.getElementById('td-date').textContent.replace('Selected: ', ''),
+      selectedTasks[currentTaskIndex]
+    );
+    updateTaskIndexLabel();
+  }
+});
+
+document.getElementById('nextTaskBtn').addEventListener('click', () => {
+  if (currentTaskIndex < selectedTasks.length - 1) {
+    currentTaskIndex++;
+    showTaskDetails(
+      document.getElementById('td-date').textContent.replace('Selected: ', ''),
+      selectedTasks[currentTaskIndex]
+    );
+    updateTaskIndexLabel();
+  }
+});
+
+document.getElementById('closeDetails').addEventListener('click', () => {
+  document.getElementById('taskDetails').classList.add('hidden');
+});
+
+
+document.getElementById('closeDetails')
+  .addEventListener('click', () => {
+    document.getElementById('taskDetails')
+      .classList.add('hidden');
+  });
+
+
+</script>
+
+
+
+</body></html>

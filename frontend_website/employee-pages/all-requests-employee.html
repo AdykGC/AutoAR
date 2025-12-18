@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoAr - All Requests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen">
+<nav class="flex flex-col w-64 bg-white dark:bg-background-dark dark:border-r dark:border-slate-800 border-r border-slate-200">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-2">
+  <div class="rounded-full size-10 flex items-center justify-center">
+    <svg class="text-primary h-12 w-12" fill="none" height="48" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+  
+  <div class="flex flex-col">
+    <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">AutoAr</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Automation Hub</p>
+  </div>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+<a href="employee-dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a href="all-requests-employee.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" >
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">All Requests</p>
+</a>
+<a href="cv-generation.html" class="flex items-center gap-3 px-3 py-2 rounded-lg
+           hover:bg-slate-100 dark:hover:bg-slate-800 
+           text-slate-700 dark:text-slate-300
+           focus:outline-none focus:ring-0">
+  <span class="material-symbols-outlined">person</span>
+  <p class="text-sm font-medium leading-normal">CV</p>
+</a>
+<a href="jobs-calendar.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300" href="jobs-calendar.html">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-sm font-medium leading-normal">Jobs Calendar</p>
+</a>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-10">
+<h1 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">All Requests</h1>
+<div class="flex flex-1 justify-end items-center gap-4">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 relative bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"></div>
+</button>
+</div>
+</header>
+<div class="flex-1 p-10">
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between gap-4">
+<label class="flex flex-col min-w-40 !h-10 max-w-sm flex-1">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 flex border-none bg-white dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<!-- Search placeholder -->
+
+<input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-white dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search by name or ID..." value=""/>
+
+</div>
+
+</label>
+<div class="flex items-center gap-2">
+
+<!-- Filter Btn -->
+<!-- <button id="filterBtn" class="flex items-center gap-2 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-base">filter_list</span>
+<span>Filter</span>
+</button> -->
+
+<!-- FILTER DROPDOWN -->
+<div class="relative">
+  <button
+    id="filterBtn"
+    class="flex items-center gap-2 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
+  >
+    <span class="material-symbols-outlined text-base">filter_list</span>
+    <span>Filter</span>
+  </button>
+
+  <!-- DROPDOWN -->
+  <div
+    id="filterMenu"
+    class="hidden absolute right-0 mt-2 w-40 rounded-lg bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 z-20"
+  >
+    <button data-status=""
+      class="filter-item w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">
+      All
+    </button>
+    <button data-status="approved"
+      class="filter-item w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">
+      Approved
+    </button>
+    <button data-status="pending"
+      class="filter-item w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">
+      Pending
+    </button>
+    <button data-status="rejected"
+      class="filter-item w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">
+      Rejected
+    </button>
+  </div>
+</div>
+
+
+<!-- Sort Btn -->
+<button id="sortBtn" class="flex items-center gap-2 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-base">swap_vert</span>
+<span>Sort</span>
+</button>
+
+
+<a 
+  href="submit-newrequest-employee.html" 
+  class="flex items-center gap-2 h-10 px-4 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90"
+>
+  <span class="material-symbols-outlined text-base">add</span>
+  <span>New Request</span>
+</a>
+
+</div>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-xs text-slate-500 dark:text-slate-400 uppercase bg-slate-50 dark:bg-slate-800">
+<tr>
+<th class="px-6 py-3 rounded-l-lg font-semibold" scope="col">Request ID</th>
+<th class="px-6 py-3 font-semibold" scope="col">Submitted By</th>
+<th class="px-6 py-3 font-semibold" scope="col">Request Type</th>
+<th class="px-6 py-3 font-semibold" scope="col">Date Submitted</th>
+<th class="px-6 py-3 font-semibold" scope="col">Status</th>
+<th class="px-6 py-3 rounded-r-lg font-semibold" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="text-sm text-slate-900 dark:text-white">
+<tr class="bg-white dark:bg-background-dark border-b dark:border-slate-800">
+<td class="px-6 py-4 font-medium">#REQ-001</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCWjviukgd6T1ZmYboweR2U4WJ4xrPZ7IlxrVvHv44uvu2KQNUbgZR78J2kmcLls5IgiQHA3hAKIjxzcTEvoNCCna8rw95LjPKOrK4i1Q4i3DwPL48IWzWZAgsnanpvCmjjJYGbLKzEKpC8Y-HIPGv3CpIvREIM3-MrZcqbGo6RYsyIXuKMtkHMj2kzV4waf9mVOny-tiW6OH2yu3il-sKZyonwt8KbwQr4c0K1K-PeoX64lBZpjPScwVyQdwcbP9qYpgU5aeb_jn68");'></div>
+<span>Alex Johnson</span>
+</div>
+</td>
+<td class="px-6 py-4">Time Off</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 15, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Approved</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+<tr class="bg-white dark:bg-background-dark border-b dark:border-slate-800">
+<td class="px-6 py-4 font-medium">#REQ-002</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_OFBWtxLb2srR792lnqTBbahsvpA8JrmHcI2CoeqemISdy6nDdOUw9m9T4oA7qQn-mX0aSmnGoneonPtPycmK96Cq1uYYtwW3Eb7Y05oV6igU1whZ7tNVX3iKkUyJCZcqQWwbu4WbsdZwFWXjik4bsRiL2TMhcN3sLglqc2N3OlaU8npXrr8bo8qTWgITQ4hndArikYZleNcH-enSgUFJLUkS_nX0uiHz2FSXsV2pFx8jSP2951LXK8JxTqgm2wwbta1rJMOykIFq");'></div>
+<span>Maria Garcia</span>
+</div>
+</td>
+<td class="px-6 py-4">Expense Report</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 14, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">Pending</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+<tr class="bg-white dark:bg-background-dark border-b dark:border-slate-800">
+<td class="px-6 py-4 font-medium">#REQ-003</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_OFBWtxLb2srR792lnqTBbahsvpA8JrmHcI2CoeqemISdy6nDdOUw9m9T4oA7qQn-mX0aSmnGoneonPtPycmK96Cq1uYYtwW3Eb7Y05oV6igU1whZ7tNVX3iKkUyJCZcqQWwbu4WbsdZwFWXjik4bsRiL2TMhcN3sLglqc2N3OlaU8npXrr8bo8qTWgITQ4hndArikYZleNcH-enSgUFJLUkS_nX0uiHz2FSXsV2pFx8jSP2951LXK8JxTqgm2wwbta1rJMOykIFq");'></div>
+<span>David Smith</span>
+</div>
+</td>
+<td class="px-6 py-4">IT Support</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 12, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">Rejected</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+<tr class="bg-white dark:bg-background-dark border-b dark:border-slate-800">
+<td class="px-6 py-4 font-medium">#REQ-004</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_OFBWtxLb2srR792lnqTBbahsvpA8JrmHcI2CoeqemISdy6nDdOUw9m9T4oA7qQn-mX0aSmnGoneonPtPycmK96Cq1uYYtwW3Eb7Y05oV6igU1whZ7tNVX3iKkUyJCZcqQWwbu4WbsdZwFWXjik4bsRiL2TMhcN3sLglqc2N3OlaU8npXrr8bo8qTWgITQ4hndArikYZleNcH-enSgUFJLUkS_nX0uiHz2FSXsV2pFx8jSP2951LXK8JxTqgm2wwbta1rJMOykIFq");'></div>
+<span>Emily White</span>
+</div>
+</td>
+<td class="px-6 py-4">Equipment Purchase</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 11, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Approved</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+<tr class="bg-white dark:bg-background-dark border-b dark:border-slate-800">
+<td class="px-6 py-4 font-medium">#REQ-005</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_OFBWtxLb2srR792lnqTBbahsvpA8JrmHcI2CoeqemISdy6nDdOUw9m9T4oA7qQn-mX0aSmnGoneonPtPycmK96Cq1uYYtwW3Eb7Y05oV6igU1whZ7tNVX3iKkUyJCZcqQWwbu4WbsdZwFWXjik4bsRiL2TMhcN3sLglqc2N3OlaU8npXrr8bo8qTWgITQ4hndArikYZleNcH-enSgUFJLUkS_nX0uiHz2FSXsV2pFx8jSP2951LXK8JxTqgm2wwbta1rJMOykIFq");'></div>
+<span>Michael Brown</span>
+</div>
+</td>
+<td class="px-6 py-4">Time Off</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 10, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">Pending</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+<tr class="bg-white dark:bg-background-dark">
+<td class="px-6 py-4 font-medium">#REQ-006</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_OFBWtxLb2srR792lnqTBbahsvpA8JrmHcI2CoeqemISdy6nDdOUw9m9T4oA7qQn-mX0aSmnGoneonPtPycmK96Cq1uYYtwW3Eb7Y05oV6igU1whZ7tNVX3iKkUyJCZcqQWwbu4WbsdZwFWXjik4bsRiL2TMhcN3sLglqc2N3OlaU8npXrr8bo8qTWgITQ4hndArikYZleNcH-enSgUFJLUkS_nX0uiHz2FSXsV2pFx8jSP2951LXK8JxTqgm2wwbta1rJMOykIFq");'></div>
+<span>Jessica Davis</span>
+</div>
+</td>
+<td class="px-6 py-4">Travel Authorization</td>
+<td class="px-6 py-4 text-slate-600 dark:text-slate-400">Oct 09, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Approved</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:underline">View Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<nav aria-label="Table navigation" class="flex items-center justify-between pt-4">
+<!-- <span class="text-sm font-normal text-slate-500 dark:text-slate-400">Showing <span class="font-semibold text-slate-900 dark:text-white">1-6</span> of <span class="font-semibold text-slate-900 dark:text-white">100</span></span> -->
+<!-- <ul class="inline-flex -space-x-px text-sm h-8">
+<li>
+<a class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-slate-500 bg-white border border-slate-300 rounded-l-lg hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >Previous</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >1</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >2</a>
+</li>
+<li>
+<a aria-current="page" class="flex items-center justify-center px-3 h-8 text-primary border border-slate-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-700 dark:text-white" >3</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >...</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >17</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white border border-slate-300 rounded-r-lg hover:bg-slate-100 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white" >Next</a>
+</li>
+</ul> -->
+</nav>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body>
+
+<script>
+
+const searchInput = document.getElementById('searchInput');
+const rows = document.querySelectorAll('tbody tr');
+
+searchInput.addEventListener('input', () => {
+  const value = searchInput.value.toLowerCase();
+
+  rows.forEach(row => {
+    const rowText = row.innerText.toLowerCase();
+    row.style.display = rowText.includes(value) ? '' : 'none';
+  });
+});
+
+</script>
+
+<script>
+let sortAsc = true;
+const sortBtn = document.getElementById('sortBtn');
+const tbody = document.querySelector('tbody');
+
+sortBtn.addEventListener('click', () => {
+  const rowsArray = Array.from(tbody.querySelectorAll('tr'));
+
+  rowsArray.sort((a, b) => {
+    const dateA = new Date(a.children[3].innerText);
+    const dateB = new Date(b.children[3].innerText);
+
+    return sortAsc ? dateA - dateB : dateB - dateA;
+  });
+
+  sortAsc = !sortAsc;
+
+  rowsArray.forEach(row => tbody.appendChild(row));
+});
+</script>
+
+<script>
+const filterBtn = document.getElementById('filterBtn');
+const filterMenu = document.getElementById('filterMenu');
+const rowss = document.querySelectorAll('tbody tr');
+
+/* открыть / закрыть */
+filterBtn.addEventListener('click', () => {
+  filterMenu.classList.toggle('hidden');
+});
+
+/* закрыть при клике вне */
+document.addEventListener('click', (e) => {
+  if (!filterBtn.contains(e.target) && !filterMenu.contains(e.target)) {
+    filterMenu.classList.add('hidden');
+  }
+});
+
+/* фильтрация */
+document.querySelectorAll('.filter-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const status = item.dataset.status;
+
+    rows.forEach(row => {
+      const rowStatus = row.children[4].innerText.toLowerCase();
+      row.style.display =
+        !status || rowStatus.includes(status) ? '' : 'none';
+    });
+
+    filterMenu.classList.add('hidden');
+  });
+});
+</script>
+
+
+
+
+</html>

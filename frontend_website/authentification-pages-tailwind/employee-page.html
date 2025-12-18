@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AutoAr - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="root">
+    <nav class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="logo" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAScGiz6bf7igBdSiaGrwBSD7sBZhxQrOF80SfzIpe-lcKfn3_lIPq0YlSeNTI-oF_QCUG4finhbaGwNi-oXb4PAjtgV5lamdUJAXR3BmYUNihHmi9HlUcEGcaGv6XcPW1bAsU23a8o1g_lF81lEgQNIyeRIbRkep-qHYhhmKvokdrPqWOz1zuTN5xMtkrvsjtsXg1zbWGYu_BTofPCqpX1jmGfs1CAPGuLNJ1Kn0w6uE5Mz3Uq8qKIvso0YMAo9wNWeFu6TCggxM3I');"></div>
+          <div>
+            <h1>AutoAr</h1>
+            <p>Automation Hub</p>
+          </div>
+        </div>
+
+        <div class="navlist">
+          <a class="navlink active" href="#"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+          <a class="navlink" href="#"><span class="material-symbols-outlined">folder</span><span>All Requests</span></a>
+          <a class="navlink" href="#"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+          <a class="navlink" href="#"><span class="material-symbols-outlined">settings</span><span>Settings</span></a>
+        </div>
+      </div>
+
+      <div>
+        <a class="navlink" href="#"><span class="material-symbols-outlined">help</span><span>Help</span></a>
+      </div>
+    </nav>
+
+    <main>
+      <header class="topbar">
+        <div class="search">
+          <span class="material-symbols-outlined">search</span>
+          <input placeholder="Search" />
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" title="Notifications"><span class="material-symbols-outlined">notifications</span></button>
+          <div class="avatar" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuCWjviukgd6T1ZmYboweR2U4WJ4xrPZ7IlxrVvHv44uvu2KQNUbgZR78J2kmcLls5IgiQHA3hAKIjxzcTEvoNCCna8rw95LjPKOrK4i1Q4i3DwPL48IWzWZAgsnanpvCmjjJYGbLKzEKpC8Y-HIPGv3CpIvREIM3-MrZcqbGo6RYsyIXuKMtkHMj2kzV4waf9mVOny-tiW6OH2yu3il-sKZyonwt8KbwQr4c0K1K-PeoX64lBZpjPScwVyQdwcbP9qYpgU5aeb_jn68');"></div>
+        </div>
+      </header>
+
+      <section class="page">
+        <div class="page-head">
+          <div>
+            <h2>Welcome back, Alex!</h2>
+            <p class="muted">Here's a summary of your activity. Today is Tuesday, 24 October.</p>
+          </div>
+          <div>
+            <button class="btn-primary">Submit New Request</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="card">
+              <h3>Your Pending Requests</h3>
+              <div style="overflow:auto;margin-top:12px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Request Type</th>
+                      <th>Request ID</th>
+                      <th>Date Submitted</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="small">PTO Request</td>
+                      <td class="small muted">#789123</td>
+                      <td class="small muted">Oct 23, 2023</td>
+                      <td><span class="status pending"><span style="width:8px;height:8px;border-radius:50%;background:#f97316;display:inline-block"></span>Pending Approval</span></td>
+                    </tr>
+                    <tr>
+                      <td class="small">Expense Report</td>
+                      <td class="small muted">#789122</td>
+                      <td class="small muted">Oct 22, 2023</td>
+                      <td><span class="status info"><span style="width:8px;height:8px;border-radius:50%;background:#0284c7;display:inline-block"></span>Needs Information</span></td>
+                    </tr>
+                    <tr>
+                      <td class="small">Hardware Request</td>
+                      <td class="small muted">#789120</td>
+                      <td class="small muted">Oct 20, 2023</td>
+                      <td><span class="status pending"><span style="width:8px;height:8px;border-radius:50%;background:#f97316;display:inline-block"></span>Pending Approval</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px">
+              <h3>What would you like to do?</h3>
+              <div class="quicklinks" style="margin-top:12px">
+                <div class="quick">
+                  <div class="icon"><span class="material-symbols-outlined">event_available</span></div>
+                  <p style="margin:8px 0 0 0;font-weight:600">Request Time Off</p>
+                </div>
+                <div class="quick">
+                  <div class="icon"><span class="material-symbols-outlined">receipt_long</span></div>
+                  <p style="margin:8px 0 0 0;font-weight:600">Submit Expense</p>
+                </div>
+                <div class="quick">
+                  <div class="icon"><span class="material-symbols-outlined">computer</span></div>
+                  <p style="margin:8px 0 0 0;font-weight:600">Request Hardware</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="card">
+              <h3>Recent Activity</h3>
+              <div style="margin-top:12px" class="activity">
+                <div class="activity-row">
+                  <div class="badge" style="background:#ecfdf5;color:#059669;border-radius:10px"><span class="material-symbols-outlined">check_circle</span></div>
+                  <div>
+                    <p style="margin:0;font-weight:600">Your PTO request #789121 was approved by <strong>Jane Doe</strong>.</p>
+                    <p class="muted" style="margin:6px 0 0 0">2 hours ago</p>
+                  </div>
+                </div>
+
+                <div class="activity-row">
+                  <div class="badge" style="background:#fff1f2;color:#ef4444;border-radius:10px"><span class="material-symbols-outlined">cancel</span></div>
+                  <div>
+                    <p style="margin:0;font-weight:600">Your expense report #789115 was rejected.</p>
+                    <p class="muted" style="margin:6px 0 0 0">Yesterday</p>
+                  </div>
+                </div>
+
+                <div class="activity-row">
+                  <div class="badge" style="background:#eff6ff;color:#2563eb;border-radius:10px"><span class="material-symbols-outlined">chat</span></div>
+                  <div>
+                    <p style="margin:0;font-weight:600"><strong>John Smith</strong> commented on your hardware request #789120.</p>
+                    <p class="muted" style="margin:6px 0 0 0">3 days ago</p>
+                  </div>
+                </div>
+
+                <div class="activity-row">
+                  <div class="badge" style="background:#f8fafc;color:#475569;border-radius:10px"><span class="material-symbols-outlined">campaign</span></div>
+                  <div>
+                    <p style="margin:0;font-weight:600">System announcement: The office will be closed on Friday.</p>
+                    <p class="muted" style="margin:6px 0 0 0">4 days ago</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </aside>
+        </div>
+
+      </section>
+    </main>
+  </div>
+  <script>
+    // Toggle `.active` on sidebar items when clicked (single-select)
+    (function(){
+      const navLinks = document.querySelectorAll('.navlink');
+      navLinks.forEach(link => {
+        // allow keyboard selection
+        link.setAttribute('tabindex','0');
+        link.addEventListener('click', (e) => {
+          navLinks.forEach(l => l.classList.remove('active'));
+          e.currentTarget.classList.add('active');
+          // prevent real navigation in this demo
+          e.preventDefault();
+        });
+        link.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            link.click();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
