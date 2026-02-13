@@ -41,3 +41,18 @@ body {
 }
 
 
+/* AUTH */
+.custom-heading {
+  color: #0d121b;          /* светлый текст */
+  font-size: 2.225rem;      /* text-3xl → 30px */
+  font-weight: 900;         /* font-black */
+  line-height: 1.25;        /* leading-tight */
+  letter-spacing: -0.033em; /* tracking-[-0.033em] */
+}
+.deprecated-text {
+  color: #4B5563;       /* Tailwind text-gray-600 */
+  font-size: 16px;       /* text-base */
+  font-weight: 400;      /* font-normal */
+  line-height: 1.5;      /* leading-normal */
+}
+

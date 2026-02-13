@@ -1,198 +1,336 @@
 <template>
-    <div class="">
-        <div class="login-container">
-            <h1>Welcome Back</h1>
+  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+      <main class="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8">
+          <div class="flex flex-col gap-3 text-center">
+            <p class="custom-heading">
+              Create your account
+            </p>
+            <p class="deprecated-text">
+              Join Rubicon to streamline approvals and automate your workflow.
+            </p>
+          </div>
 
-            <form @submit.prevent="handleRegister">
-                <div class="input-group">
-                    <input v-model="email" type="email" id="email" placeholder=" " required>
-                    <label for="username">Email</label>
+          <div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8 border border-gray-200 dark:border-gray-800">
+            <!-- Табы для переключения -->
+            <div class="flex h-10 flex-1 items-center justify-center rounded-lg bg-[#e7ebf3] dark:bg-gray-800 p-1 mb-6">
+              <router-link 
+                to="/login"
+                class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all"
+                :class="{
+                  'bg-white dark:bg-gray-700 text-[#0d121b] dark:text-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]': $route.path === '/login',
+                  'text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-[#0d121b] dark:hover:text-white': $route.path !== '/login'
+                }"
+              >
+                <span class="truncate">Sign In</span>
+              </router-link>
+
+              <router-link 
+                to="/register"
+                class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all"
+                :class="{
+                  'bg-white dark:bg-gray-700 text-[#0d121b] dark:text-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]': $route.path === '/register',
+                  'text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-[#0d121b] dark:hover:text-white': $route.path !== '/register'
+                }"
+              >
+                <span class="truncate">Register</span>
+              </router-link>
+            </div>
+
+            <!-- Сообщение об ошибке -->
+            <div v-if="error" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-700 dark:text-red-300 text-sm">{{ error }}</p>
+            </div>
+
+            <!-- Форма регистрации -->
+            <form @submit.prevent="handleRegister" class="space-y-6">
+              <div class="space-y-4">
+                <!-- Имя и Фамилия -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <label class="flex flex-col flex-1">
+                    <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                      Name
+                    </p>
+                    <div class="relative flex w-full flex-1 items-stretch">
+                      <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                        <span class="material-symbols-outlined text-xl">person</span>
+                      </div>
+                      <input 
+                        v-model="registerForm.name"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal"
+                        placeholder="John"
+                        type="text"
+                        required
+                      />
+                    </div>
+                  </label>
+                  
+                  <label class="flex flex-col flex-1">
+                    <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                      Surname
+                    </p>
+                    <div class="relative flex w-full flex-1 items-stretch">
+                      <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                        <span class="material-symbols-outlined text-xl">person</span>
+                      </div>
+                      <input 
+                        v-model="registerForm.surname"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal"
+                        placeholder="Doe"
+                        type="text"
+                        required
+                      />
+                    </div>
+                  </label>
                 </div>
-                <div class="input-group">
-                    <input v-model="nickname" type="nickname" id="nickname" placeholder=" " required>
-                    <label for="nickname">Nickname</label>
+
+                <!-- Email -->
+                <label class="flex flex-col flex-1">
+                  <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    Email
+                  </p>
+                  <div class="relative flex w-full flex-1 items-stretch">
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                      <span class="material-symbols-outlined text-xl">mail</span>
+                    </div>
+                    <input 
+                      v-model="registerForm.email"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal"
+                      placeholder="you@yourcompany.com"
+                      type="email"
+                      required
+                    />
+                  </div>
+                </label>
+
+                <!-- Phone (необязательный) -->
+                <label class="flex flex-col flex-1">
+                  <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    Phone (optional)
+                  </p>
+                  <div class="relative flex w-full flex-1 items-stretch">
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                      <span class="material-symbols-outlined text-xl">phone</span>
+                    </div>
+                    <input 
+                      v-model="registerForm.phone"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal"
+                      placeholder="+1 (555) 123-4567"
+                      type="tel"
+                    />
+                  </div>
+                </label>
+
+                <!-- Role (обязательный) -->
+                <label class="flex flex-col flex-1">
+                  <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    Role *
+                  </p>
+                  <div class="relative flex w-full flex-1 items-stretch">
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                      <span class="material-symbols-outlined text-xl">badge</span>
+                    </div>
+                    <select 
+                      v-model="registerForm.role"
+                      class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-10 text-base font-normal leading-normal appearance-none"
+                      required
+                    >
+                      <option value="" disabled selected>Select your role</option>
+                      <option value="Client">Client</option>
+                      <option value="Client VIP">Client VIP</option>
+                      <option value="Employee">Employee</option>
+                      <option value="Manager">Manager</option>
+                    </select>
+                    <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center pr-4">
+                      <span class="material-symbols-outlined text-xl">arrow_drop_down</span>
+                    </div>
+                  </div>
+                  <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                    Available roles: Client, Client VIP, Employee, Manager
+                  </p>
+                </label>
+
+                <!-- Password -->
+                <div class="flex flex-col flex-1">
+                  <label>
+                    <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                      Create Password
+                    </p>
+                    <div class="relative flex w-full flex-1 items-stretch">
+                      <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                        <span class="material-symbols-outlined text-xl">lock</span>
+                      </div>
+                      <input 
+                        v-model="registerForm.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-12 text-base font-normal leading-normal"
+                        placeholder="Enter a strong password"
+                        required
+                      />
+                      <button 
+                        @click="showPassword = !showPassword"
+                        type="button"
+                        class="text-gray-400 dark:text-gray-500 absolute inset-y-0 right-0 flex cursor-pointer items-center justify-center pr-4"
+                      >
+                        <span class="material-symbols-outlined text-xl">
+                          {{ showPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
+                      </button>
+                    </div>
+                  </label>
                 </div>
-                <div class="input-group">
-                    <input v-model="password" type="password" id="password" placeholder=" " required>
-                    <label for="password">Password</label>
+
+                <!-- Confirm Password -->
+                <div class="flex flex-col flex-1">
+                  <label>
+                    <p class="text-[#0d121b] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                      Confirm Password
+                    </p>
+                    <div class="relative flex w-full flex-1 items-stretch">
+                      <div class="text-gray-400 dark:text-gray-500 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4">
+                        <span class="material-symbols-outlined text-xl">lock</span>
+                      </div>
+                      <input 
+                        v-model="registerForm.password_confirmation"
+                        :type="showConfirmPassword ? 'text' : 'password'"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d121b] dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-12 pr-12 text-base font-normal leading-normal"
+                        placeholder="Confirm your password"
+                        required
+                      />
+                      <button 
+                        @click="showConfirmPassword = !showConfirmPassword"
+                        type="button"
+                        class="text-gray-400 dark:text-gray-500 absolute inset-y-0 right-0 flex cursor-pointer items-center justify-center pr-4"
+                      >
+                        <span class="material-symbols-outlined text-xl">
+                          {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
+                      </button>
+                    </div>
+                  </label>
                 </div>
-                <button type="submit" class="btn">Register</button>
-                <div class="extra-links">
-                    <a href="/login">I have account</a>
-                </div>
+              </div>
+
+              <button 
+                :disabled="loading"
+                class="group relative flex w-full justify-center rounded-lg bg-primary py-3 px-4 text-sm font-semibold text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                type="submit"
+              >
+                <span v-if="loading">Creating Account...</span>
+                <span v-else>Create Account</span>
+              </button>
+
+              <div class="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">   </div>
             </form>
-
+          </div>
         </div>
+      </main>
     </div>
+  </div>
 </template>
 
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import authService from '../../services/auth.service.js' // Используем ваш authService
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+const router = useRouter()
 
-.login-container {
-    display: flex;
-    font-family: 'Space Grotesk', sans-serif;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
-}
+// Состояния
+const loading = ref(false)
+const error = ref('')
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
-.input-group {
-    position: relative;
-    margin-bottom: 1.5rem;
-}
+// Правильная форма регистрации
+const registerForm = reactive({
+  name: '',
+  surname: '',
+  email: '',
+  phone: '',
+  password: '',
+  password_confirmation: '',
+  role: ''
+})
 
-.input-group input {
-    width: 300px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 10px;
-    color: var(--text);
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-}
+// Автозаполнение для тестирования
+onMounted(() => {
+  const randomNum = Math.floor(Math.random() * 10000)
+  registerForm.name = 'John'
+  registerForm.surname = 'Doe'
+  registerForm.email = `test${randomNum}@example.com`
+  registerForm.phone = ''
+  registerForm.password = 'password123'
+  registerForm.password_confirmation = 'password123'
+  registerForm.role = 'Employee'
+})
 
-.input-group input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-left: 3px solid var(--secondary);
-    box-shadow: 0 5px 15px rgba(15, 206, 255, 0.2);
-}
+// Регистрация с использованием authService
+const handleRegister = async () => {
+  try {
+    loading.value = true
+    error.value = ''
 
-.input-group label {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    color: var(--light);
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.input-group input:focus+label,
-.input-group input:not(:placeholder-shown)+label {
-    transform: translateY(-26px);
-    font-size: 0.8rem;
-    opacity: 1;
-    color: var(--secondary);
-}
-
-
-.btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(45deg, var(--primary), var(--tertiary));
-    color: var(--light);
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(174, 13, 255, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(174, 13, 255, 0.4);
-}
-
-.btn:active {
-    transform: translateY(0);
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(to bottom right,
-            rgba(255, 255, 255, 0.3),
-            rgba(255, 255, 255, 0),
-            rgba(255, 255, 255, 0.3));
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-    opacity: 0;
-}
-
-.btn:hover::before {
-    animation: shine 1.5s ease;
-}
-
-@keyframes shine {
-    0% {
-        left: -100%;
-        opacity: 0;
+    // Валидация
+    if (!registerForm.name || !registerForm.email || !registerForm.password || !registerForm.role) {
+      error.value = 'Please fill all required fields'
+      loading.value = false
+      return
     }
 
-    50% {
-        opacity: 0.5;
+    if (registerForm.password !== registerForm.password_confirmation) {
+      error.value = 'Passwords do not match'
+      loading.value = false
+      return
     }
 
-    100% {
-        left: 100%;
-        opacity: 0;
+    if (registerForm.password.length < 8) {
+      error.value = 'Password must be at least 8 characters'
+      loading.value = false
+      return
     }
-}
 
-.extra-links {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-}
-
-.extra-links a {
-    color: var(--light);
-    text-decoration: none;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-.extra-links a:hover {
-    color: var(--secondary);
-    opacity: 1;
-    text-decoration: underline;
-}
-</style>
-
-<script scoped>
-import Auth_Service from "../../axios/index.js";
-
-export default {
-    data() {
-        return {
-            email: "",
-            nickname: "",
-            password: ""
-            };
-        },
-    methods: {
-        handleRegister() {
-            Auth_Service.register(this.email, this.nickname, this.password)
-                .then(response => {
-                    Auth_Service.saveToken(response.data);
-                    console.log("Register successful", response.data);
-                    // редирект на защищённую страницу, например:
-                    this.$router.push("/login");
-                })
-                .catch(error => {
-                    console.error("Register failed", error);
-                    alert("Invalid email or password");
-                });
-        }
+    // Подготовка данных для отправки
+    const requestData = {
+      name: registerForm.name,
+      surname: registerForm.surname || null,
+      email: registerForm.email,
+      phone: registerForm.phone || null,
+      password: registerForm.password,
+      password_confirmation: registerForm.password_confirmation,
+      role: registerForm.role
     }
-};
+
+    console.log('📤 Attempting registration...')
+
+    // Используем authService для регистрации
+    const response = await authService.register(requestData)
+    
+    console.log('✅ Registration successful via authService')
+    
+    // Проверяем, что пользователь сохранен
+    const userData = authService.getUserData()
+    const token = authService.getToken()
+    
+    if (token && userData) {
+      console.log('✅ Token and user data saved after registration')
+      console.log('- User:', userData.email)
+      console.log('- Role:', userData.roles?.[0]?.name)
+      
+      alert('Registration successful!')
+      
+      // Перенаправляем на дашборд
+      router.push('/dashboard')
+    } else {
+      error.value = 'Registration successful but data not saved properly'
+    }
+    
+  } catch (err) {
+    console.error('❌ Registration error:', err.message)
+    error.value = err.message || 'Registration failed. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
 </script>

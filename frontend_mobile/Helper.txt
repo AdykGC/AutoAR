@@ -1,0 +1,102 @@
+login_screen.dart - только UI
+login_viewmodel.dart - бизнес-логика
+auth_service.dart - вместо api_service.dart
+config/environment.dart
+main.dart - настройка приложения
+
+
+lib/
+│
+├── main.dart                      # Точка входа и настройка приложения
+│
+├── app/                           # Ядро приложения (обязательно!)
+│   ├── config/
+│   │   ├── environment.dart       # Конфигурация окружения (dev/prod)
+│   │   ├── routes.dart            # Конфигурация маршрутизации
+│   │   ├── theme.dart             # Тема приложения (светлая/темная)
+│   │   └── constants.dart         # Глобальные константы
+│   │
+│   ├── di/                        # Dependency Injection (если нужно)
+│   │   └── service_locator.dart
+│   │
+│   └── utils/                     # Глобальные утилиты
+│       ├── extensions.dart        # Dart расширения (String, DateTime)
+│       ├── validators.dart        # Валидаторы форм
+│       ├── formatters.dart        # Форматирование (даты, валюты)
+│       ├── debouncer.dart         # Дебаунсер для поиска
+│       └── logger.dart            # Кастомный логгер
+│
+├── data/                          # Слой данных (обязательно!)
+│   ├── models/                    # Модели/сущности
+│   │   ├── user.dart
+│   │   ├── api_response.dart
+│   │   └── project.dart
+│   │
+│   ├── datasources/               # Источники данных
+│   │   ├── remote/                # API
+│   │   │   ├── api_client.dart
+│   │   │   └── auth_api.dart
+│   │   │
+│   │   └── local/                 # Локальное хранилище
+│   │       ├── storage_service.dart
+│   │       └── preferences.dart
+│   │
+│   └── repositories/              # Репозитории (объединяют источники)
+│       ├── auth_repository.dart
+│       └── project_repository.dart
+│
+├── domain/                        # Бизнес-логика (опционально для средних проектов)
+│   ├── entities/                  # Бизнес-сущности (отличаются от моделей)
+│   ├── repositories/              # Абстрактные репозитории
+│   └── usecases/                  # Сценарии использования
+│       └── login_usecase.dart
+│
+├── presentation/                  # UI слой (обязательно!)
+│   │
+│   ├── screens/                   # Экран = папка
+│   │   ├── auth/                  # Группа экранов авторизации
+│   │   │   ├── login/
+│   │   │   │   ├── login_screen.dart     # Стартовый виджет экрана
+│   │   │   │   ├── login_view.dart       # Чистый UI
+│   │   │   │   ├── login_viewmodel.dart  # Логика состояния
+│   │   │   │   └── widgets/              # Локальные виджеты
+│   │   │   │       └── login_button.dart
+│   │   │   │
+│   │   │   └── register/                 # Аналогичная структура
+│   │   │
+│   │   ├── home/                  # Главный экран
+│   │   │   ├── home_screen.dart
+│   │   │   ├── home_view.dart
+│   │   │   └── home_viewmodel.dart
+│   │   │
+│   │   └── project_detail/        # Экран деталей проекта
+│   │
+│   ├── widgets/                   # Общие переиспользуемые виджеты
+│   │   ├── common/
+│   │   │   ├── custom_button.dart
+│   │   │   ├── custom_text_field.dart
+│   │   │   ├── loading_indicator.dart
+│   │   │   └── error_widget.dart
+│   │   │
+│   │   ├── dialogs/               # Диалоги
+│   │   └── bottom_sheets/         # Bottom sheets
+│   │
+│   └── state/                     # State management (выберите один!)
+│       ├── providers/             # Provider/Riverpod
+│       │   ├── auth_provider.dart
+│       │   └── theme_provider.dart
+│       │
+│       ├── bloc/                  # BLoC
+│       │   ├── auth/
+│       │   │   ├── auth_bloc.dart
+│       │   │   ├── auth_event.dart
+│       │   │   └── auth_state.dart
+│       │   └── theme/
+│       │
+│       └── viewmodels/            # MVVM через ChangeNotifier
+│           ├── auth_viewmodel.dart
+│           └── home_viewmodel.dart
+│
+└── generated/                     # Автогенерируемые файлы (роуты, локализация)
+    ├── routes.dart
+    └── l10n.dart
