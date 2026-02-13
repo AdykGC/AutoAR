@@ -1,16 +1,6 @@
 <template>
   <div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4">
     <div class="flex w-full max-w-md flex-col items-center space-y-8 py-10">
-      <!-- Logo -->
-      <div class="flex flex-col items-center space-y-2">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20">
-          <span class="material-symbols-outlined text-3xl text-primary">
-            autorenew
-          </span>
-        </div>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-200">AutoAr</h2>
-      </div>
-
       <!-- Card -->
       <div class="w-full rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-background-dark/50 md:p-8">
         <div class="flex flex-col items-center">

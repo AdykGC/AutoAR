@@ -36,3 +36,23 @@ php artisan make:model ClientTask
 # Сбросим и запустим все заново
 php artisan migrate:fresh --seed
 php artisan db:seed --class=RolePermissionSeeder
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+flutter create frontend_mobile
+cd frontend_mobile
+flutter run
+
+flutter devices      # список устройств
+flutter emulators    # эмуляторы
+flutter run -d macos # запуск на MacOS
+open macos/Runner.xcworkspace
+
+flutter run -d ios   # запуск на iOS
+flutter clean        # если что-то сломалось
+
+flutter pub get
+
+flutter pub add flutter_dotenv
+API_URL=https://your-api.com

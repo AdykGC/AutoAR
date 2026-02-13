@@ -4,10 +4,10 @@
       <main class="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="w-full max-w-md space-y-8">
           <div class="flex flex-col gap-3 text-center">
-            <p class="text-[#0d121b] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
-              Welcome to the AutoAr Employee Portal
+            <p class="custom-heading">
+              Welcome to the Rubicon
             </p>
-            <p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">
+            <p class="deprecated-text">
               Enter your credentials to access your account.
             </p>
           </div>
@@ -119,24 +119,12 @@
               </button>
 
               <div class="text-center text-sm text-gray-500 dark:text-gray-400 pt-4">
-                Are you an employer? 
-                <a class="font-medium text-primary hover:text-primary/80 cursor-pointer">
-                  Sign in here
-                </a>
+                <a class="font-medium text-primary hover:text-primary/80 cursor-pointer"> </a>
               </div>
             </form>
           </div>
         </div>
       </main>
-
-      <footer class="w-full mt-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div class="text-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
-          <span>© 2025 AutoAr.</span>
-          <router-link to="/test" class="text-primary hover:text-primary/80">
-            API Test
-          </router-link>
-        </div>
-      </footer>
     </div>
   </div>
 </template>

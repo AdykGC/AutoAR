@@ -4,11 +4,11 @@
       <main class="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="w-full max-w-md space-y-8">
           <div class="flex flex-col gap-3 text-center">
-            <p class="text-[#0d121b] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
-              Create your Employee Account
+            <p class="custom-heading">
+              Create your account
             </p>
-            <p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">
-              Join AutoAr to streamline approvals and automate your workflow.
+            <p class="deprecated-text">
+              Join Rubicon to streamline approvals and automate your workflow.
             </p>
           </div>
 
@@ -221,22 +221,11 @@
                 <span v-else>Create Account</span>
               </button>
 
-              <div class="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">
-                Already have an account? Click the Sign In button above.
-              </div>
+              <div class="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">   </div>
             </form>
           </div>
         </div>
       </main>
-
-      <footer class="w-full mt-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div class="text-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
-          <span>© 2025 AutoAr.</span>
-          <router-link to="/test" class="text-primary hover:text-primary/80">
-            API Test
-          </router-link>
-        </div>
-      </footer>
     </div>
   </div>
 </template>
