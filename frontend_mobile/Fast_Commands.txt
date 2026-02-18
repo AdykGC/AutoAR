@@ -1,6 +1,12 @@
+| Удаляет временные файлы, старые сборки и кеш. | Скачивает все зависимости проекта | Для iOS – обновляем поды | Собирает проект
 
-Скачивает все зависимости проекта | Удаляет временные файлы, старые сборки и кеш. | Собирает проект только для iOS-симулятора
-flutter pub get
 flutter clean
+flutter pub get
+cd ios
+pod install
+cd ..
 open ios/Runner.xcworkspace 
 
+
+ekole@issejub.jm
+KiribatiZucocerit185
