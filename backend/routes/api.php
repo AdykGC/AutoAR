@@ -19,24 +19,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/register',                  RegisterController::class)->middleware('throttle:5,1');
-Route::post('/login',                     LoginController::class)->middleware('throttle:5,1');
+
+Route::prefix('auth')->group(function () {
+    Route::post('/register',                  RegisterController::class)->middleware('throttle:5,1');
+    Route::post('/login',                     LoginController::class)->middleware('throttle:5,1');
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/logout',                             LogoutController::class);
+        Route::post('/update',                             UpdateController::class);
+        Route::get('/showMe',                              GetUserController::class);
+    });
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/logout',                             LogoutController::class);
-    Route::post('/update',                             UpdateController::class);
-    Route::get('/showMe',                              GetUserController::class);
-    
-    
     Route::post('/machines/create',                              CreateMachinesController::class);
     Route::put('/machines/update/{id}',                          UpdateMachinesController::class);
     Route::post('/machines/delete/{id}',                         DeleteMachinesController::class);
     Route::get('/machines/show/{id}',                            ShowMachinesController::class);
     Route::get('/machines/list',                                 ListMachinesController::class);
-
-
     //Route::get('/machines', [MachineController::class, 'index']);
     //Route::get('/machines/{id}', [MachineController::class, 'show']);
-
 });
 
 

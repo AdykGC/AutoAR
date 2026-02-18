@@ -9,8 +9,8 @@ class registerUserRequest extends FormRequest {
     /** * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
     public function rules(): array {
         return [
-            'name'              =>  'required|string|max:50',
-            'surname'           =>  'required|string|max:50',
+            // 'name'              =>  'sometimes|string|max:50',
+            // 'surname'           =>  'sometimes|string|max:50',
             'email'             =>  'required|email|unique:users,email',
             'password'          =>  'required|string|min:8|confirmed',
         ];

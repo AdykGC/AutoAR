@@ -14,8 +14,8 @@ use App\Models\{
 class UserService {
     public function register($request){
         $data = User::create([
-            'name'               => $request->name,
-            'surname'            => $request->surname,
+        //    'name'               => $request->name,
+        //    'surname'            => $request->surname,
             'email'              => $request->email,
             'password'           => Hash::make($request->password),
         ]);
