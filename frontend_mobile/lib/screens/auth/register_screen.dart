@@ -32,8 +32,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const LoginScreen()), );
     } catch (e) {
       debugPrint('Ошибка регистрации: $e');
-      // Ловим ошибки и выводим безопасно в Xcode 
-      // Если это JSON от Laravel — пытаемся распарсить
       try {
         final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
         debugPrint('JSON ошибки Laravel: $jsonError');
