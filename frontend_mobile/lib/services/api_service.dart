@@ -31,21 +31,6 @@ class ApiService {
     }
   }
 
-  // ==================== LOGIN ====================
-  static Future<void> login(String email, String password) async {
-    final url = Uri.parse('$baseUrl/auth/login');
-    final response = await http.post(url, body: {'email': email, 'password': password});
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final token = data['token'];
-      await storage.write(key: 'token', value: token);
-    } else {
-      throw Exception('Ошибка входа: ${response.body}');
-    }
-  }
-
-
 
   // ==================== GET PROJECTS ====================
   static Future<Map<String, dynamic>> getProjects() async {

@@ -1,5 +1,6 @@
-import 'dart:convert'; // <- добавляем это для jsonDecode
+import 'dart:convert'; // jsonDecode
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/screens/main_screen.dart'; // Импортируйте MainScreen
 import '../../services/auth_service.dart';
 import '../../widgets/common_widgets.dart';
 import '../../styles/app_styles.dart';
@@ -35,7 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthService.login(_emailController.text, _passwordController.text);
       ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Вход успешен!')), );
-      // Переход на главный экран
+      // =================== Изменение: Переход на MainScreen ===================
+      Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), );
       // Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       debugPrint('Ошибка входа: $e');
@@ -67,20 +69,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showError(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
-        backgroundColor: AppStyles.errorColor,
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), backgroundColor: AppStyles.errorColor, ), );
   }
 
   void _showSuccess(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), ), );
   }
 
   @override
