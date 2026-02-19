@@ -1,9 +1,9 @@
-import 'dart:convert'; // <- для jsonDecode
+import 'dart:convert';                                                // jsonDecode
 import 'package:flutter/material.dart';
-import '../../services/auth_service.dart';
-import '../../widgets/common_widgets.dart';
-import '../../styles/app_styles.dart';
-import 'login_screen.dart';
+import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
+import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
+import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
+import 'package:frontend_mobile/screens/auth/login_screen.dart';      // [ Screens ]
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,17 +21,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _register() async {
     setState(() => _loading = true);
+    FocusScope.of(context).unfocus();
 
-    if (_passwordController.text != _confirmController.text) {
-      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Пароли не совпадают')), );
-      setState(() => _loading = false);
-      return;
-    }
+    if (_passwordController.text != _confirmController.text) { ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Пароли не совпадают')), ); setState(() => _loading = false); return; }
 
     try {
       await AuthService.register( _emailController.text, _passwordController.text, _confirmController.text, );
       ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
-      Navigator.pop(context);
+      // =================== Изменение: Переход на MainScreen ===================
+      Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const LoginScreen()), );
     } catch (e) {
       debugPrint('Ошибка регистрации: $e');
       // Ловим ошибки и выводим безопасно в Xcode 
@@ -53,44 +51,111 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      backgroundColor: AppStyles.background,
       body: SafeArea(
         child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 360),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Text(
+                    'Создать аккаунт',
+                    style: TextStyle(
+                      color: AppStyles.textPrimary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: AppStyles.fontFamily,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
-                  TextField(
+                  const SizedBox(height: 12),
+                  Text(
+                    'Введите ваши данные для регистрации',
+                    style: TextStyle(
+                      color: AppStyles.textSecondary,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Email
+                  CustomTextField(
+                    label: 'Email',
                     controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
+                    keyboardType: TextInputType.emailAddress,
+                    prefixIcon: Icons.email_outlined,
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
+                  const SizedBox(height: 20),
+
+                  // Пароль
+                  CustomTextField(
+                    label: 'Пароль',
                     controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Password'),
                     obscureText: true,
+                    prefixIcon: Icons.lock_outline,
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
+                  const SizedBox(height: 20),
+
+                  // Подтверждение пароля
+                  CustomTextField(
+                    label: 'Подтвердите пароль',
                     controller: _confirmController,
-                    decoration: const InputDecoration(labelText: 'Confirm Password'),
                     obscureText: true,
+                    prefixIcon: Icons.lock_outline,
                   ),
-                  const SizedBox(height: 24),
-                  _loading
-                      ? const CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: _register,
-                          child: const Text('Register'),
+                  const SizedBox(height: 32),
+
+                  // Кнопка регистрации
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _loading ? null : _register,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
+                        backgroundColor: AppStyles.accent,
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      child: _loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text('Зарегистрироваться'),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Кнопка перехода на логин
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    child: Text(
+                      'Уже есть аккаунт? Войти',
+                      style: TextStyle(
+                        color: AppStyles.accent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
