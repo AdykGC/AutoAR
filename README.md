@@ -1,4 +1,4 @@
-# AutoAR
+# Rubicon
 
 ### Frontend:
 `JavaScript`
@@ -8,10 +8,14 @@
 `CSS`
 
 ### Backend:
-`Python`
-`Django`
-`Django REST Framework (DRF)`
-`Cross-Origin Resource Sharing (CORS) : django-cors-headers`
+`Php`
+`Laravel`
+`Laravel Sanctum`
+`Spatie Permission`
+`Backpack`
+
+### Mobile:
+`Flutter`
 
 ### Database:
 `PostgreSql`
@@ -26,34 +30,19 @@
 
 ```cd AutoAR```
 
-| Запуск серверов                              | Frontend                                     | Backend                                      |
-|----------------------------------------------|----------------------------------------------|----------------------------------------------|
-| Перейти в папку                              | cd frontend                                  | cd backend                                   |
-| Создание виртуального окружения              |                                              | python3 -m venv venv                         |
-| Активация виртуального окружения             |                                              | source venv/bin/activate                     |
-| Установка зависимостей                       | npm install                                  | pip3 install -r requirements.txt             |
-|                                              | npm install axios                            |                                              |
-| Создание .env                                | touch .env                                   | touch .env                                   |
-| Заполнение .env                              |                                              |                                              |
-| Создать миграции                             |                                              | python manage.py makemigrations              |
-| Применить миграции                           |                                              | python manage.py migrate                     |
-| Запуск серверов                              | npm run dev                                  | python3 manage.py runserver                  |
-
-
-# Пример .Env
-
-### Frontend
-
-| Key                                          | Value                                        | Info                                         |
-|----------------------------------------------|----------------------------------------------|----------------------------------------------|
-| VITE_API_URL                                 | 'URL_of_Django_Server/api'                   | Value                                        |
-
-### Backend
-
-| Key                                          | Value                                        | Info                                         |
-|----------------------------------------------|----------------------------------------------|----------------------------------------------|
-| DJANGO_SECRET_KEY                            | 'SecretKeyGeneratedByTheInstruction'         | Value                                        |
-| DJANGO_DEBUG                                 | False                                        | Value                                        |
-
-```python3 -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'```
-DJANGO_SECRET_KEY=полученное_значение
+| Запуск серверов                              | Backend                                      | Frontend                                     | Mobile                                       |
+|----------------------------------------------|----------------------------------------------|----------------------------------------------|----------------------------------------------|
+| Перейти в папку                              | cd backend                                   | cd frontend_website                          | cd frontend_mobile                           |
+| Установка зависимостей                       | composer require                             | npm install                                  | flutter pub get                              |
+|                                              |                                              | npm install axios                            | flutter doctor                               |
+|                                              |                                              |                                              | cd ios                                       |
+|                                              |                                              |                                              | pod install                                  |
+|                                              |                                              |                                              | cd ..                                        |
+|                                              |                                              |                                              |                                              |
+| Заполнение .env                              | cp .env.example .env                         | cp .env.example .env                         | cp .env.example .env                         |
+|                                              |                                              |                                              |                                              |
+|                                              | php artisan key:generate                     |                                              |                                              |
+| Применить миграции                           | php artisan migrate                          |                                              |                                              |
+|                                              |                                              |                                              |                                              |
+| Запуск серверов                              | php artisan serve --host=0.0.0.0 --port=8000 | npm run dev                                  | open ios/Runner.xcworkspace                  |
+| Получить IP-адрес                            | ipconfig getifaddr en0                       |                                              |                                              |
