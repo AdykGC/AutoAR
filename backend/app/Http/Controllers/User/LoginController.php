@@ -6,7 +6,6 @@ use App\Http\Requests\User\loginUserRequest;
 
 class LoginController extends BaseController{
     public function __invoke(loginUserRequest $request) {
-        /** @var User $user */
 
 
         try {

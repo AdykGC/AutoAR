@@ -45,32 +45,7 @@ class ApiService {
     }
   }
 
-  // ==================== REGISTER ====================
-    static Future<void> register(
-            String email, 
-            String password, 
-            String passwordConfirmation
-        ) async {
-            final url = Uri.parse('$baseUrl/auth/register');
-            final response = await http.post(url, body: {
-                'email': email,
-                'password': password,
-                'password_confirmation': passwordConfirmation,
-            });
-        if (response.statusCode == 201) {
-            final data = jsonDecode(response.body);
-            final token = data['token'];
-            await storage.write(key: 'token', value: token);
-        } else if (response.statusCode == 422) {
-            // Ошибки валидации Laravel
-            final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
-            final firstError = errors.values.first;
-            final message = firstError is List ? firstError.first : firstError.toString();
-            throw Exception(message);
-        } else {
-            throw Exception('Ошибка регистрации: ${response.body}');
-        }
-    }
+
 
   // ==================== GET PROJECTS ====================
   static Future<Map<String, dynamic>> getProjects() async {

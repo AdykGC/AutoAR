@@ -14,21 +14,12 @@ use App\Models\{
 class UserService {
     public function register($request){
         $data = User::create([
-        //    'name'               => $request->name,
-        //    'surname'            => $request->surname,
             'email'              => $request->email,
             'password'           => Hash::make($request->password),
         ]);
-
-        // $role = 'Client';
-        // $data->assignRole($role);
-        // $data->load('roles.permissions');
-
         return response()->json([
             'message' => 'Пользователь успешно зарегистрирован',
             'user' => $data,
-            // 'role' => $role,
-            'permissions' => $data->getAllPermissions()->pluck('name'),
         ]);
     }
 

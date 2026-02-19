@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\{
-    GetUserController, LoginController, RegisterController, LogoutController, UpdateController
+    GetUserController, LoginController, UserRegisterController, LogoutController, UpdateController
 };
 use App\Http\Controllers\Product\{
     MachineController, CreateMachinesController, ShowMachinesController, UpdateMachinesController, DeleteMachinesController, ListMachinesController,
@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register',                  RegisterController::class);//->middleware('throttle:5,1')
+    Route::post('/register',                  UserRegisterController::class);//->middleware('throttle:5,1')
     Route::post('/login',                     LoginController::class)->middleware('throttle:5,1');
 
     Route::middleware(['auth:sanctum'])->group(function () {
