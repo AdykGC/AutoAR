@@ -1,62 +1,44 @@
 import 'package:flutter/material.dart';
-import '../styles/app_styles.dart';
+import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
 
-// 1. Адаптивная кнопка
-class PrimaryButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final bool isLoading;
-  
-  const PrimaryButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  });
-  
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : Text(text),
-      ),
-    );
-  }
-}
-
-// 2. Адаптивное текстовое поле
 class CustomTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final bool obscureText;
-  final TextInputType? keyboardType;
-  
+  final TextInputType keyboardType;
+  final IconData? prefixIcon; // ← добавили сюда
+
   const CustomTextField({
     super.key,
     required this.label,
     required this.controller,
     this.obscureText = false,
-    this.keyboardType,
+    this.keyboardType = TextInputType.text,
+    this.prefixIcon, // ← и сюда
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
       obscureText: obscureText,
       keyboardType: keyboardType,
+      style: TextStyle(color: AppStyles.textPrimary),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: AppStyles.textSecondary),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppStyles.textSecondary) : null,
+        filled: true,
+        fillColor: AppStyles.secondary.withOpacity(0.2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppStyles.accent),
+        ),
+      ),
     );
   }
 }
