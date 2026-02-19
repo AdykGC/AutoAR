@@ -18,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmController = TextEditingController();
   bool _loading = false;
 
+
   void _register() async {
     setState(() => _loading = true);
 
@@ -32,7 +33,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
       Navigator.pop(context);
     } catch (e) {
-      debugPrint('Ошибка регистрации: $e'); // Ловим ошибки и выводим безопасно в Xcode 
+      debugPrint('Ошибка регистрации: $e');
+      // Ловим ошибки и выводим безопасно в Xcode 
       // Если это JSON от Laravel — пытаемся распарсить
       try {
         final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));

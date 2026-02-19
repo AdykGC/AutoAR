@@ -1,5 +1,6 @@
+import 'dart:convert'; // <- добавляем это для jsonDecode
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/common_widgets.dart';
 import '../../styles/app_styles.dart';
 import 'register_screen.dart';
@@ -17,33 +18,54 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _loading = false;
 
   void _login() async {
-    // Закрываем клавиатуру
-    FocusScope.of(context).unfocus();
-    
+    setState(() => _loading = true);
+
     // Простая валидация
     if (_emailController.text.isEmpty) {
       _showError('Введите email');
+      setState(() => _loading = false);
       return;
     }
     if (_passwordController.text.isEmpty) {
       _showError('Введите пароль');
+      setState(() => _loading = false);
       return;
     }
-    
-    setState(() => _loading = true);
-    
+
     try {
-      await ApiService.login(_emailController.text, _passwordController.text);
-      _showSuccess('Вход успешен!');
-      // TODO: перейти на главный экран
+      await AuthService.login(_emailController.text, _passwordController.text);
+      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Вход успешен!')), );
+      // Переход на главный экран
       // Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      _showError('Ошибка: $e');
+      debugPrint('Ошибка входа: $e');
+      // Ловим ошибки и выводим безопасно в Xcode 
+      // Если это JSON от Laravel — пытаемся распарсить
+      try {
+        final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
+        debugPrint('JSON ошибки Laravel: $jsonError');
+
+        // Если сервер возвращает ошибки
+        if (jsonError.containsKey('errors')) {
+          final errors = jsonError['errors'] as Map<String, dynamic>;
+          String errorMessage = '';
+          errors.forEach((key, value) {
+            final message = value is List ? value.first : value.toString();
+            errorMessage += '$message\n';
+          });
+          _showError(errorMessage.trim());
+        } else {
+          _showError('Ошибка входа: ${e.toString()}');
+        }
+      } catch (_) {
+        debugPrint('Не удалось распарсить JSON ошибки');
+        _showError('Ошибка входа: ${e.toString()}');
+      }
     } finally {
       setState(() => _loading = false);
     }
   }
-  
+
   void _showError(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -52,10 +74,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-  
+
   void _showSuccess(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)),
+      SnackBar(
+        content: Text(text),
+      ),
     );
   }
 
