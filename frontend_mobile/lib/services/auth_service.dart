@@ -16,6 +16,8 @@ class AuthService {
 
   static final storage = FlutterSecureStorage();
 
+
+
     // ==================== REGISTER ====================
     static Future<void> register( String email,  String password,  String passwordConfirmation ) async {
         final url = Uri.parse('$baseUrl/auth/register');
@@ -42,6 +44,7 @@ class AuthService {
             rethrow;
         }
     }
+
 
 
     // ==================== LOGIN ====================

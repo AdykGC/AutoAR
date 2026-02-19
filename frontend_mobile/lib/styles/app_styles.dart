@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppStyles {
     // Цвета
-    static const primaryColor = Colors.blue;
+    static const primary = Colors.blue;
     static const errorColor = Colors.red;
+    static const background = Colors.white;  // Белый цвет фона
+    static const accent = Colors.green;      // Зеленый цвет акцента
+    static const textPrimary = Colors.black; // Черный для основного текста
+    static const textSecondary = Colors.grey; // Серый для вторичного текста
     
     // Тексты
     static const TextStyle titleText = TextStyle(
