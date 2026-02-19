@@ -56,20 +56,18 @@ class AuthService {
                 if (data.containsKey('token') && data['token'] != null) {
                     await storage.write(key: 'token', value: data['token']);
                 }
-      return;
-    } else if (response.statusCode == 422) {
-      // Laravel возвращает ошибки в формате { "errors": { "field": ["message"] } }
-      final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
-      final firstError = errors.values.first;
-      final message = firstError is List ? firstError.first : firstError.toString();
-      throw Exception(message);
-    } else {
-      throw Exception('Ошибка входа: ${response.body}');
+                return;
+            } else if (response.statusCode == 422) {
+                final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
+                final firstError = errors.values.first;
+                final message = firstError is List ? firstError.first : firstError.toString();
+                throw Exception(message);
+            } else {
+                throw Exception('Ошибка входа: ${response.body}');
+            }
+        } catch (e) {
+            debugPrint('Ошибка запроса к API (login): $e');
+            rethrow;
+        }
     }
-  } catch (e) {
-    debugPrint('Ошибка запроса к API (login): $e');
-    rethrow;
-  }
-}
-
 }
