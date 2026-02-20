@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final IconData? prefixIcon; // ← добавили сюда
+  final String? errorText;              //  ДОБАВЛЕНО
 
   const CustomTextField({
     super.key,
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.prefixIcon, // ← и сюда
+    this.errorText,                      //  ДОБАВЛЕНО
   });
 
   @override
@@ -28,6 +30,7 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         labelStyle: TextStyle(color: AppStyles.textSecondary),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppStyles.textSecondary) : null,
+        errorText: errorText,
         filled: true,
         fillColor: AppStyles.secondary.withOpacity(0.2),
         border: OutlineInputBorder(

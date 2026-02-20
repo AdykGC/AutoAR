@@ -20,7 +20,9 @@ void main() async {
     final token = await AuthTokenService.getToken();
     debugPrint('Значение токена: $token');
   }
-  debugPrint('=======================================');  
+  debugPrint('=======================================');
+  debugPrint(' ');
+  debugPrint(' ');
 
 
   runApp(const MyApp());

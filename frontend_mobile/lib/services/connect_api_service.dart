@@ -35,8 +35,12 @@ class ConnectApiService {
             debugPrint('API URL: $_apiUrl');
             debugPrint('Timeout: $_timeout секунд');
             debugPrint('=========================================');
+            debugPrint(' ');
+            debugPrint(' ');
         } catch (e){
             debugPrint('[-] Ошибка загрузки .env файла: $e');
+            debugPrint(' ');
+            debugPrint(' ');
         }
     }
 

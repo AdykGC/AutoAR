@@ -1,10 +1,9 @@
 <?php namespace App\Http\Controllers\User;
 
-use App\Models\User;
 use App\Http\Controllers\User\BaseController;
 use App\Http\Requests\User\loginUserRequest;
 
-class LoginController extends BaseController{
+class UserLoginController extends BaseController{
     public function __invoke(loginUserRequest $request) {
 
 

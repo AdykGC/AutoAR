@@ -3,13 +3,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+/* [ Service ] */
+import 'connect_api_service.dart';
 
 class AuthLogoutService {
-    static const String baseUrl_iOS = 'http://172.20.10.3:8000/api';
-    static const String baseUrl_Android = 'http://10.0.2.2:8000/api';
-
-    static String get baseUrl => defaultTargetPlatform == TargetPlatform.iOS ? baseUrl_iOS : baseUrl_Android;
-    static final storage = FlutterSecureStorage();
+        static final storage = FlutterSecureStorage();
 
 
     // ==================== LOGOUT ====================
@@ -20,43 +18,27 @@ class AuthLogoutService {
         debugPrint('Токен найден: ${token != null}');
         
         // Всегда пытаемся вызвать API logout, даже если токена нет
-        if (token != null) {
-            await _callLogoutApi(token);
-        }
+        if (token != null) { await _callLogoutApi(token); }
         
         // В любом случае удаляем токен локально
         await storage.delete(key: 'token');
-        debugPrint('✅ Токен удален из локального хранилища');
+        debugPrint('[+] Токен удален из локального хранилища');
         
         // Дополнительно очищаем возможные другие данные
         await storage.delete(key: 'user_data');
         
-        debugPrint('✅ Выход выполнен успешно');
+        debugPrint('[+] Выход выполнен успешно');
         debugPrint('===================================');
     }
 
     static Future<void> _callLogoutApi(String token) async {
-        final url = Uri.parse('$baseUrl/auth/logout');
-        
+        final url = Uri.parse(ConnectApiService.endpoint('auth/logout'));
         try {
-            final response = await http.post(
-                url,
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer $token',
-                },
-            ).timeout(
-                const Duration(seconds: 5),
-                onTimeout: () {
-                    debugPrint('⚠️ Таймаут при вызове API logout');
-                    return http.Response('Timeout', 408);
-                },
-            );
-
+            final response = await http.post( url, headers: { 'Accept': 'application/json', 'Authorization': 'Bearer $token', }, ).timeout( const Duration(seconds: 5), onTimeout: () { debugPrint('⚠️ Таймаут при вызове API logout'); return http.Response('Timeout', 408); }, );
             debugPrint('Статус API logout: ${response.statusCode}');
             
             if (response.statusCode == 200) {
-                debugPrint('✅ API logout успешен');
+                debugPrint('[+] API logout успешен');
                 try {
                     final data = jsonDecode(response.body);
                     debugPrint('Ответ сервера: ${data['message'] ?? 'OK'}');

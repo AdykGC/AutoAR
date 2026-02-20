@@ -1,9 +1,14 @@
-import 'dart:convert';                                                // jsonDecode
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
-import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
-import 'package:frontend_mobile/screens/auth/login_screen.dart';      // [ Screens ]
+/* [ Widgets ] */
+import 'package:frontend_mobile/widgets/common_widgets.dart';
+/* [ Styles ] */
+import 'package:frontend_mobile/styles/app_styles.dart';
+/* [ Service ] */
+import 'package:frontend_mobile/services/auth_register_service.dart';
+/* [ Screen ] */
+import 'package:frontend_mobile/screens/auth/login_screen.dart';
+import 'package:frontend_mobile/screens/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,30 +22,74 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   bool _loading = false;
+  String? _emailError; String? _passwordError; String? _confirmError;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_validateEmailOnChange);
+    _passwordController.addListener(_validatePasswordOnChange);
+    _confirmController.addListener(_validateConfirmOnChange);
+  }
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_validateEmailOnChange);
+    _passwordController.removeListener(_validatePasswordOnChange);
+    _confirmController.removeListener(_validateConfirmOnChange);
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  void _validateEmailOnChange() {
+    setState(() { _emailError = AuthRegisterService.validateEmail(_emailController.text); });
+  }
+
+  void _validatePasswordOnChange() {
+    setState(() { _passwordError = AuthRegisterService.validatePassword(_passwordController.text); });
+    if (_confirmController.text.isNotEmpty) { _validateConfirmOnChange(); }
+  }
+
+  void _validateConfirmOnChange() {
+    setState(() { _confirmError = AuthRegisterService.validatePasswordConfirmation( _passwordController.text, _confirmController.text ); });
+  }
+
+
+  bool _validateForm() {
+    setState(() {
+      _emailError = AuthRegisterService.validateEmail(_emailController.text);
+      _passwordError = AuthRegisterService.validatePassword(_passwordController.text);
+      _confirmError = AuthRegisterService.validatePasswordConfirmation( _passwordController.text,  _confirmController.text );
+    });
+    return _emailError == null && _passwordError == null && _confirmError == null;
+  }
 
 
   void _register() async {
+    if (!_validateForm()) { setState(() => _loading = false); return; }
+
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();
 
-    if (_passwordController.text != _confirmController.text) { ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Пароли не совпадают')), ); setState(() => _loading = false); return; }
-
     try {
-      await AuthService.register( _emailController.text, _passwordController.text, _confirmController.text, );
-      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
-      // =================== Изменение: Переход на MainScreen ===================
-      Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const LoginScreen()), );
+      await AuthRegisterService.register(  email: _emailController.text,  password: _passwordController.text, passwordConfirmation: _confirmController.text, );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
+        Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), );
+      }
     } catch (e) {
       debugPrint('Ошибка регистрации: $e');
-      try {
-        final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
-        debugPrint('JSON ошибки Laravel: $jsonError');
-      } catch (_) {
-        debugPrint('Не удалось распарсить JSON ошибки');
+      String errorMessage = e.toString().replaceAll('Exception: ', '');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(errorMessage), backgroundColor: Colors.redAccent, behavior: SnackBarBehavior.floating, ), );
       }
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Ошибка регистрации: $e')), );
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -86,6 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
+                    errorText: _emailError,
                   ),
                   const SizedBox(height: 20),
 
@@ -95,6 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _passwordController,
                     obscureText: true,
                     prefixIcon: Icons.lock_outline,
+                    errorText: _passwordError,
                   ),
                   const SizedBox(height: 20),
 
@@ -104,8 +155,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _confirmController,
                     obscureText: true,
                     prefixIcon: Icons.lock_outline,
+                    errorText: _confirmError,
                   ),
                   const SizedBox(height: 32),
+
 
                   // Кнопка регистрации
                   SizedBox(
