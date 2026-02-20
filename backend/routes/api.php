@@ -15,7 +15,7 @@ use App\Http\Controllers\TestController;
 Route::get('/test', [TestController::class, 'test']);
 Route::get('/cors-test', [TestController::class, 'corsTest']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', action: function (Request $request) {
     return $request->user();
 });
 
@@ -26,8 +26,8 @@ Route::prefix('auth')->group(function () {
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout',                             LogoutController::class);
+        Route::get('/user',                                GetUserController::class);
         Route::post('/update',                             UpdateController::class);
-        Route::get('/showMe',                              GetUserController::class);
     });
 });
 

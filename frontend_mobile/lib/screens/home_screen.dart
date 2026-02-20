@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_mobile/widgets/willpopscope_widgets.dart';   // [ Widgets ]
 import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
 import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
+import 'package:frontend_mobile/services/auth_logout_service.dart';
 import 'package:frontend_mobile/screens/auth/login_screen.dart';      // [ Screens ]
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
 
@@ -21,11 +22,18 @@ class _MainScreenState extends State<MainScreen> {
 
   void _logout() async {
     try {
-      await AuthService.logout();
+      await AuthLogoutService.logout();
+      if (!mounted) return;
+      Navigator.pop(context);
       Navigator.pushAndRemoveUntil( context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false, );
+      ScaffoldMessenger.of(context).showSnackBar( const SnackBar( content: Text('Выход выполнен успешно'), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating, ), );
     } catch (e){
+      if (!mounted) return;
+      Navigator.pop(context);
       debugPrint('Ошибка при выходе: $e');
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text('Ошибка при выходе: ${e.toString()}'), backgroundColor: Colors.redAccent, ), );
+      await AuthLogoutService.forceLogout();
+      Navigator.pushAndRemoveUntil( context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false, );
+      ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text('Выполнен принудительный выход'), backgroundColor: Colors.redAccent, ), );
     }
   }
 

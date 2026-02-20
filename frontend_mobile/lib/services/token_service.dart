@@ -21,24 +21,43 @@ class AuthService {
 
             if (response.statusCode >= 200 && response.statusCode < 300) {
                 final data = jsonDecode(response.body);
-                
-                if (data.containsKey('data') && data['data'] != null) {
-                    final tokenData = data['data']['token'];
-                    if (tokenData != null) {
-                        await storage.write(key: 'token', value: tokenData);
-                        debugPrint('Токен сохранен: $tokenData');
-                    } else { debugPrint('Токен не найден в ответе'); }
-                    return;
-                } else { debugPrint('Нет поля data в ответе'); }
+                if (data.containsKey('token') && data['token'] != null) {
+                    await storage.write( key: 'token', value: data['token'] );
+                }
+                return;
+            } else if ( response.statusCode == 422 ) {
+                final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
+                final firstError = errors.values.first;
+                final message = firstError is List ? firstError.first : firstError.toString();
+                throw Exception(message);
+            } else {
+                throw Exception('Ошибка регистрации: ${response.body}');
+            }
+        } catch (e) {
+            debugPrint('Ошибка запроса к API: $e');
+            rethrow;
+        }
+    }
+
+
+    // ==================== LOGIN ====================
+    static Future<void> login(String email, String password) async {
+        final url = Uri.parse('$baseUrl/auth/login');
+        try { 
+            final response = await http.post( url, headers: {'Accept': 'application/json'}, body: {'email': email, 'password': password}, );
+            debugPrint('Ответ API (login) | (status ${response.statusCode}): ${response.body}');
+
+            if (response.statusCode >= 200 && response.statusCode < 300) {
+                final data = jsonDecode(response.body);
+                if (data.containsKey('token') && data['token'] != null) {
+                    await storage.write(key: 'token', value: data['token']);
+                }
                 return;
             } else {
-                final responseData = jsonDecode(response.body);
-                if (responseData.containsKey('errors')) {
-                    final errors = responseData['errors'] as Map<String, dynamic>;
-                    final firstError = errors.values.first;
-                    final message = firstError is List ? firstError.first : firstError.toString();
-                    throw Exception(message);
-                } else { throw Exception('Ошибка входа: ${response.body}'); }
+                final errors = jsonDecode(response.body)['errors'] as Map<String, dynamic>;
+                final firstError = errors.values.first;
+                final message = firstError is List ? firstError.first : firstError.toString();
+                throw Exception(message);
             }
         } catch (e) {
             debugPrint('Ошибка запроса к API (login): $e');
@@ -70,14 +89,4 @@ class AuthService {
         rethrow;
         }
     }
-
-    // Добавьте в класс AuthService
-static Future<bool> hasToken() async {
-    final token = await storage.read(key: 'token');
-    return token != null;
-}
-
-static Future<String?> getToken() async {
-    return await storage.read(key: 'token');
-}
 }

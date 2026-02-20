@@ -2,7 +2,8 @@ import 'dart:convert';                                                // jsonDec
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
 import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
+import 'package:frontend_mobile/services/auth_login_service.dart';    // [ Services ]
+import 'package:frontend_mobile/services/auth_token_service.dart';    // 
 import 'package:frontend_mobile/screens/home_screen.dart';            // [ Screens ]
 import 'package:frontend_mobile/screens/auth/register_screen.dart';
 
@@ -18,30 +19,91 @@ class _LoginScreenState extends State<LoginScreen> {
     final _passwordController = TextEditingController();
     bool _loading = false;
 
-    void _login() async {
-        setState(() => _loading = true);
-        FocusScope.of(context).unfocus();
 
-        if (_emailController.text.isEmpty) { _showError('Введите email'); setState(() => _loading = false); return; }
-        if (_passwordController.text.isEmpty) { _showError('Введите пароль'); setState(() => _loading = false); return; }
-
-        try {
-            await AuthService.login(_emailController.text, _passwordController.text);
-            ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Вход успешен!')), );
-            // =================== Изменение: Переход на MainScreen ===================
-            Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), );
-        } catch (e) {
-          debugPrint('Ошибка входа: $e');
-          _showError('Ошибка входа: ${e.toString()}');
-          try {
-            final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
-            debugPrint('JSON ошибки Laravel: $jsonError');
-          } catch (_) {
-            debugPrint('Не удалось распарсить JSON ошибки');
-          }
-          ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Ошибка входа: $e')), );
-        } finally { setState(() => _loading = false); }
+   @override
+    void initState() {
+        super.initState();
+        _checkExistingToken();
     }
+
+    // Добавьте этот метод
+    Future<void> _checkExistingToken() async {
+        final hasToken = await AuthTokenService.hasToken();
+        if (hasToken) {
+            debugPrint('Найден существующий токен, переходим на главную');
+            if (mounted) { Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), ); }
+        }
+    }
+
+    void _login() async {
+    setState(() => _loading = true);
+    FocusScope.of(context).unfocus();
+
+    // Валидация на клиенте
+    if (_emailController.text.isEmpty) { 
+        _showError('Введите email'); 
+        setState(() => _loading = false); 
+        return; 
+    }
+    
+    if (!_emailController.text.contains('@')) {
+        _showError('Введите корректный email');
+        setState(() => _loading = false);
+        return;
+    }
+    
+    if (_passwordController.text.isEmpty) { 
+        _showError('Введите пароль'); 
+        setState(() => _loading = false); 
+        return; 
+    }
+    
+    if (_passwordController.text.length < 6) {
+        _showError('Пароль должен содержать минимум 6 символов');
+        setState(() => _loading = false);
+        return;
+    }
+
+    try {
+        await AuthLoginService.login(_emailController.text, _passwordController.text);
+        
+        // Успешный вход
+        if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar( 
+                SnackBar(
+                    content: const Text('Вход успешен!'),
+                    backgroundColor: Colors.green,
+                ), 
+            );
+            
+            // Переход на главный экран
+            Navigator.pushReplacement( 
+                context, 
+                MaterialPageRoute(builder: (context) => const MainScreen()), 
+            );
+        }
+        
+    } catch (e) {
+        debugPrint('Ошибка входа: $e');
+        
+        // Показываем пользователю понятное сообщение
+        String errorMessage = e.toString().replaceAll('Exception: ', '');
+        
+        // Специфические сообщения для разных ошибок
+        if (errorMessage.contains('email') && errorMessage.contains('password')) {
+            errorMessage = 'Неверный email или пароль';
+        } else if (errorMessage.contains('connection')) {
+            errorMessage = 'Проверьте подключение к интернету';
+        }
+        
+        _showError(errorMessage);
+        
+    } finally { 
+        if (mounted) {
+            setState(() => _loading = false); 
+        }
+    }
+}
 
   void _showError(String text) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), backgroundColor: Colors.redAccent, ), );
