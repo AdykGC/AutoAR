@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/widgets/willpopscope_widgets.dart';   // [ Widgets ]
 import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
-import 'package:frontend_mobile/services/auth_logout_service.dart';
+import 'package:frontend_mobile/services/auth_logout_service.dart';   // [ Services ]
 import 'package:frontend_mobile/screens/auth/login_screen.dart';      // [ Screens ]
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
 
