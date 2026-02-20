@@ -30,15 +30,16 @@ Route::prefix('auth')->group(function () {
         Route::patch('/update',                             UpdateController::class);
     });
 });
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/machines/create',                              CreateMachinesController::class);
-    Route::put('/machines/update/{id}',                          UpdateMachinesController::class);
-    Route::post('/machines/delete/{id}',                         DeleteMachinesController::class);
-    Route::get('/machines/show/{id}',                            ShowMachinesController::class);
-    Route::get('/machines/list',                                 ListMachinesController::class);
-    //Route::get('/machines', [MachineController::class, 'index']);
-    //Route::get('/machines/{id}', [MachineController::class, 'show']);
+Route::prefix('machines')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/create',                              CreateMachinesController::class);
+        Route::put('/update/{id}',                          UpdateMachinesController::class);
+        Route::post('/delete/{id}',                         DeleteMachinesController::class);
+        Route::get('/show/{id}',                            ShowMachinesController::class);
+        Route::get('/list',                                 ListMachinesController::class);
+        //Route::get('/machines', [MachineController::class, 'index']);
+        //Route::get('/machines/{id}', [MachineController::class, 'show']);
+    });
 });
 
 
