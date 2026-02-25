@@ -2,10 +2,10 @@
 
 use App\Models\User;
 use App\Http\Controllers\User\BaseController;
-use App\Http\Requests\User\updateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 
-class UpdateController extends BaseController{
-    public function __invoke(updateUserRequest $request) {
+class UserUpdateController extends BaseController{
+    public function __invoke(UpdateUserRequest $request) {
         /** @var User $user */
         $user = auth()->user();
         return $this->service->update($request, $user);

@@ -11,6 +11,7 @@ return new class extends Migration
         // 1. ПОЛЬЗОВАТЕЛИ (уже есть от Laravel, немного дополним)
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('password');
