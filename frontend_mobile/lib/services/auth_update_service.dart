@@ -13,7 +13,7 @@ class AuthUpdateService {
     // ==================== UPDATE USER PROFILE ====================
     static Future<void> updateUserProfile({
         String? name,
-        String? surname,
+        String? companyTitle,
         String? phone,
         String? address,
     }) async {
@@ -33,19 +33,19 @@ class AuthUpdateService {
 
             if (name != null && name.isNotEmpty) {
                 body['name'] = name;
-                debugPrint('📝 Name: $name');
+                debugPrint('Name: $name');
             }
-            if (surname != null && surname.isNotEmpty) {
-                body['surname'] = surname;
-                debugPrint('📝 Surname: $surname');
+            if (companyTitle != null && companyTitle.isNotEmpty) {
+                body['company_title'] = companyTitle;
+                debugPrint('company_title: $companyTitle');
             }
             if (phone != null && phone.isNotEmpty) {
                 body['phone'] = phone;
-                debugPrint('📝 Phone: $phone');
+                debugPrint('Phone: $phone');
             }
             if (address != null && address.isNotEmpty) {
                 body['address'] = address;
-                debugPrint('📝 Address: $address');
+                debugPrint('Address: $address');
             }
 
             debugPrint('📦 Body: $body');

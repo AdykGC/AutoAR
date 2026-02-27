@@ -5,7 +5,7 @@ use App\Http\Controllers\User\{
     GetUserController, UserLoginController, UserRegisterController, UserLogoutController, UserUpdateController
 };
 use App\Http\Controllers\Product\{
-    MachineController, CreateMachinesController, ShowMachinesController, UpdateMachinesController, DeleteMachinesController, ListMachinesController,
+    MachineCreateController, MachineListController, MachineUpdateController, MachineDeleteController
 };
 
 
@@ -32,11 +32,10 @@ Route::prefix('auth')->group(function () {
 });
 Route::prefix('machines')->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
-        Route::post('/create',                              CreateMachinesController::class);
-        Route::put('/update/{id}',                          UpdateMachinesController::class);
-        Route::post('/delete/{id}',                         DeleteMachinesController::class);
-        Route::get('/show/{id}',                            ShowMachinesController::class);
-        Route::get('/list',                                 ListMachinesController::class);
+        Route::post('/create',                              MachineCreateController::class);
+        Route::get('/',                                     MachineListController::class);
+        Route::patch('/update/{id}',                        MachineUpdateController::class);
+        Route::post('/delete/{id}',                         MachineDeleteController::class);
         //Route::get('/machines', [MachineController::class, 'index']);
         //Route::get('/machines/{id}', [MachineController::class, 'show']);
     });

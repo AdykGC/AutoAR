@@ -1,14 +1,25 @@
+// ================= IMPORTS =================
+/* [ Dart ] */
 import 'dart:convert';
+
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
+
 /* [ Widgets ] */
 import 'package:frontend_mobile/widgets/common_widgets.dart';
+
 /* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
+
 /* [ Service ] */
 import 'package:frontend_mobile/services/auth_register_service.dart';
+
 /* [ Screen ] */
 import 'package:frontend_mobile/screens/auth/login_screen.dart';
-import 'package:frontend_mobile/screens/home_screen.dart';
+import 'package:frontend_mobile/screens/main/main_screen.dart';
+
+
+// ================= WIDGET =================
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,17 +28,29 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+
+// ================= STATE =================
+
 class _RegisterScreenState extends State<RegisterScreen> {
+  // -------- CONTROLLERS --------
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+
+  // -------- UI STATE --------
   bool _loading = false;
+  bool _passwordVisible = false;
+
+  // -------- ERROR STATES --------
   String? _emailError; String? _passwordError; String? _confirmError;
 
+
+  // ================= LIFECYCLE =================
 
   @override
   void initState() {
     super.initState();
+    // Реалтайм валидация
     _emailController.addListener(_validateEmailOnChange);
     _passwordController.addListener(_validatePasswordOnChange);
     _confirmController.addListener(_validateConfirmOnChange);
@@ -35,15 +58,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
+    // Удаление listeners
     _emailController.removeListener(_validateEmailOnChange);
     _passwordController.removeListener(_validatePasswordOnChange);
     _confirmController.removeListener(_validateConfirmOnChange);
+
+    // Освобождение ресурсов
     _emailController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
+
     super.dispose();
   }
 
+
+// ================= VALIDATION (REALTIME) =================
   void _validateEmailOnChange() {
     setState(() { _emailError = AuthRegisterService.validateEmail(_emailController.text); });
   }
@@ -58,6 +87,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
 
+// ================= FORM VALIDATION =================
+
   bool _validateForm() {
     setState(() {
       _emailError = AuthRegisterService.validateEmail(_emailController.text);
@@ -67,6 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return _emailError == null && _passwordError == null && _confirmError == null;
   }
 
+
+  // ================= AUTH LOGIC =================
 
   void _register() async {
     if (!_validateForm()) { setState(() => _loading = false); return; }
@@ -87,13 +120,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(errorMessage), backgroundColor: Colors.redAccent, behavior: SnackBarBehavior.floating, ), );
       }
     } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
+      if (mounted) { setState(() => _loading = false); }
     }
   }
 
 
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -102,12 +134,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  
+                  // -------- TITLE --------
                   Text(
                     'Создать аккаунт',
                     style: TextStyle(
@@ -116,95 +149,88 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       fontWeight: FontWeight.bold,
                       fontFamily: AppStyles.fontFamily,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Введите ваши данные для регистрации',
-                    style: TextStyle(
-                      color: AppStyles.textSecondary,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
+                  ), const SizedBox(height: 32),
 
-                  // Email
+                  // -------- EMAIL --------
                   CustomTextField(
                     label: 'Email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
                     errorText: _emailError,
-                  ),
-                  const SizedBox(height: 20),
+                  ), const SizedBox(height: 20),
 
-                  // Пароль
+                  // -------- PASSWORD --------
                   CustomTextField(
                     label: 'Пароль',
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible,
                     prefixIcon: Icons.lock_outline,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible = !_passwordVisible; });
+                      },
+                    ),
                     errorText: _passwordError,
-                  ),
-                  const SizedBox(height: 20),
+                  ), const SizedBox(height: 20),
 
-                  // Подтверждение пароля
+                  // -------- CONFIRM PASSWORD --------
                   CustomTextField(
                     label: 'Подтвердите пароль',
                     controller: _confirmController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible,
                     prefixIcon: Icons.lock_outline,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible = !_passwordVisible; });
+                      },
+                    ),
                     errorText: _confirmError,
-                  ),
-                  const SizedBox(height: 32),
+                  ), const SizedBox(height: 32),
 
 
-                  // Кнопка регистрации
+                  // -------- REGISTER BUTTON --------
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _register,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: AppStyles.accent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: AppStyles.accent,
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
                       ),
                       child: _loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
                             )
                           : const Text('Зарегистрироваться'),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Кнопка перехода на логин
+                  // -------- LOGIN NAVIGATION --------
                   TextButton(
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const LoginScreen(),
+                        ),
                       );
                     },
                     child: Text(
                       'Уже есть аккаунт? Войти',
-                      style: TextStyle(
-                        color: AppStyles.accent,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: AppStyles.accent),
                     ),
                   ),
                 ],

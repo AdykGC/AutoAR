@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/screens/home_screen.dart';
+import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
 
 

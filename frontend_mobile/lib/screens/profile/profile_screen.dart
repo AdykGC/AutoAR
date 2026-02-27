@@ -1,12 +1,20 @@
+// ================= IMPORTS =================
+/* [ Dart ] */
 import 'dart:convert';
+
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
+
 /* [ Widgets ] */
 import 'package:frontend_mobile/widgets/common_widgets.dart';
+
 /* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
+
 /* [ Service ] */
 import 'package:frontend_mobile/services/auth_token_service.dart';
 import 'package:frontend_mobile/services/auth_update_service.dart';
+
 /* [ Screen ] */
 import 'package:frontend_mobile/screens/auth/login_screen.dart';
 
@@ -19,7 +27,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
     final _nameController = TextEditingController();
-    final _surnameController = TextEditingController();
+    final _companyController = TextEditingController();
     final _emailController = TextEditingController();
     final _phoneController = TextEditingController();
     final _addressController = TextEditingController();
@@ -38,24 +46,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     @override
     void dispose() { 
         _nameController.dispose(); 
-        _surnameController.dispose(); 
+        _companyController.dispose(); 
         _emailController.dispose(); 
         _phoneController.dispose(); 
         _addressController.dispose(); 
         super.dispose(); 
     }
 
+
     void _navigateToLogin() { 
-      Navigator.of(context).pushAndRemoveUntil( MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false, );
+        Navigator.of(context).pushAndRemoveUntil( MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false, );
     }
-
     void _showError(String message) {
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(message), backgroundColor: Colors.redAccent, behavior: SnackBarBehavior.floating, ), );
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(message), backgroundColor: Colors.redAccent, behavior: SnackBarBehavior.floating, ), );
+    }
+    void _showSuccess(String message) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(message), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating, ), );
     }
 
-    void _showSuccess(String message) {
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(message), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating, ), );
-    }
 
     Future<void> _loadUserProfile() async {
         setState(() { _isLoading = true; _errorMessage = null; });
@@ -79,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             setState(() { 
                 _userData = response;
                 _nameController.text = userData['name'] ?? ''; 
-                _surnameController.text = userData['surname'] ?? ''; 
+                _companyController.text = userData['company_title'] ?? '';
                 _emailController.text = userData['email'] ?? '';
                 _phoneController.text = userData['phone'] ?? '';
                 _addressController.text = userData['address'] ?? '';
@@ -107,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         try {
             await AuthUpdateService.updateUserProfile(
                 name: _nameController.text.isNotEmpty ? _nameController.text : null,
-                surname: _surnameController.text.isNotEmpty ? _surnameController.text : null, 
+                companyTitle: _companyController.text.isNotEmpty ? _companyController.text : null,
                 phone: _phoneController.text.isNotEmpty ? _phoneController.text : null, 
                 address: _addressController.text.isNotEmpty ? _addressController.text : null,
             );
@@ -201,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             const SizedBox(height: 20),
                                             
                                             Text(
-                                                '${_nameController.text} ${_surnameController.text}'.trim(),
+                                                '${_nameController.text} ${_companyController.text}'.trim(),
                                                 style: TextStyle(
                                                     color: AppStyles.textPrimary,
                                                     fontSize: 24,
@@ -227,10 +235,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ),
                                             const SizedBox(height: 20),
 
-                                            // Фамилия
+                                            // Company
                                             CustomTextField(
-                                                label: 'Фамилия',
-                                                controller: _surnameController,
+                                                label: 'Company',
+                                                controller: _companyController,
                                                 prefixIcon: Icons.person_outline,
                                             ),
                                             const SizedBox(height: 20),
@@ -301,13 +309,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 // Определяем откуда брать данные
                                                 _buildInfoRow('ID', _userData!.containsKey('user') ? _userData!['user']['id']?.toString() ?? '—' : _userData!['id']?.toString() ?? '—'),
                                                 _buildInfoRow('Email', _userData!.containsKey('user') ? _userData!['user']['email'] ?? '—' : _userData!['email'] ?? '—'),
+                                                _buildInfoRow('Компания', _userData!.containsKey('user') ? _userData!['user']['company_title'] ?? '—' : _userData!['company_title'] ?? '—'),
+                                                _buildInfoRow('Адресс', _userData!.containsKey('user') ? _userData!['user']['address'] ?? '—' : _userData!['address'] ?? '—'),
                                                 _buildInfoRow('Телефон', _userData!.containsKey('user') ? _userData!['user']['phone'] ?? '—' : _userData!['phone'] ?? '—'),
                                                 _buildInfoRow('Дата регистрации', _formatDate(_userData!.containsKey('user')  ? _userData!['user']['created_at'] : _userData!['created_at'] )),
                                                 _buildInfoRow('Последнее обновление', _formatDate( _userData!.containsKey('user') ? _userData!['user']['updated_at'] : _userData!['updated_at'] )),
                                             ],
-                                          ],
+                                        ],
                                     ),
-                              
                         ),
                     ),
                 ),
@@ -344,10 +353,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     String _getInitials() {
         String name = _nameController.text.trim();
-        String surname = _surnameController.text.trim();
+        String companyTitle = _companyController.text.trim();
         
-        if (name.isNotEmpty && surname.isNotEmpty) {
-            return '${name[0]}${surname[0]}'.toUpperCase();
+        if (name.isNotEmpty && companyTitle.isNotEmpty) {
+            return '${name[0]}${companyTitle[0]}'.toUpperCase();
         } else if (name.isNotEmpty) {
             return name[0].toUpperCase();
         } else {

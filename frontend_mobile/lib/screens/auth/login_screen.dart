@@ -1,11 +1,26 @@
-import 'dart:convert';                                                // jsonDecode
+// ================= IMPORTS =================
+/* [ Dart ] */
+import 'dart:convert';
+
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
-import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_login_service.dart';    // [ Services ]
-import 'package:frontend_mobile/services/auth_token_service.dart';    // 
-import 'package:frontend_mobile/screens/home_screen.dart';            // [ Screens ]
+
+/* [ Widgets ] */
+import 'package:frontend_mobile/widgets/common_widgets.dart';
+
+/* [ Styles ] */
+import 'package:frontend_mobile/styles/app_styles.dart';
+
+/* [ Services ] */
+import 'package:frontend_mobile/services/auth_login_service.dart';
+import 'package:frontend_mobile/services/auth_token_service.dart';
+
+/* [ Screens ] */
+import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/auth/register_screen.dart';
+
+
+// ================= WIDGET =================
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,19 +29,25 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+
+// ================= STATE =================
+
 class _LoginScreenState extends State<LoginScreen> {
-    final _emailController = TextEditingController();
-    final _passwordController = TextEditingController();
-    bool _loading = false;
+  // Controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  // Loading state
+  bool _loading = false;
+  bool _passwordVisible = false;
 
-
-   @override
+  // ================= LIFECYCLE =================
+  @override
     void initState() {
         super.initState();
         _checkExistingToken();
     }
 
-    // Добавьте этот метод
+  // ================= AUTH LOGIC =================
     Future<void> _checkExistingToken() async {
         final hasToken = await AuthTokenService.hasToken();
         if (hasToken) {
@@ -67,6 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
         await AuthLoginService.login(_emailController.text, _passwordController.text);
         
+        await Future.delayed(const Duration(milliseconds: 500));
+        
         // Успешный вход
         if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar( 
@@ -84,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         
     } catch (e) {
+      
         debugPrint('Ошибка входа: $e');
         
         // Показываем пользователю понятное сообщение
@@ -105,13 +129,21 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 }
 
+
+  // ================= UI HELPERS =================
+
+  /// Показ ошибки
   void _showError(String text) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), backgroundColor: Colors.redAccent, ), );
   }
 
+  /// Показ успеха
   void _showSuccess(String text) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), ), );
   }
+
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Заголовок
+
+                  // -------- TITLE --------
+
                   Text(
                     'Добро пожаловать',
                     style: TextStyle(
@@ -136,42 +170,57 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontFamily: AppStyles.fontFamily,
                     ),
                     textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
+                  ), const SizedBox(height: 12),
+
                   Text(
                     'Войдите в свой аккаунт',
                     style: TextStyle(
                       color: AppStyles.textSecondary,
                       fontSize: 16,
                     ),
-                  ),
-                  const SizedBox(height: 40),
+                  ), const SizedBox(height: 40),
 
-                  // Email
+                  // -------- EMAIL --------
+
                   CustomTextField(
                     label: 'Email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
                   ),
+
                   const SizedBox(height: 20),
 
-                  // Пароль
+                  // -------- PASSWORD --------
+
                   CustomTextField(
                     label: 'Пароль',
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible, // управление видимостью
                     prefixIcon: Icons.lock_outline,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible = !_passwordVisible; });
+                      },
+                    ),
                   ),
+
+
                   const SizedBox(height: 32),
 
-                  // Кнопка входа с градиентом
+                  // -------- LOGIN BUTTON --------
+
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _login,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -196,7 +245,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Кнопка регистрации
+                  // -------- REGISTER BUTTON --------
+
                   TextButton(
                     onPressed: () {
                       Navigator.push(
