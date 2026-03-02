@@ -56,93 +56,79 @@ class _LoginScreenState extends State<LoginScreen> {
         }
     }
 
-  void _login() async {
-    FocusScope.of(context).unfocus();
+
+    void _login() async {
     setState(() => _loading = true);
+    FocusScope.of(context).unfocus();
 
-    await Future.delayed(const Duration(milliseconds: 500)); 
-    // имитация загрузки (чтобы красиво крутился индикатор)
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const MainScreen()),
-    );
-
-    setState(() => _loading = false);
-  }
-
-//     void _login() async {
-//     setState(() => _loading = true);
-//     FocusScope.of(context).unfocus();
-
-//     // Валидация на клиенте
-//     if (_emailController.text.isEmpty) { 
-//         _showError('Введите email'); 
-//         setState(() => _loading = false); 
-//         return; 
-//     }
+    // Валидация на клиенте
+    if (_emailController.text.isEmpty) { 
+        _showError('Введите email'); 
+        setState(() => _loading = false); 
+        return; 
+    }
     
-//     if (!_emailController.text.contains('@')) {
-//         _showError('Введите корректный email');
-//         setState(() => _loading = false);
-//         return;
-//     }
+    if (!_emailController.text.contains('@')) {
+        _showError('Введите корректный email');
+        setState(() => _loading = false);
+        return;
+    }
     
-//     if (_passwordController.text.isEmpty) { 
-//         _showError('Введите пароль'); 
-//         setState(() => _loading = false); 
-//         return; 
-//     }
+    if (_passwordController.text.isEmpty) { 
+        _showError('Введите пароль'); 
+        setState(() => _loading = false); 
+        return; 
+    }
     
-//     if (_passwordController.text.length < 6) {
-//         _showError('Пароль должен содержать минимум 6 символов');
-//         setState(() => _loading = false);
-//         return;
-//     }
+    if (_passwordController.text.length < 6) {
+        _showError('Пароль должен содержать минимум 6 символов');
+        setState(() => _loading = false);
+        return;
+    }
 
-//     try {
-//         await AuthLoginService.login(_emailController.text, _passwordController.text);
+    try {
+        await AuthLoginService.login(_emailController.text, _passwordController.text);
         
-//         await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
         
-//         // Успешный вход
-//         if (mounted) {
-//             ScaffoldMessenger.of(context).showSnackBar( 
-//                 SnackBar(
-//                     content: const Text('Вход успешен!'),
-//                     backgroundColor: Colors.green,
-//                 ), 
-//             );
+        // Успешный вход
+        if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar( 
+                SnackBar(
+                    content: const Text('Вход успешен!'),
+                    backgroundColor: Colors.green,
+                ), 
+            );
             
-//             // Переход на главный экран
-//             Navigator.pushReplacement( 
-//                 context, 
-//                 MaterialPageRoute(builder: (context) => const MainScreen()), 
-//             );
-//         }
+            // Переход на главный экран
+            Navigator.pushReplacement( 
+                context, 
+                MaterialPageRoute(builder: (context) => const MainScreen()), 
+            );
+        }
         
-//     } catch (e) {
+    } catch (e) {
       
-//         debugPrint('Ошибка входа: $e');
+        debugPrint('Ошибка входа: $e');
         
-//         // Показываем пользователю понятное сообщение
-//         String errorMessage = e.toString().replaceAll('Exception: ', '');
+        // Показываем пользователю понятное сообщение
+        String errorMessage = e.toString().replaceAll('Exception: ', '');
         
-//         // Специфические сообщения для разных ошибок
-//         if (errorMessage.contains('email') && errorMessage.contains('password')) {
-//             errorMessage = 'Неверный email или пароль';
-//         } else if (errorMessage.contains('connection')) {
-//             errorMessage = 'Проверьте подключение к интернету';
-//         }
+        // Специфические сообщения для разных ошибок
+        if (errorMessage.contains('email') && errorMessage.contains('password')) {
+            errorMessage = 'Неверный email или пароль';
+        } else if (errorMessage.contains('connection')) {
+            errorMessage = 'Проверьте подключение к интернету';
+        }
         
-//         _showError(errorMessage);
+        _showError(errorMessage);
         
-//     } finally { 
-//         if (mounted) {
-//             setState(() => _loading = false); 
-//         }
-//     }
-// }
+    } finally { 
+        if (mounted) {
+            setState(() => _loading = false); 
+        }
+    }
+}
 
 
   // ================= UI HELPERS =================
