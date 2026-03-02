@@ -1,0 +1,13 @@
+| Удаляет временные файлы, старые сборки и кеш. | Скачивает все зависимости проекта | Для iOS – обновляем поды | Собирает проект
+
+flutter clean
+flutter pub get
+flutter pub run flutter_launcher_icons
+cd ios
+pod install
+cd ..
+open ios/Runner.xcworkspace 
+
+
+ekole@issejub.jm
+KiribatiZucocerit185

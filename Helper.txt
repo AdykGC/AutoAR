@@ -1,0 +1,58 @@
+|||||||||||||||||||| Download Spatie ||||||||||||||||||||||
+composer require spatie/laravel-permission:6.22.0
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan migrate
+
+php artisan make:seeder RolePermissionSeeder
+php artisan db:seed --class=RolePermissionSeeder
+
+
+
+
+
+|||||||||||||||||||| Download Backpack ||||||||||||||||||||||
+composer require backpack/crud
+
+
+
+
+
+|||||||||||||||||||| Download Sanctum ||||||||||||||||||||||
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+php artisan make:model ClientTask
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# Сбросим и запустим все заново
+php artisan migrate:fresh --seed
+php artisan db:seed --class=RolePermissionSeeder
+
+
+
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+flutter create frontend_mobile
+cd frontend_mobile
+flutter run
+
+flutter devices      # список устройств
+flutter emulators    # эмуляторы
+flutter run -d macos # запуск на MacOS
+open macos/Runner.xcworkspace
+
+flutter run -d ios   # запуск на iOS
+flutter clean        # если что-то сломалось
+
+flutter pub get
+
+flutter pub add flutter_dotenv
+API_URL=https://your-api.com

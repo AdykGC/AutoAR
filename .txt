@@ -1,0 +1,12 @@
+11. Удаление временных файлов:
+   sudo rm -rf /private/var/folders/*
+ 2. Удаление кэша системы и приложений:
+   rm -rf ~/Library/Caches/* /System/Library/Caches/*
+   sudo rm -rf /Library/Caches/*
+ 3. Очистка кэша Homebrew:
+   brew cleanup -s
+ 4. Удаление старых iOS резервных копий:
+   rm -rf ~/Library/Application\ Support/MobileSync/Backup/*
+ 5. Удаление старых образов дисков Xcode и архивов:
+   rm -rf ~/Library/Developer/Xcode/DerivedData/*
+   rm -rf ~/Library/Developer/Xcode/Archives/*
