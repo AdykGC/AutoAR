@@ -39,7 +39,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // -------- UI STATE --------
   bool _loading = false;
-  bool _passwordVisible = false;
+  bool _passwordVisible1 = false;
+  bool _passwordVisible2 = false;
 
   // -------- ERROR STATES --------
   String? _emailError; String? _passwordError; String? _confirmError;
@@ -164,15 +165,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   CustomTextField(
                     label: 'Пароль',
                     controller: _passwordController,
-                    obscureText: !_passwordVisible,
+                    obscureText: !_passwordVisible1,
                     prefixIcon: Icons.lock_outline,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        _passwordVisible1 ? Icons.visibility : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
-                        setState(() { _passwordVisible = !_passwordVisible; });
+                        setState(() { _passwordVisible1 = !_passwordVisible1; });
                       },
                     ),
                     errorText: _passwordError,
@@ -182,15 +183,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   CustomTextField(
                     label: 'Подтвердите пароль',
                     controller: _confirmController,
-                    obscureText: !_passwordVisible,
+                    obscureText: !_passwordVisible2,
                     prefixIcon: Icons.lock_outline,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        _passwordVisible2 ? Icons.visibility : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
-                        setState(() { _passwordVisible = !_passwordVisible; });
+                        setState(() { _passwordVisible2 = !_passwordVisible2; });
                       },
                     ),
                     errorText: _confirmError,
@@ -221,12 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // -------- LOGIN NAVIGATION --------
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const LoginScreen(),
-                        ),
-                      );
+                      Navigator.pop(context);
                     },
                     child: Text(
                       'Уже есть аккаунт? Войти',
