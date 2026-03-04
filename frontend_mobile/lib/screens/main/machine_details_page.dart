@@ -56,6 +56,26 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                   _buildDetailRow("Тип", machine.type, "type"),
                   const SizedBox(height: 16),
 
+                  const SizedBox(height: 16),
+
+                  _buildDetailRow(
+                    "Тип соединения",
+                    machine.connectionType?.isNotEmpty == true
+                        ? machine.connectionType!
+                        : "",
+                    "connectionType",
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildDetailRow(
+                    "Регулировка цены (%)",
+                    machine.priceAdjustment != null
+                        ? "${machine.priceAdjustment} %"
+                        : "",
+                    "priceAdjustment",
+                  ),
+
                   // Локация (если указана)
                   _buildDetailRow(
                     "Локация",
@@ -255,64 +275,64 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
     }
   }
   // =======================================================
-// Карта с местоположением аппарата (для flutter_map 8+)
-// =======================================================
-Widget _buildMapWidget() {
-  if (machine.latitude == null || machine.longitude == null) {
-    return const Text(
-      "Координаты не указаны",
-      style: TextStyle(color: Colors.white54),
+  // Карта с местоположением аппарата (для flutter_map 8+)
+  // =======================================================
+  Widget _buildMapWidget() {
+    if (machine.latitude == null || machine.longitude == null) {
+     return const Text(
+        "Координаты не указаны",
+       style: TextStyle(color: Colors.white54),
+     );
+    }
+
+   final lat = machine.latitude!;
+    final lng = machine.longitude!;
+
+    return Container(
+     margin: const EdgeInsets.only(top: 12),
+     height: 200,
+     decoration: BoxDecoration(
+       borderRadius: BorderRadius.circular(16),
+       border: Border.all(color: Colors.white54),
+     ),
+     child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: FlutterMap(
+          options: MapOptions(
+            // начальный центр и уровень зума
+            initialCenter: LatLng(lat, lng),
+            initialZoom: 15.0,
+          ),
+          children: [
+           // Слой с OSM‑тайлами
+           TileLayer(
+              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              subdomains: const ['a', 'b', 'c'],
+              userAgentPackageName: 'com.example.app',
+           ),
+
+            // Слой с маркером
+           MarkerLayer(
+             markers: [
+               Marker(
+                  point: LatLng(lat, lng),
+                 width: 40,
+                 height: 40,
+                 alignment: Alignment.center,
+                 // Вместо builder используем child
+                 child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                   size: 32,
+                 ),
+               ),
+              ],
+           ),
+         ],
+       ),
+     ),
     );
   }
-
-  final lat = machine.latitude!;
-  final lng = machine.longitude!;
-
-  return Container(
-    margin: const EdgeInsets.only(top: 12),
-    height: 200,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.white54),
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: FlutterMap(
-        options: MapOptions(
-          // начальный центр и уровень зума
-          initialCenter: LatLng(lat, lng),
-          initialZoom: 15.0,
-        ),
-        children: [
-          // Слой с OSM‑тайлами
-          TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            subdomains: const ['a', 'b', 'c'],
-            userAgentPackageName: 'com.example.app',
-          ),
-
-          // Слой с маркером
-          MarkerLayer(
-            markers: [
-              Marker(
-                point: LatLng(lat, lng),
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                // Вместо builder используем child
-                child: const Icon(
-                  Icons.location_on,
-                  color: Colors.red,
-                  size: 32,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 
 }

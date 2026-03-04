@@ -4,10 +4,12 @@ class Machine {
   final String type;
   final String? location;
   final String? serialNumber;
+  
 
   // Новые поля
   final String? connectionType;
   final double? installPrice;
+  final double? priceAdjustment;
   final double? latitude;
   final double? longitude;
   final bool isActive;
@@ -20,6 +22,7 @@ class Machine {
     this.serialNumber,
     this.connectionType,
     this.installPrice,
+    this.priceAdjustment,
     this.latitude,
     this.longitude,
     this.isActive = true, // по умолчанию активный
@@ -35,6 +38,9 @@ class Machine {
       connectionType: json['connection_type'],
       installPrice: json['install_price'] != null
           ? double.tryParse(json['install_price'].toString())
+          : null,
+      priceAdjustment: json['price_adjustment'] != null
+          ? double.tryParse(json['price_adjustment'].toString())
           : null,
       latitude: json['latitude'] != null
           ? double.tryParse(json['latitude'].toString())
