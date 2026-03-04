@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
       /// ===== APPBAR =====
       appBar: AppBar(
-        backgroundColor: AppStyles.secondary,
+        backgroundColor: AppStyles.dashboardCard,
         title: const Text('Settings'),
       ),
 
@@ -132,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppStyles.primary,
+            color: AppStyles.fab,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -147,7 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
                     Text('Administrator',
-                        style: TextStyle(color: Colors.white70)),
+                        style: TextStyle(color: Colors.white)),
                     Text('Enterprise Plan',
                         style: TextStyle(color: Colors.white, fontSize: 12)),
                   ],

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppStyles {
   // ===== Цвета =====
   static const Color background = Color.fromARGB(255, 0, 0, 0);
-  static const Color dashboardCard = Color(0xFF1F1C2F);
+  static const Color dashboardCard = Color.fromARGB(255, 40, 37, 63);
   static const Color accentGreen = Colors.greenAccent;
   static const Color accentRed = Colors.redAccent;
   static const Color fab = Color(0xFF7500B9);
@@ -12,7 +12,11 @@ class AppStyles {
   static const Color accent = Color.fromARGB(255, 136, 39, 255);       // светлый фиолетовый
   static const Color textPrimary = Color.fromARGB(255, 255, 255, 255);  // светлый серый
   static const Color textSecondary = Color(0xFFB0B0B0);// серый для вспомогательного текста
+  static const Color selected = Color.fromARGB(255, 162, 0, 255);
+  static const Color unselected = Color.fromARGB(255, 255, 253, 253);
   static const String fontFamily = 'Roboto';
+
+  
 
   // ===== Текстовые стили =====
   static const TextStyle overviewLabel = TextStyle(

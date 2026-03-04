@@ -1,21 +1,28 @@
-// ================= IMPORTS =================
-/* [ Dart ] */
+// =======================================================
+// IMPORTS
+// =======================================================
+
 import 'package:flutter/material.dart';
-
-/* [ Flutter ] */
-/* [ Widgets ] */
-/* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
-
 import 'package:frontend_mobile/models/machine.dart';
-
-/* [ Service ] */
 import 'package:frontend_mobile/services/machine_create_service.dart';
 import 'package:frontend_mobile/services/machine_list_service.dart';
 import 'package:frontend_mobile/services/machine_delete_service.dart';
 import 'package:frontend_mobile/services/machine_update_service.dart';
+import 'package:frontend_mobile/screens/main/machine_details_page.dart';
 
-// ================= MACHINE LIST PAGE =================
+
+// =======================================================
+// ENUM ДЛЯ ФИЛЬТРА
+// =======================================================
+
+enum MachineFilter { all, active, inactive }
+
+
+// =======================================================
+// MACHINE LIST PAGE
+// =======================================================
+
 class MachineListPage extends StatefulWidget {
   const MachineListPage({super.key});
 
@@ -23,12 +30,34 @@ class MachineListPage extends StatefulWidget {
   State<MachineListPage> createState() => _MachineListPageState();
 }
 
-// ================= SHOW / LIST MACHINE PAGE =================
 class _MachineListPageState extends State<MachineListPage> {
-  final List<Machine> _machines = [];
 
-  bool _isLoading = true;
-  String? _error;
+  // ------------------ STATE ------------------
+
+  final List<Machine> _machines = [];           // Все аппараты с сервера
+  final List<Machine> _filteredMachines = [];   // Отфильтрованные аппараты
+
+  bool _isLoading = true;                       // Индикатор загрузки
+  String? _error;                               // Текст ошибки
+
+  String _searchQuery = "";                     // Поисковый запрос
+  MachineFilter _currentFilter = MachineFilter.all; // Текущий фильтр
+
+
+  // =======================================================
+  // INIT
+  // =======================================================
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMachines();
+  }
+
+
+  // =======================================================
+  // ЗАГРУЗКА АППАРАТОВ С БЭКЕНДА
+  // =======================================================
 
   Future<void> _loadMachines() async {
     setState(() {
@@ -39,176 +68,346 @@ class _MachineListPageState extends State<MachineListPage> {
     try {
       final data = await MachineListService.fetchMachines();
 
-      setState(() {
-        _machines.clear();
-        _machines.addAll( data.map((item) => Machine.fromJson(item)), );
-      });
-    } catch (e) { setState(() { _error = e.toString(); });
-    } finally { setState(() { _isLoading = false; }); }
-  }
-  @override
-  void initState() {
-    super.initState();
-    _loadMachines();
-  }
-  // ================= DELETE =================
-void _delete(int index) {
-  final machine = _machines[index];
+      _machines
+        ..clear()
+        ..addAll(data.map((item) => Machine.fromJson(item)));
 
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: const Text("Удалить аппарат?"),
-      content: Text("Вы уверены, что хотите удалить ${machine.name}?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Отмена"),
-        ),
-        TextButton(
-          onPressed: () async {
-            Navigator.pop(context);
+      _applySearchAndFilter();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
-            try {
-              await MachineDeleteService.delete(machine.id);
-              await _loadMachines();
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
-            }
-          },
-          child: const Text(
-            "Удалить",
-            style: TextStyle(color: Colors.red),
+
+  // =======================================================
+  // ПОИСК + ФИЛЬТР
+  // =======================================================
+
+  void _applySearchAndFilter() {
+    List<Machine> result = List.from(_machines);
+
+    // ----- Фильтр по активности -----
+    switch (_currentFilter) {
+      case MachineFilter.active:
+        result = result.where((m) => m.isActive == true).toList();
+        break;
+
+      case MachineFilter.inactive:
+        result = result.where((m) => m.isActive == false).toList();
+        break;
+
+      case MachineFilter.all:
+        break;
+    }
+
+    // ----- Поиск по названию -----
+    if (_searchQuery.isNotEmpty) {
+      result = result
+          .where((m) =>
+              m.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      _filteredMachines
+        ..clear()
+        ..addAll(result);
+    });
+  }
+
+
+  // =======================================================
+  // УДАЛЕНИЕ АППАРАТА
+  // =======================================================
+
+  void _deleteMachine(int index) {
+    final machine = _filteredMachines[index];
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Удалить аппарат?"),
+        content: Text("Вы уверены, что хотите удалить ${machine.name}?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Отмена",
+            style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
-      ],
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await MachineDeleteService.delete(machine.id);
+                await _loadMachines();
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(e.toString())));
+                }
+              }
+            },
+            child: const Text(
+              "Удалить",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  // =======================================================
+  // ВСПОМОГАТЕЛЬНЫЕ ВИДЖЕТЫ
+  // =======================================================
+
+  /// Формирование строки описания аппарата
+  String _buildSubtitle(Machine machine) {
+    final parts = [
+      "Тип: ${machine.type}",
+      if (machine.location?.isNotEmpty ?? false)
+        "Локация: ${machine.location}",
+      if (machine.serialNumber?.isNotEmpty ?? false)
+        "С/Н: ${machine.serialNumber}",
+    ];
+
+    return parts.join(" • ");
+  }
+
+  /// Панель фильтров
+  Widget _buildFilterBar() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      _buildFilterButton(
+        icon: Icons.list,
+        filter: MachineFilter.all,
+        label: "All",
+      ),
+      _buildFilterButton(
+        icon: Icons.check_circle,
+        filter: MachineFilter.active,
+        label: "Active",
+      ),
+      _buildFilterButton(
+        icon: Icons.cancel,
+        filter: MachineFilter.inactive,
+        label: "Inactive",
+      ),
+    ],
+  );
+}
+
+/// Универсальная кнопка фильтра (иконка + текст)
+Widget _buildFilterButton({
+  required IconData icon,
+  required MachineFilter filter,
+  required String label,
+}) {
+  final isSelected = _currentFilter == filter;
+
+  return InkWell(
+    borderRadius: BorderRadius.circular(12),
+    onTap: () {
+      setState(() => _currentFilter = filter);
+      _applySearchAndFilter();
+    },
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? AppStyles.selected : AppStyles.unselected,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? AppStyles.selected : AppStyles.unselected,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
 
-  // ================= SUBTITLE BUILDER =================
-  String _buildSubtitle(Machine machine) {
-    final parts = <String>[];
-    parts.add("Тип: ${machine.type}");
-    if (machine.location != null && machine.location!.isNotEmpty) {
-      parts.add("Локация: ${machine.location}");
-    }
-    if (machine.serialNumber != null && machine.serialNumber!.isNotEmpty) {
-      parts.add("С/Н: ${machine.serialNumber}");
-    }
-    return parts.join(" • ");
-  }
 
-  // ================= UI =================
+
+  // =======================================================
+  // UI
+  // =======================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.background,
-      appBar: AppBar(
-        title: const Text("Список аппаратов"),
-        backgroundColor: AppStyles.primary,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Добавление нового аппарата
-          final newMachine = await Navigator.push<Machine>(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const EditMachinePage(),
-            ),
-          );
+      appBar: _buildAppBar(),
+      floatingActionButton: _buildFab(),
+      body: _buildBody(),
+    );
+  }
 
-          if (newMachine != null) { await _loadMachines(); }
+
+  // ------------------ APP BAR ------------------
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: AppStyles.background,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: Column(
+          children: [
+            _buildSearchField(),
+            _buildFilterBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: TextField(
+        onChanged: (value) {
+          _searchQuery = value;
+          _applySearchAndFilter();
         },
-        backgroundColor: AppStyles.fab,
-        child: const Icon(Icons.add),
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: "Поиск по названию",
+          hintStyle: const TextStyle(color: Colors.white70),
+          prefixIcon:
+              const Icon(Icons.search, color: Colors.white70),
+          filled: true,
+          fillColor: AppStyles.secondary,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+        ),
       ),
-body: _isLoading
-    ? const Center(
-        child: CircularProgressIndicator(),
-      )
-    : _error != null
-        ? Center(
-            child: Text(
-              _error!,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
-          )
-        : _machines.isEmpty
-            ? const Center(
-                child: Text(
-                  "Список пуст",
-                  style: TextStyle(color: Colors.white70),
-                ),
-              )
-            : RefreshIndicator(
-                onRefresh: _loadMachines,
-                child: ListView.builder(
-                  itemCount: _machines.length,
-                  itemBuilder: (_, index) {
-                    final machine = _machines[index];
-                    return Card(
-                      key: ValueKey(machine.id),
-                      color: AppStyles.dashboardCard,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          machine.name,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          _buildSubtitle(machine),
-                          style:
-                              const TextStyle(color: Colors.white70),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit,
-                                  color: Colors.white70),
-                              onPressed: () async {
-                                final updatedMachine =
-                                    await Navigator.push<Machine>(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => EditMachinePage(
-                                      machine: machine,
-                                    ),
-                                  ),
-                                );
+    );
+  }
 
-                                if (updatedMachine != null) {
-                                  await _loadMachines();
-                                }
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Colors.redAccent),
-                              onPressed: () => _delete(index),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+
+  // ------------------ BODY ------------------
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Text(
+          _error!,
+          style: const TextStyle(color: Colors.redAccent),
+        ),
+      );
+    }
+
+    if (_filteredMachines.isEmpty) {
+      return Center(
+        child: Text(
+          "Список пуст",
+          style: TextStyle(color: AppStyles.textPrimary),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadMachines,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: _filteredMachines.length,
+        itemBuilder: (_, index) =>
+            _buildMachineCard(_filteredMachines[index], index),
+      ),
+    );
+  }
+
+
+  // ------------------ CARD ------------------
+
+  Widget _buildMachineCard(Machine machine, int index) {
+  return Card(
+    key: ValueKey(machine.id),
+    color: AppStyles.dashboardCard,
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: ListTile(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MachineDetailsPage(machine: machine),
+          ),
+        );
+      },
+      title: Text(
+        machine.name,
+        style: const TextStyle(color: Colors.white),
+      ),
+      subtitle: Text(
+        _buildSubtitle(machine),
+        style: const TextStyle(color: Colors.white70),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.redAccent),
+            onPressed: () => _deleteMachine(index),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+
+  // ------------------ FAB ------------------
+
+  Widget _buildFab() {
+    return FloatingActionButton(
+      backgroundColor: AppStyles.fab,
+      child: const Icon(Icons.add),
+      onPressed: () async {
+        final newMachine = await Navigator.push<Machine>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const EditMachinePage(),
+          ),
+        );
+
+        if (newMachine != null) {
+          await _loadMachines();
+        }
+      },
     );
   }
 }
 
 
-// ================= EDIT / ADD MACHINE PAGE =================
+// =======================================================
+// EDIT / ADD PAGE
+// =======================================================
+
 class EditMachinePage extends StatefulWidget {
-  final Machine? machine; // если null → добавление нового
+  final Machine? machine;
 
   const EditMachinePage({super.key, this.machine});
 
@@ -217,18 +416,24 @@ class EditMachinePage extends StatefulWidget {
 }
 
 class _EditMachinePageState extends State<EditMachinePage> {
-  late TextEditingController nameController;
-  late TextEditingController typeController;
-  late TextEditingController locationController;
-  late TextEditingController serialController;
+
+  late final TextEditingController nameController;
+  late final TextEditingController typeController;
+  late final TextEditingController locationController;
+  late final TextEditingController serialController;
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.machine?.name ?? "");
-    typeController = TextEditingController(text: widget.machine?.type ?? "");
-    locationController = TextEditingController(text: widget.machine?.location ?? "");
-    serialController = TextEditingController(text: widget.machine?.serialNumber ?? "");
+
+    nameController =
+        TextEditingController(text: widget.machine?.name ?? "");
+    typeController =
+        TextEditingController(text: widget.machine?.type ?? "");
+    locationController =
+        TextEditingController(text: widget.machine?.location ?? "");
+    serialController =
+        TextEditingController(text: widget.machine?.serialNumber ?? "");
   }
 
   @override
@@ -240,57 +445,61 @@ class _EditMachinePageState extends State<EditMachinePage> {
     super.dispose();
   }
 
-Future<void> _save() async {
-  if (nameController.text.isEmpty || typeController.text.isEmpty) return;
+  Future<void> _save() async {
+    if (nameController.text.isEmpty ||
+        typeController.text.isEmpty) return;
 
-  try {
-    final isEditing = widget.machine != null;
+    try {
+      final isEditing = widget.machine != null;
 
-    final response = isEditing
-        ? await MachineUpdateService.update(
-            id: widget.machine!.id,
-            name: nameController.text,
-            type: typeController.text,
-            location: locationController.text,
-            serialNumber: serialController.text,
-          )
-        : await MachineCreateService.create(
-            name: nameController.text,
-            type: typeController.text,
-            location: locationController.text,
-            serialNumber: serialController.text,
-          );
+      final response = isEditing
+          ? await MachineUpdateService.update(
+              id: widget.machine!.id,
+              name: nameController.text,
+              type: typeController.text,
+              location: locationController.text,
+              serialNumber: serialController.text,
+            )
+          : await MachineCreateService.create(
+              name: nameController.text,
+              type: typeController.text,
+              location: locationController.text,
+              serialNumber: serialController.text,
+            );
 
-    final machineData = response['data']['machine'];
-    final machine = Machine.fromJson(machineData);
+      final machine =
+          Machine.fromJson(response['data']['machine']);
 
-    if (mounted) {
-      Navigator.pop(context, machine);
+      if (mounted) Navigator.pop(context, machine);
+
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString())),
-    );
   }
-}
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _buildField(
+      String label, TextEditingController controller) {
     return TextField(
       controller: controller,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: AppStyles.secondary,
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white24),
+          borderSide:
+              const BorderSide(color: Colors.white24),
           borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppStyles.accent, width: 2),
+          borderSide:
+              BorderSide(color: AppStyles.accent, width: 2),
           borderRadius: BorderRadius.circular(8),
         ),
-        filled: true,
-        fillColor: AppStyles.secondary,
       ),
     );
   }
@@ -300,26 +509,29 @@ Future<void> _save() async {
     final isEditing = widget.machine != null;
 
     return Scaffold(
+      backgroundColor: AppStyles.background,
       appBar: AppBar(
-        title: Text(isEditing ? "Редактировать аппарат" : "Добавить аппарат"),
+        title: Text(
+            isEditing ? "Редактировать аппарат" : "Добавить аппарат"),
         backgroundColor: AppStyles.primary,
       ),
-      backgroundColor: AppStyles.background,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
-            _buildTextField("Название", nameController),
+            _buildField("Название", nameController),
             const SizedBox(height: 10),
-            _buildTextField("Тип аппарата", typeController),
+            _buildField("Тип аппарата", typeController),
             const SizedBox(height: 10),
-            _buildTextField("Локация (опционально)", locationController),
+            _buildField("Локация (опционально)", locationController),
             const SizedBox(height: 10),
-            _buildTextField("Серийный номер (опционально)", serialController),
+            _buildField("Серийный номер (опционально)", serialController),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _save,
-              style: ElevatedButton.styleFrom(backgroundColor: AppStyles.accent),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppStyles.accent,
+              ),
               child: const Text("Сохранить"),
             ),
           ],
