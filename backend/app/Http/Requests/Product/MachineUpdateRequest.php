@@ -14,6 +14,13 @@ class MachineUpdateRequest extends FormRequest {
             'type' => 'sometimes|string|max:50',
             'location' => 'sometimes|string|max:100',
             'serial_number' => 'sometimes|string|max:100',
+
+            'connection_type' => 'sometimes|nullable|string|max:50',
+            'install_price' => 'sometimes|nullable|numeric|min:0',
+            'price_adjustment' => 'sometimes|nullable|numeric',
+            'latitude' => 'sometimes|nullable|numeric|between:-90,90',
+            'longitude' => 'sometimes|nullable|numeric|between:-180,180',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }

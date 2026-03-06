@@ -56,7 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
         }
     }
 
-
     void _login() async {
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();

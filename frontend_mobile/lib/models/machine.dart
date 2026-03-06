@@ -77,5 +77,4 @@ class Machine {
       isActive: isActive ?? this.isActive,
     );
   }
-
 }

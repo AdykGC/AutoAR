@@ -1,3 +1,5 @@
+// machine_details_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/models/machine.dart';
 import 'package:frontend_mobile/services/machine_update_service.dart';
@@ -28,16 +30,22 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyles.background,
-      appBar: AppBar(
-        title: const Text("Детали аппарата"),
-        backgroundColor: AppStyles.primary,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-          child: Card(
+    return WillPopScope(
+      onWillPop: () async {
+        // Возвращаем обновлённый объект при закрытии
+        Navigator.pop(context, machine);
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: AppStyles.background,
+        appBar: AppBar(
+          title: const Text("Детали аппарата"),
+          backgroundColor: AppStyles.primary,
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+            child: Card(
             color: AppStyles.dashboardCard,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -98,6 +106,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                   // Статус с переключателем
                   _buildStatusRow(),
                 ],
+                ),
               ),
             ),
           ),
@@ -232,6 +241,13 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
         type: fieldKey == "type" ? newValue : machine.type,
         location: fieldKey == "location" ? newValue : machine.location,
         serialNumber: fieldKey == "serialNumber" ? newValue : machine.serialNumber,
+
+        connectionType: fieldKey == "connectionType" ? newValue : machine.connectionType,
+        priceAdjustment: fieldKey == "priceAdjustment" ? double.tryParse(newValue) : machine.priceAdjustment,
+        installPrice: machine.installPrice,
+        latitude: machine.latitude,
+        longitude: machine.longitude,
+        isActive: machine.isActive,
       );
 
       // Обновляем локальную модель
@@ -260,6 +276,13 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
         type: machine.type,
         location: machine.location,
         serialNumber: machine.serialNumber,
+
+        connectionType: machine.connectionType,
+        installPrice: machine.installPrice,
+        priceAdjustment: machine.priceAdjustment,
+        latitude: machine.latitude,
+        longitude: machine.longitude,
+        isActive: value,
       );
 
       // Обновляем локальную модель
@@ -279,62 +302,59 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
   // =======================================================
   Widget _buildMapWidget() {
     if (machine.latitude == null || machine.longitude == null) {
-     return const Text(
+      return const Text(
         "Координаты не указаны",
-       style: TextStyle(color: Colors.white54),
-     );
+        style: TextStyle(color: Colors.white54),
+      );
     }
 
-   final lat = machine.latitude!;
+    final lat = machine.latitude!;
     final lng = machine.longitude!;
 
     return Container(
-     margin: const EdgeInsets.only(top: 12),
-     height: 200,
-     decoration: BoxDecoration(
-       borderRadius: BorderRadius.circular(16),
-       border: Border.all(color: Colors.white54),
-     ),
-     child: ClipRRect(
+      margin: const EdgeInsets.only(top: 12),
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white54),
+      ),
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: FlutterMap(
+          key: ValueKey("${machine.latitude}_${machine.longitude}"),
           options: MapOptions(
             // начальный центр и уровень зума
             initialCenter: LatLng(lat, lng),
             initialZoom: 15.0,
           ),
           children: [
-           // Слой с OSM‑тайлами
-           TileLayer(
+            // Слой с OSM‑тайлами
+            TileLayer(
               urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               subdomains: const ['a', 'b', 'c'],
               userAgentPackageName: 'com.example.app',
-           ),
+            ),
 
             // Слой с маркером
-           MarkerLayer(
-             markers: [
-               Marker(
+            MarkerLayer(
+              markers: [
+                Marker(
                   point: LatLng(lat, lng),
-                 width: 40,
-                 height: 40,
-                 alignment: Alignment.center,
-                 // Вместо builder используем child
-                 child: const Icon(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  // Вместо builder используем child
+                  child: const Icon(
                     Icons.location_on,
                     color: Colors.red,
-                   size: 32,
-                 ),
-               ),
+                    size: 32,
+                  ),
+                ),
               ],
-           ),
-         ],
-       ),
-     ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-
-
 }
-
-

@@ -14,6 +14,13 @@ class Machine extends Model {
         'location',
         'serial_number',
         'user_id',
+
+        'connection_type',
+        'install_price',
+        'price_adjustment',
+        'latitude',
+        'longitude',
+        'is_active'
     ];
 
     // Связь с пользователем

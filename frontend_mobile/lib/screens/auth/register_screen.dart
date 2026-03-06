@@ -126,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
 
-  // ================= UI =================
+// ================= UI =================
 
   @override
   Widget build(BuildContext context) {

@@ -10,6 +10,12 @@ class MachineUpdateService {
     required String type,
     String? location,
     String? serialNumber,
+    String? connectionType,
+    double? installPrice,
+    double? priceAdjustment,
+    double? latitude,
+    double? longitude,
+    bool? isActive,
   }) async {
     final token = await AuthTokenService.getToken();
     if (token == null) { throw Exception('Токен не найден'); }
@@ -19,8 +25,14 @@ class MachineUpdateService {
       'name': name,
       'type': type,
       if (location != null && location.isNotEmpty) 'location': location,
-      if (serialNumber != null && serialNumber.isNotEmpty)
-        'serial_number': serialNumber,
+      if (serialNumber != null && serialNumber.isNotEmpty) 'serial_number': serialNumber,
+
+      if (connectionType != null) 'connection_type': connectionType,
+      if (installPrice != null) 'install_price': installPrice,
+      if (priceAdjustment != null) 'price_adjustment': priceAdjustment,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (isActive != null) 'is_active': isActive,
     };
 
     final response = await http.patch(

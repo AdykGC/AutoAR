@@ -32,7 +32,7 @@ php artisan make:model ClientTask
 
 
 
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # Сбросим и запустим все заново
 php artisan migrate:fresh --seed
 php artisan db:seed --class=RolePermissionSeeder

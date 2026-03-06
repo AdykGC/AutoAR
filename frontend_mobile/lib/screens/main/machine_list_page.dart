@@ -1,3 +1,4 @@
+//machine_list_page.dart
 // =======================================================
 // IMPORTS
 // =======================================================
@@ -348,13 +349,22 @@ Widget _buildFilterButton({
       borderRadius: BorderRadius.circular(12),
     ),
     child: ListTile(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MachineDetailsPage(machine: machine),
-          ),
-        );
+      onTap: () async {
+        final updatedMachine = await Navigator.push<Machine>(
+  context,
+  MaterialPageRoute(
+    builder: (_) => MachineDetailsPage(machine: machine),
+  ),
+);
+
+if (updatedMachine != null) {
+  // находим старый объект в списке по id и заменяем новым
+  final index = _machines.indexWhere((m) => m.id == updatedMachine.id);
+  if (index != -1) {
+    _machines[index] = updatedMachine;
+    _applySearchAndFilter(); // обновляем фильтр/список
+  }
+}
       },
       title: Text(
         machine.name,
