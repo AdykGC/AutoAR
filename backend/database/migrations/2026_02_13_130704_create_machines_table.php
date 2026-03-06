@@ -13,6 +13,14 @@ return new class extends Migration {
             $table->string('location')->nullable();
             $table->string('serial_number')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            $table->string('connection_type')->nullable();
+            $table->decimal('install_price', 10, 2)->nullable();
+            $table->decimal('price_adjustment', 10, 2)->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }
