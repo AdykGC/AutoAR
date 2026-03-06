@@ -1,10 +1,26 @@
-import 'dart:convert';                                                // jsonDecode
+// ================= IMPORTS =================
+/* [ Dart ] */
+import 'dart:convert';
+
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
-import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
-import 'package:frontend_mobile/screens/home_screen.dart';            // [ Screens ]
+
+/* [ Widgets ] */
+import 'package:frontend_mobile/widgets/common_widgets.dart';
+
+/* [ Styles ] */
+import 'package:frontend_mobile/styles/app_styles.dart';
+
+/* [ Services ] */
+import 'package:frontend_mobile/services/auth_login_service.dart';
+import 'package:frontend_mobile/services/auth_token_service.dart';
+
+/* [ Screens ] */
+import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/auth/register_screen.dart';
+
+
+// ================= WIDGET =================
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,59 +29,121 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+
+// ================= STATE =================
+
 class _LoginScreenState extends State<LoginScreen> {
+  // Controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  // Loading state
   bool _loading = false;
+  bool _passwordVisible = false;
 
-  void _login() async {
+  // ================= LIFECYCLE =================
+  @override
+    void initState() {
+        super.initState();
+        _checkExistingToken();
+    }
+
+  // ================= AUTH LOGIC =================
+    Future<void> _checkExistingToken() async {
+        final hasToken = await AuthTokenService.hasToken();
+        if (hasToken) {
+            debugPrint('Найден существующий токен, переходим на главную');
+            if (mounted) { Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), ); }
+        }
+    }
+
+    void _login() async {
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();
 
-    if (_emailController.text.isEmpty) { _showError('Введите email'); setState(() => _loading = false); return; }
-    if (_passwordController.text.isEmpty) { _showError('Введите пароль'); setState(() => _loading = false); return; }
+    // Валидация на клиенте
+    if (_emailController.text.isEmpty) { 
+        _showError('Введите email'); 
+        setState(() => _loading = false); 
+        return; 
+    }
+    
+    if (!_emailController.text.contains('@')) {
+        _showError('Введите корректный email');
+        setState(() => _loading = false);
+        return;
+    }
+    
+    if (_passwordController.text.isEmpty) { 
+        _showError('Введите пароль'); 
+        setState(() => _loading = false); 
+        return; 
+    }
+    
+    if (_passwordController.text.length < 6) {
+        _showError('Пароль должен содержать минимум 6 символов');
+        setState(() => _loading = false);
+        return;
+    }
 
     try {
-      await AuthService.login(_emailController.text, _passwordController.text);
-      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Вход успешен!')), );
-      // =================== Изменение: Переход на MainScreen ===================
-      Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), );
-    } catch (e) {
-      debugPrint('Ошибка входа: $e');
-      // Ловим ошибки и выводим безопасно в Xcode 
-      // Если это JSON от Laravel — пытаемся распарсить
-      try {
-        final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
-        debugPrint('JSON ошибки Laravel: $jsonError');
-
-        // Если сервер возвращает ошибки
-        if (jsonError.containsKey('errors')) {
-          final errors = jsonError['errors'] as Map<String, dynamic>;
-          String errorMessage = '';
-          errors.forEach((key, value) {
-            final message = value is List ? value.first : value.toString();
-            errorMessage += '$message\n';
-          });
-          _showError(errorMessage.trim());
-        } else {
-          _showError('Ошибка входа: ${e.toString()}');
+        await AuthLoginService.login(_emailController.text, _passwordController.text);
+        
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        // Успешный вход
+        if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar( 
+                SnackBar(
+                    content: const Text('Вход успешен!'),
+                    backgroundColor: Colors.green,
+                ), 
+            );
+            
+            // Переход на главный экран
+            Navigator.pushReplacement( 
+                context, 
+                MaterialPageRoute(builder: (context) => const MainScreen()), 
+            );
         }
-      } catch (_) {
-        debugPrint('Не удалось распарсить JSON ошибки');
-        _showError('Ошибка входа: ${e.toString()}');
-      }
-    } finally {
-      setState(() => _loading = false);
+        
+    } catch (e) {
+      
+        debugPrint('Ошибка входа: $e');
+        
+        // Показываем пользователю понятное сообщение
+        String errorMessage = e.toString().replaceAll('Exception: ', '');
+        
+        // Специфические сообщения для разных ошибок
+        if (errorMessage.contains('email') && errorMessage.contains('password')) {
+            errorMessage = 'Неверный email или пароль';
+        } else if (errorMessage.contains('connection')) {
+            errorMessage = 'Проверьте подключение к интернету';
+        }
+        
+        _showError(errorMessage);
+        
+    } finally { 
+        if (mounted) {
+            setState(() => _loading = false); 
+        }
     }
-  }
+}
 
+
+  // ================= UI HELPERS =================
+
+  /// Показ ошибки
   void _showError(String text) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), backgroundColor: Colors.redAccent, ), );
   }
 
+  /// Показ успеха
   void _showSuccess(String text) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), ), );
   }
+
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Заголовок
+
+                  // -------- TITLE --------
+
                   Text(
                     'Добро пожаловать',
                     style: TextStyle(
@@ -90,42 +170,57 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontFamily: AppStyles.fontFamily,
                     ),
                     textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
+                  ), const SizedBox(height: 12),
+
                   Text(
                     'Войдите в свой аккаунт',
                     style: TextStyle(
                       color: AppStyles.textSecondary,
                       fontSize: 16,
                     ),
-                  ),
-                  const SizedBox(height: 40),
+                  ), const SizedBox(height: 40),
 
-                  // Email
+                  // -------- EMAIL --------
+
                   CustomTextField(
                     label: 'Email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
                   ),
+
                   const SizedBox(height: 20),
 
-                  // Пароль
+                  // -------- PASSWORD --------
+
                   CustomTextField(
                     label: 'Пароль',
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible, // управление видимостью
                     prefixIcon: Icons.lock_outline,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible = !_passwordVisible; });
+                      },
+                    ),
                   ),
+
+
                   const SizedBox(height: 32),
 
-                  // Кнопка входа с градиентом
+                  // -------- LOGIN BUTTON --------
+
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _login,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -150,7 +245,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Кнопка регистрации
+                  // -------- REGISTER BUTTON --------
+
                   TextButton(
                     onPressed: () {
                       Navigator.push(

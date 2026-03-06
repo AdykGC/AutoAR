@@ -1,9 +1,25 @@
-import 'dart:convert';                                                // jsonDecode
+// ================= IMPORTS =================
+/* [ Dart ] */
+import 'dart:convert';
+
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/widgets/common_widgets.dart';         // [ Widgets ]
-import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
-import 'package:frontend_mobile/services/auth_service.dart';          // [ Services ]
-import 'package:frontend_mobile/screens/auth/login_screen.dart';      // [ Screens ]
+
+/* [ Widgets ] */
+import 'package:frontend_mobile/widgets/common_widgets.dart';
+
+/* [ Styles ] */
+import 'package:frontend_mobile/styles/app_styles.dart';
+
+/* [ Service ] */
+import 'package:frontend_mobile/services/auth_register_service.dart';
+
+/* [ Screen ] */
+import 'package:frontend_mobile/screens/auth/login_screen.dart';
+import 'package:frontend_mobile/screens/main/main_screen.dart';
+
+
+// ================= WIDGET =================
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,41 +28,105 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+
+// ================= STATE =================
+
 class _RegisterScreenState extends State<RegisterScreen> {
+  // -------- CONTROLLERS --------
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  bool _loading = false;
 
+  // -------- UI STATE --------
+  bool _loading = false;
+  bool _passwordVisible1 = false;
+  bool _passwordVisible2 = false;
+
+  // -------- ERROR STATES --------
+  String? _emailError; String? _passwordError; String? _confirmError;
+
+
+  // ================= LIFECYCLE =================
+
+  @override
+  void initState() {
+    super.initState();
+    // Реалтайм валидация
+    _emailController.addListener(_validateEmailOnChange);
+    _passwordController.addListener(_validatePasswordOnChange);
+    _confirmController.addListener(_validateConfirmOnChange);
+  }
+
+  @override
+  void dispose() {
+    // Удаление listeners
+    _emailController.removeListener(_validateEmailOnChange);
+    _passwordController.removeListener(_validatePasswordOnChange);
+    _confirmController.removeListener(_validateConfirmOnChange);
+
+    // Освобождение ресурсов
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+
+    super.dispose();
+  }
+
+
+// ================= VALIDATION (REALTIME) =================
+  void _validateEmailOnChange() {
+    setState(() { _emailError = AuthRegisterService.validateEmail(_emailController.text); });
+  }
+
+  void _validatePasswordOnChange() {
+    setState(() { _passwordError = AuthRegisterService.validatePassword(_passwordController.text); });
+    if (_confirmController.text.isNotEmpty) { _validateConfirmOnChange(); }
+  }
+
+  void _validateConfirmOnChange() {
+    setState(() { _confirmError = AuthRegisterService.validatePasswordConfirmation( _passwordController.text, _confirmController.text ); });
+  }
+
+
+// ================= FORM VALIDATION =================
+
+  bool _validateForm() {
+    setState(() {
+      _emailError = AuthRegisterService.validateEmail(_emailController.text);
+      _passwordError = AuthRegisterService.validatePassword(_passwordController.text);
+      _confirmError = AuthRegisterService.validatePasswordConfirmation( _passwordController.text,  _confirmController.text );
+    });
+    return _emailError == null && _passwordError == null && _confirmError == null;
+  }
+
+
+  // ================= AUTH LOGIC =================
 
   void _register() async {
+    if (!_validateForm()) { setState(() => _loading = false); return; }
+
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();
 
-    if (_passwordController.text != _confirmController.text) { ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Пароли не совпадают')), ); setState(() => _loading = false); return; }
-
     try {
-      await AuthService.register( _emailController.text, _passwordController.text, _confirmController.text, );
-      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
-      // =================== Изменение: Переход на MainScreen ===================
-      Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const LoginScreen()), );
+      await AuthRegisterService.register(  email: _emailController.text,  password: _passwordController.text, passwordConfirmation: _confirmController.text, );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Регистрация успешна!')), );
+        Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const MainScreen()), );
+      }
     } catch (e) {
       debugPrint('Ошибка регистрации: $e');
-      // Ловим ошибки и выводим безопасно в Xcode 
-      // Если это JSON от Laravel — пытаемся распарсить
-      try {
-        final jsonError = jsonDecode(e.toString().replaceAll('Exception: ', ''));
-        debugPrint('JSON ошибки Laravel: $jsonError');
-      } catch (_) {
-        debugPrint('Не удалось распарсить JSON ошибки');
+      String errorMessage = e.toString().replaceAll('Exception: ', '');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(errorMessage), backgroundColor: Colors.redAccent, behavior: SnackBarBehavior.floating, ), );
       }
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Ошибка регистрации: $e')), );
     } finally {
-      setState(() => _loading = false);
+      if (mounted) { setState(() => _loading = false); }
     }
   }
 
 
+// ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +135,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  
+                  // -------- TITLE --------
                   Text(
                     'Создать аккаунт',
                     style: TextStyle(
@@ -69,91 +150,83 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       fontWeight: FontWeight.bold,
                       fontFamily: AppStyles.fontFamily,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Введите ваши данные для регистрации',
-                    style: TextStyle(
-                      color: AppStyles.textSecondary,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
+                  ), const SizedBox(height: 32),
 
-                  // Email
+                  // -------- EMAIL --------
                   CustomTextField(
                     label: 'Email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
-                  ),
-                  const SizedBox(height: 20),
+                    errorText: _emailError,
+                  ), const SizedBox(height: 20),
 
-                  // Пароль
+                  // -------- PASSWORD --------
                   CustomTextField(
                     label: 'Пароль',
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible1,
                     prefixIcon: Icons.lock_outline,
-                  ),
-                  const SizedBox(height: 20),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible1 ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible1 = !_passwordVisible1; });
+                      },
+                    ),
+                    errorText: _passwordError,
+                  ), const SizedBox(height: 20),
 
-                  // Подтверждение пароля
+                  // -------- CONFIRM PASSWORD --------
                   CustomTextField(
                     label: 'Подтвердите пароль',
                     controller: _confirmController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible2,
                     prefixIcon: Icons.lock_outline,
-                  ),
-                  const SizedBox(height: 32),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible2 ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() { _passwordVisible2 = !_passwordVisible2; });
+                      },
+                    ),
+                    errorText: _confirmError,
+                  ), const SizedBox(height: 32),
 
-                  // Кнопка регистрации
+
+                  // -------- REGISTER BUTTON --------
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _register,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: AppStyles.accent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: AppStyles.accent,
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
                       ),
                       child: _loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
                             )
                           : const Text('Зарегистрироваться'),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Кнопка перехода на логин
+                  // -------- LOGIN NAVIGATION --------
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
+                      Navigator.pop(context);
                     },
                     child: Text(
                       'Уже есть аккаунт? Войти',
-                      style: TextStyle(
-                        color: AppStyles.accent,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: AppStyles.accent),
                     ),
                   ),
                 ],

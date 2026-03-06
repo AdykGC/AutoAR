@@ -7,6 +7,9 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final IconData? prefixIcon; // ← добавили сюда
+  final String? errorText;              //  ДОБАВЛЕНО
+  final Color? cursorColor;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     super.key,
@@ -15,6 +18,9 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.prefixIcon, // ← и сюда
+    this.errorText,                      //  ДОБАВЛЕНО
+    this.cursorColor,
+    this.suffixIcon,
   });
 
   @override
@@ -24,10 +30,13 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       style: TextStyle(color: AppStyles.textPrimary),
+      cursorColor: cursorColor ?? const Color.fromARGB(255, 255, 255, 255),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: AppStyles.textSecondary),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppStyles.textSecondary) : null,
+        suffixIcon: suffixIcon,
+        errorText: errorText,
         filled: true,
         fillColor: AppStyles.secondary.withOpacity(0.2),
         border: OutlineInputBorder(

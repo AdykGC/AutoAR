@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\{
-    GetUserController, LoginController, UserRegisterController, LogoutController, UpdateController
+    GetUserController, UserLoginController, UserRegisterController, UserLogoutController, UserUpdateController
 };
 use App\Http\Controllers\Product\{
-    MachineController, CreateMachinesController, ShowMachinesController, UpdateMachinesController, DeleteMachinesController, ListMachinesController,
+    MachineCreateController, MachineListController, MachineUpdateController, MachineDeleteController
 };
 
 
@@ -15,30 +15,30 @@ use App\Http\Controllers\TestController;
 Route::get('/test', [TestController::class, 'test']);
 Route::get('/cors-test', [TestController::class, 'corsTest']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', action: function (Request $request) {
     return $request->user();
 });
 
 
 Route::prefix('auth')->group(function () {
     Route::post('/register',                  UserRegisterController::class);//->middleware('throttle:5,1')
-    Route::post('/login',                     LoginController::class)->middleware('throttle:5,1');
+    Route::post('/login',                     UserLoginController::class)->middleware('throttle:5,1');
 
     Route::middleware(['auth:sanctum'])->group(function () {
-        Route::post('/logout',                             LogoutController::class);
-        Route::post('/update',                             UpdateController::class);
-        Route::get('/showMe',                              GetUserController::class);
+        Route::post('/logout',                             UserLogoutController::class);
+        Route::get('/user',                                GetUserController::class);
+        Route::patch('/update',                             UserUpdateController::class);
     });
 });
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/machines/create',                              CreateMachinesController::class);
-    Route::put('/machines/update/{id}',                          UpdateMachinesController::class);
-    Route::post('/machines/delete/{id}',                         DeleteMachinesController::class);
-    Route::get('/machines/show/{id}',                            ShowMachinesController::class);
-    Route::get('/machines/list',                                 ListMachinesController::class);
-    //Route::get('/machines', [MachineController::class, 'index']);
-    //Route::get('/machines/{id}', [MachineController::class, 'show']);
+Route::prefix('machines')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/create',                              MachineCreateController::class);
+        Route::get('/',                                     MachineListController::class);
+        Route::patch('/update/{id}',                        MachineUpdateController::class);
+        Route::post('/delete/{id}',                         MachineDeleteController::class);
+        //Route::get('/machines', [MachineController::class, 'index']);
+        //Route::get('/machines/{id}', [MachineController::class, 'show']);
+    });
 });
 
 
