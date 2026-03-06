@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';              // [ Styles ]
 import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
+import 'package:frontend_mobile/screens/main/home_page.dart';
+import 'package:frontend_mobile/screens/main/analyses_page.dart';
+import 'package:frontend_mobile/screens/main/machine_list_page.dart';
+import 'package:frontend_mobile/screens/main/settings_page.dart';
 
 
 class MainScreen extends StatefulWidget {

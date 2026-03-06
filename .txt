@@ -1,4 +1,4 @@
-11. Удаление временных файлов:
+ 1. Удаление временных файлов:
    sudo rm -rf /private/var/folders/*
  2. Удаление кэша системы и приложений:
    rm -rf ~/Library/Caches/* /System/Library/Caches/*

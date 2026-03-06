@@ -47,10 +47,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      backgroundColor: AppStyles.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(255, 40, 37, 63),
+        backgroundColor: AppStyles.dashboardCard,
         elevation: 0,
         title: Row(
           children: const [
@@ -58,22 +58,18 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(width: 10),
             Text(
               "Rubicon",
-              style: TextStyle(
-                color: AppStyles.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              style: AppStyles.pageTitle,
             ),
           ],
         ),
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 40, 37, 63),
+        backgroundColor: AppStyles.dashboardCard,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: const Color.fromARGB(255, 117, 0, 185),
-        unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+        selectedItemColor: AppStyles.selected,
+        unselectedItemColor: AppStyles.unselected,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem( icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home', ),
