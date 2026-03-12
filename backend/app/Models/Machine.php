@@ -5,22 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Machine extends Model
-{
+class Machine extends Model {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'machine_number',
-        'location',
-        'status',
-        'last_service',
         'type',
-        'capacity',
-        'current_balance',
-        'connectivity_status',
-        'maintenance_notes',
+        'location',
+        'serial_number',
         'user_id',
+
+        'connection_type',
+        'install_price',
+        'price_adjustment',
+        'latitude',
+        'longitude',
+        'is_active'
     ];
 
     // Связь с пользователем

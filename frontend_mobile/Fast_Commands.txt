@@ -2,6 +2,7 @@
 
 flutter clean
 flutter pub get
+flutter pub run flutter_launcher_icons
 cd ios
 pod install
 cd ..
@@ -10,3 +11,8 @@ open ios/Runner.xcworkspace
 
 ekole@issejub.jm
 KiribatiZucocerit185
+
+
+
+ipconfig getifaddr en0
+php artisan serve --host=0.0.0.0 --port=8000

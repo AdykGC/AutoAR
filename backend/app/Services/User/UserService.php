@@ -13,14 +13,16 @@ use App\Models\{
 
 class UserService {
     public function register($request){
-        $data = User::create([
-            'email'              => $request->email,
-            'password'           => Hash::make($request->password),
-        ]);
-        return response()->json([
-            'message' => 'Пользователь успешно зарегистрирован',
-            'user' => $data,
-        ]);
+        try {
+            $data = User::create([ 'email' => $request->email, 'password' => Hash::make($request->password), ]);
+            $token = $data->createToken('Token')->plainTextToken;
+            return [
+                'token' => $token,
+                'user' => $data, 
+            ];
+        } catch (\Exception $e) {
+            throw new \Exception('Ошибка при создании пользователя: ' . $e->getMessage());
+        }
     }
 
 

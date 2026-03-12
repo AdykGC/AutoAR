@@ -9,16 +9,18 @@ return new class extends Migration {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('machine_number')->unique();
+            $table->string('type');
             $table->string('location')->nullable();
-            $table->enum('status', ['active', 'inactive', 'maintenance'])->default('active');
-            $table->dateTime('last_service')->nullable();
-            $table->string('type')->nullable(); // кофе, снэки, напитки
-            $table->integer('capacity')->nullable();
-            $table->decimal('current_balance', 10, 2)->default(0);
-            $table->enum('connectivity_status', ['online', 'offline'])->default('online');
-            $table->text('maintenance_notes')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // привязка к пользователю
+            $table->string('serial_number')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            $table->string('connection_type')->nullable();
+            $table->decimal('install_price', 10, 2)->nullable();
+            $table->decimal('price_adjustment', 10, 2)->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }
