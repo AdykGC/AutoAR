@@ -1,19 +1,21 @@
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
+/* [ Models ] */
 import 'package:frontend_mobile/models/machine.dart';
-import 'package:frontend_mobile/services/machine_create_service.dart';
-import 'package:frontend_mobile/services/machine_update_service.dart';
+/* [ Widgets ] */
+/* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
+/* [ Services ] */
+import 'package:frontend_mobile/services/machine_create_service.dart';
 
-class EditMachinePage extends StatefulWidget {
-  final Machine? machine;
-
-  const EditMachinePage({super.key, this.machine});
+class CreateMachinePage extends StatefulWidget {
+  const CreateMachinePage({super.key});
 
   @override
-  State<EditMachinePage> createState() => _EditMachinePageState();
+  State<CreateMachinePage> createState() => _CreateMachinePageState();
 }
 
-class _EditMachinePageState extends State<EditMachinePage> {
+class _CreateMachinePageState extends State<CreateMachinePage> {
   late final TextEditingController nameController;
   late final TextEditingController typeController;
   late final TextEditingController locationController;
@@ -22,10 +24,10 @@ class _EditMachinePageState extends State<EditMachinePage> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.machine?.name ?? "");
-    typeController = TextEditingController(text: widget.machine?.type ?? "");
-    locationController = TextEditingController(text: widget.machine?.location ?? "");
-    serialController = TextEditingController(text: widget.machine?.serialNumber ?? "");
+    nameController = TextEditingController();
+    typeController = TextEditingController();
+    locationController = TextEditingController();
+    serialController = TextEditingController();
   }
 
   @override
@@ -41,25 +43,18 @@ class _EditMachinePageState extends State<EditMachinePage> {
     if (nameController.text.isEmpty || typeController.text.isEmpty) return;
 
     try {
-      final isEditing = widget.machine != null;
-
-      final response = isEditing
-          ? await MachineUpdateService.update(
-              id: widget.machine!.id,
-              name: nameController.text,
-              type: typeController.text,
-              location: locationController.text,
-              serialNumber: serialController.text,
-            )
-          : await MachineCreateService.create(
-              name: nameController.text,
-              type: typeController.text,
-              location: locationController.text,
-              serialNumber: serialController.text,
-            );
+      final response = await MachineCreateService.create(
+        name: nameController.text,
+        type: typeController.text,
+        location: locationController.text,
+        serialNumber: serialController.text,
+      );
 
       final machine = Machine.fromJson(response['data']['machine']);
-      if (mounted) Navigator.pop(context, machine);
+
+      if (mounted) {
+        Navigator.pop(context, machine);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -91,12 +86,10 @@ class _EditMachinePageState extends State<EditMachinePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.machine != null;
-
     return Scaffold(
       backgroundColor: AppStyles.background,
       appBar: AppBar(
-        title: Text(isEditing ? "Редактировать аппарат" : "Добавить аппарат"),
+        title: const Text("Добавить аппарат"),
         backgroundColor: AppStyles.primary,
       ),
       body: Padding(

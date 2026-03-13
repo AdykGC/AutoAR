@@ -1,7 +1,13 @@
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
+/* [ Models ] */
 import 'package:frontend_mobile/models/machine.dart';
-import 'package:frontend_mobile/screens/main/machine_details_page.dart';
+/* [ Widgets ] */
+/* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
+/* [ Services ] */
+/* [ Screens ] */
+import 'package:frontend_mobile/screens/machine/machine_details_page.dart';
 
 class MachineCard extends StatelessWidget {
   final Machine machine;
