@@ -17,7 +17,7 @@ import 'package:frontend_mobile/styles/app_styles.dart';
 import 'package:frontend_mobile/services/machine_list_service.dart';
 
 /* [ Screens ] */
-import 'package:frontend_mobile/screens/main/edit_machine_page.dart';
+import 'package:frontend_mobile/screens/machine/create_machine_page.dart';
 
 class MachineListPage extends StatefulWidget {
   const MachineListPage({super.key});
@@ -129,7 +129,7 @@ class _MachineListPageState extends State<MachineListPage> {
         onPressed: () async {
           final newMachine = await Navigator.push<Machine>(
             context,
-            MaterialPageRoute(builder: (_) => const EditMachinePage()),
+            MaterialPageRoute(builder: (_) => const CreateMachinePage()),
           );
           if (newMachine != null) await _loadMachines();
         },

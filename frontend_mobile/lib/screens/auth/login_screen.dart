@@ -18,7 +18,7 @@ import 'package:frontend_mobile/services/auth_token_service.dart';
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/auth/register_screen.dart';
-import 'package:frontend_mobile/screens/main/machine_details_page.dart';
+import 'package:frontend_mobile/screens/machine/machine_details_page.dart';
 
 
 // ================= WIDGET =================

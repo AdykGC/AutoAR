@@ -1,12 +1,20 @@
-// machine_details_page.dart
-
+/* [ Flutter ] */
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/models/machine.dart';
-import 'package:frontend_mobile/services/machine_update_service.dart';
-import 'package:frontend_mobile/styles/app_styles.dart';
-import 'package:frontend_mobile/services/machine_delete_service.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+/* [ Models ] */
+import 'package:frontend_mobile/models/machine.dart';
+/* [ Widgets ] */
+import 'package:frontend_mobile/widgets/widget_for_machines/machine_detail_row.dart';
+import 'package:frontend_mobile/widgets/widget_for_machines/machine_status_row.dart';
+import 'package:frontend_mobile/widgets/widget_for_machines/machine_map_widget.dart';
+/* [ Styles ] */
+import 'package:frontend_mobile/styles/app_styles.dart';
+/* [ Services ] */
+import 'package:frontend_mobile/services/machine_update_service.dart';
+import 'package:frontend_mobile/services/machine_delete_service.dart';
+/* [ Screens ] */
+import 'package:frontend_mobile/screens/machine/select_location_page.dart';
 
 
 /// Страница деталей аппарата с возможностью редактирования полей
@@ -25,15 +33,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
   @override
   void initState() {
     super.initState();
-    // Копируем данные машины из переданных параметров
     machine = widget.machine;
-
-    
-    // Если координаты null, задаём тестовые
-    machine = machine.copyWith(
-      latitude: machine.latitude ?? 43.2075,
-     longitude: machine.longitude ?? 76.6699,
-    );
   }
 
   @override
@@ -70,89 +70,26 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Название аппарата
-                  _buildDetailRow("Название", machine.name, "name"),
+                  MachineDetailRow( label: "Название", value: machine.name, onEdit: () => _editField("Название", machine.name, "name"), ), const SizedBox(height: 16),
+                  MachineDetailRow( label: "Тип", value: machine.type, onEdit: () => _editField("Тип", machine.type, "type"), ), const SizedBox(height: 16),
+                  MachineDetailRow( label: "Тип соединения", value: machine.connectionType?.isNotEmpty == true ? machine.connectionType! : "", onEdit: () => _editField("Тип соединения", machine.connectionType ?? "", "connectionType"), ), const SizedBox(height: 16),
+                  MachineDetailRow( label: "Регулировка цены (%)", value: machine.priceAdjustment != null ? "${machine.priceAdjustment} %" : "", onEdit: () => _editField("Регулировка цены (%)", machine.priceAdjustment?.toString() ?? "", "priceAdjustment"), ), const SizedBox(height: 16),
+                  MachineDetailRow( label: "Локация", value: machine.location?.isNotEmpty == true ? machine.location! : "", onEdit: () => _editField("Локация", machine.location ?? "", "location"), ), const SizedBox(height: 16),
                   const SizedBox(height: 16),
+                  Row( children: [ const Text( "Координаты", style: TextStyle( color: Colors.white70, fontSize: 14, ), ), const Spacer(),
+                  TextButton.icon( onPressed: _openMap, icon: const Icon(Icons.map, color: Colors.white), label: const Text( "Изменить на карте", style: TextStyle(color: Colors.white), ), ), ], ), const SizedBox(height: 8),
+                  Text( machine.latitude != null && machine.longitude != null ? "${machine.latitude}, ${machine.longitude}" : "Координаты не указаны", style: const TextStyle( color: Colors.white, fontSize: 16, ), ),
 
-                  // Тип аппарата
-                  _buildDetailRow("Тип", machine.type, "type"),
-                  const SizedBox(height: 16),
-
-                  const SizedBox(height: 16),
-
-                  _buildDetailRow(
-                    "Тип соединения",
-                    machine.connectionType?.isNotEmpty == true
-                        ? machine.connectionType!
-                        : "",
-                    "connectionType",
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _buildDetailRow(
-                    "Регулировка цены (%)",
-                    machine.priceAdjustment != null
-                        ? "${machine.priceAdjustment} %"
-                        : "",
-                    "priceAdjustment",
-                  ),
-
-                  // Локация (если указана)
-                  _buildDetailRow(
-                    "Локация",
-                    machine.location?.isNotEmpty == true ? machine.location! : "",
-                    "location",
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // =============================
-                  // ADDED: Latitude
-                  // =============================
-                  _buildDetailRow(
-                    "Latitude",
-                    machine.latitude?.toString() ?? "",
-                    "latitude",
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // =============================
-                  // ADDED: Longitude
-                  // =============================
-                  _buildDetailRow(
-                    "Longitude",
-                    machine.longitude?.toString() ?? "",
-                    "longitude",
-                  ),
-
-                  // Карту показываем только если есть координаты
-                  _buildMapWidget(),
-                  const SizedBox(height: 12),
-
-                  ElevatedButton(
-                    onPressed: _updateCoordinates,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppStyles.primary, // цвет кнопки
-                      foregroundColor: Colors.white,      // цвет текста
-                      
-                    ),
-                    child: const Text("Сохранить координаты"),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Серийный номер (если указан)
-                  _buildDetailRow(
-                    "Серийный номер",
-                    machine.serialNumber?.isNotEmpty == true ? machine.serialNumber! : "",
-                    "serialNumber",
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Статус с переключателем
-                  _buildStatusRow(),
+                  // MachineDetailRow( label: "Latitude", value: machine.latitude?.toString() ?? "", onEdit: () => _editField("Latitude", machine.latitude?.toString() ?? "", "latitude"), ), const SizedBox(height: 16),
+                  // MachineDetailRow( label: "Longitude", value: machine.longitude?.toString() ?? "", onEdit: () => _editField("Longitude", machine.longitude?.toString() ?? "", "longitude"), ), const SizedBox(height: 16),
+                  
+                  // if (machine.latitude != null && machine.longitude != null) ...[ 
+                    // MachineMapWidget( latitude: machine.latitude!, longitude: machine.longitude!, onTap: (point) { setState(() { machine = machine.copyWith( latitude: point.latitude, longitude: point.longitude, ); }); }, ), const SizedBox(height: 12),
+                    // ElevatedButton( onPressed: _updateCoordinates, style: ElevatedButton.styleFrom( backgroundColor: AppStyles.primary, foregroundColor: Colors.white, ), child: const Text("Сохранить координаты"), ),
+                  // ] else
+                    // const Text( "Координаты не указаны", style: TextStyle(color: Colors.white54), ), const SizedBox(height: 16),
+                  MachineDetailRow( label: "Серийный номер", value: machine.serialNumber?.isNotEmpty == true ? machine.serialNumber! : "", onEdit: () => _editField("Серийный номер", machine.serialNumber ?? "", "serialNumber"), ), const SizedBox(height: 16),
+                  MachineStatusRow( isActive: machine.isActive ?? false, onChanged: _updateStatus, ),
                 ],
                 ),
               ),
@@ -163,73 +100,6 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
     );
   }
 
-  // =======================================================
-  // Строка параметра с кнопкой редактирования
-  // =======================================================
-  Widget _buildDetailRow(String label, String value, String fieldKey) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Подпись поля
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 4),
-
-              // Значение поля
-              Text(
-                value.isEmpty ? "Не указано" : value,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Кнопка редактирования
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.white54, size: 20),
-          onPressed: () => _editField(label, value, fieldKey),
-        ),
-      ],
-    );
-  }
-
-  // =======================================================
-  // Статус аппарата (с переключателем)
-  // =======================================================
-  Widget _buildStatusRow() {
-    return Row(
-      children: [
-        const Text(
-          "Статус",
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
-        ),
-        const Spacer(),
-
-        // Переключатель статуса
-        Switch(
-          value: machine.isActive == true,
-          activeColor: Colors.green,
-          onChanged: (value) => _updateStatus(value),
-        ),
-      ],
-    );
-  }
 
   // =======================================================
   // Редактирование текстового поля через диалог
@@ -374,75 +244,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
     }
   }
 
-  // =======================================================
-  // Карта с местоположением аппарата (для flutter_map 8+)
-  // =======================================================
-  Widget _buildMapWidget() {
-    if (machine.latitude == null || machine.longitude == null) {
-      return const Text(
-        "Координаты не указаны",
-        style: TextStyle(color: Colors.white54),
-      );
-    }
 
-    final lat = machine.latitude!;
-    final lng = machine.longitude!;
-
-    return Container(
-      margin: const EdgeInsets.only(top: 12),
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white54),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: FlutterMap(
-          key: ValueKey("${machine.latitude}_${machine.longitude}"),
-          options: MapOptions(
-            // начальный центр и уровень зума
-            initialCenter: LatLng(lat, lng),
-            initialZoom: 15.0,
-
-            onTap: (tapPosition, point) {
-              setState(() {
-                machine = machine.copyWith(
-                  latitude: point.latitude,
-                  longitude: point.longitude,
-                );
-              });
-            },
-          ),
-          children: [
-            // Слой с OSM‑тайлами
-            TileLayer(
-              urlTemplate: 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png',
-              subdomains: ['a','b','c','d'],
-              userAgentPackageName: 'com.example.app', // оставь свой package name
-            ),
-
-            // Слой с маркером
-            MarkerLayer(
-              markers: [
-                Marker(
-                  point: LatLng(lat, lng),
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  // Вместо builder используем child
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 32,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Future<void> _deleteMachine() async {
   final confirm = await showDialog<bool>(
@@ -485,4 +287,33 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
   }
 }
 
+Future<void> _openMap() async {
+
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => SelectLocationPage(
+        latitude: machine.latitude,
+        longitude: machine.longitude,
+        location: machine.location,
+      ),
+    ),
+  );
+
+  if (result != null) {
+
+    setState(() {
+
+      machine = machine.copyWith(
+        latitude: result["latitude"],
+        longitude: result["longitude"],
+        location: result["location"],
+      );
+
+    });
+
+    await _updateCoordinates();
+  }
+
+}
 }
