@@ -18,6 +18,7 @@ import 'package:frontend_mobile/services/auth_token_service.dart';
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/main/main_screen.dart';
 import 'package:frontend_mobile/screens/auth/register_screen.dart';
+import 'package:frontend_mobile/screens/machine/machine_details_page.dart';
 
 
 // ================= WIDGET =================
@@ -55,10 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();
 
-    if (_emailController.text.isEmpty) return _showError('Введите email');
-    if (!_emailController.text.contains('@')) return _showError('Введите корректный email');
-    if (_passwordController.text.isEmpty) return _showError('Введите пароль');
-    if (_passwordController.text.length < 6) return _showError('Пароль должен содержать минимум 6 символов');
+    // Валидация на клиенте
+    if (_emailController.text.isEmpty) { _showError('Введите email'); setState(() => _loading = false); return; }
+    if (!_emailController.text.contains('@')) { _showError('Введите корректный email'); setState(() => _loading = false); return; }
+    if (_passwordController.text.isEmpty) { _showError('Введите пароль'); setState(() => _loading = false); return; }
+    if (_passwordController.text.length < 6) { _showError('Пароль должен содержать минимум 6 символов'); setState(() => _loading = false); return; }
 
     try {
       await AuthLoginService.login(_emailController.text, _passwordController.text);
@@ -80,23 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _showError(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
-        backgroundColor: AppStyles.accentRed,
-      ),
-    );
-  }
+  // ================= UI HELPERS =================
 
-  void _showSuccess(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text, style: const TextStyle(color: Colors.white)),
-        backgroundColor: AppStyles.accentGreen,
-      ),
-    );
-  }
+  /// Показ ошибки
+  void _showError(String text) { ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text), backgroundColor: AppStyles.accentRed, ), ); }
+
+  /// Показ успеха
+  void _showSuccess(String text) { ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text(text, style: const TextStyle(color: Colors.white)), backgroundColor: AppStyles.accentGreen, ), ); }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {

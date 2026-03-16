@@ -137,13 +137,13 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           child: Row(
             children: const [
-              CircleAvatar(radius: 28, child: Icon(Icons.person, size: 28)),
+              CircleAvatar(radius: 28, child: Icon(Icons.person, size: 28, color: Colors.white)),
               SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Name Surname',
+                    Text('Profile',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
                     Text('Administrator',
@@ -228,15 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
           ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: () {},
-            child: const Text('Restore System Defaults'),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.white24),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-          ),
+          
         ],
       );
 }
