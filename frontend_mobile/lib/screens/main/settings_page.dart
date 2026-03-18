@@ -3,10 +3,12 @@ import 'package:frontend_mobile/styles/app_styles.dart';
 import 'package:frontend_mobile/services/auth_logout_service.dart';
 import 'package:frontend_mobile/screens/auth/login_screen.dart';
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
 
 /// =======================================================
 /// SETTINGS PAGE
-/// Экран настроек пользователя
+/// Экран настроек пользователя с рабочими переключателями
 /// =======================================================
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -21,6 +23,27 @@ class _SettingsPageState extends State<SettingsPage> {
   bool pushNotifications = true;
   bool autoSync = true;
   bool biometricLogin = false;
+
+  final LocalAuthentication _auth = LocalAuthentication();
+
+  /// ===== INIT =====
+  /// Загружаем сохраненные настройки при старте экрана
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  /// Загружаем сохраненные настройки из SharedPreferences
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      darkMode = prefs.getBool('darkMode') ?? false;
+      pushNotifications = prefs.getBool('pushNotifications') ?? true;
+      autoSync = prefs.getBool('autoSync') ?? true;
+      biometricLogin = prefs.getBool('biometricLogin') ?? false;
+    });
+  }
 
   /// ===== NAVIGATION =====
   void _goToProfile() =>
@@ -55,6 +78,17 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       );
 
+  /// ===== SAVE PREFERENCES =====
+  /// Сохраняем состояния всех переключателей в SharedPreferences
+  Future<void> _savePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('darkMode', darkMode);
+    await prefs.setBool('pushNotifications', pushNotifications);
+    await prefs.setBool('autoSync', autoSync);
+    await prefs.setBool('biometricLogin', biometricLogin);
+    _snack('Настройки сохранены', Colors.green);
+  }
+
   /// =======================================================
   /// BUILD
   /// =======================================================
@@ -80,40 +114,57 @@ class _SettingsPageState extends State<SettingsPage> {
               _profileCard(),
               const SizedBox(height: 24),
 
-              
-
-              const SizedBox(height: 24),
-
-              /// SYSTEM
+              /// SYSTEM PREFERENCES
               _section('SYSTEM PREFERENCES'),
-              _switch(Icons.dark_mode, 'Dark Mode', darkMode,
-                  (v) => setState(() => darkMode = v)),
-              _switch(Icons.notifications, 'Push Notifications', pushNotifications,
-                  (v) => setState(() => pushNotifications = v)),
-              _switch(Icons.auto_graph, 'Auto-Sync Analytics', autoSync,
-                  (v) => setState(() => autoSync = v)),
+              _switch(Icons.dark_mode, 'Dark Mode', darkMode, (v) {
+                setState(() => darkMode = v);
+                _snack(v ? 'Темная тема включена' : 'Темная тема выключена', Colors.blue);
+              }),
+              _switch(Icons.notifications, 'Push Notifications', pushNotifications, (v) {
+                setState(() => pushNotifications = v);
+                _snack(v ? 'Push уведомления включены' : 'Push уведомления отключены', Colors.blue);
+              }),
+              _switch(Icons.auto_graph, 'Auto-Sync Analytics', autoSync, (v) {
+                setState(() => autoSync = v);
+                _snack(v ? 'Авто-синхронизация включена' : 'Авто-синхронизация отключена', Colors.blue);
+              }),
 
               const SizedBox(height: 24),
 
-              /// SECURITY
+              /// SECURITY & PRIVACY
               _section('SECURITY & PRIVACY'),
-              _switch(Icons.fingerprint, 'Biometric Login', biometricLogin,
-                  (v) => setState(() => biometricLogin = v)),
-              _tile(Icons.lock, 'Two-Factor Authentication',
-                  'Secure your account access'),
+              _switch(Icons.fingerprint, 'Biometric Login', biometricLogin, (v) async {
+                // Проверяем поддержку биометрии
+                bool canCheck = await _auth.canCheckBiometrics;
+                if (canCheck) {
+                  bool authenticated = await _auth.authenticate(
+                    localizedReason: 'Авторизуйтесь для включения биометрии',
+                  );
+                  if (authenticated) {
+                    setState(() => biometricLogin = v);
+                    _snack(v ? 'Вход по отпечатку включен' : 'Вход по отпечатку отключен', Colors.blue);
+                  }
+                } else {
+                  _snack('Биометрия не поддерживается на этом устройстве', Colors.redAccent);
+                }
+              }),
+              _tile(Icons.lock, 'Two-Factor Authentication', 'Secure your account access',
+                  onTap: () => _snack('Откроется экран 2FA', Colors.blue)),
 
               const SizedBox(height: 24),
 
-              /// APP
+              /// APPLICATION
               _section('APPLICATION'),
-              _tile(Icons.info, 'About Rubicon', 'Version 2.4.1-build.92'),
-              _tile(Icons.warning, 'Legal & Privacy',
-                  'Terms of service and data policy'),
+              _tile(Icons.info, 'About Rubicon', 'Version 2.4.1-build.92',
+                  onTap: () => _snack('Rubicon v2.4.1', Colors.blue)),
+              _tile(Icons.warning, 'Legal & Privacy', 'Terms of service and data policy',
+                  onTap: () => _snack('Откроется политика конфиденциальности', Colors.blue)),
               _tile(Icons.logout, 'Log Out', 'Safely exit your current session',
                   iconColor: Colors.redAccent, onTap: _logout),
 
               const SizedBox(height: 24),
 
+              /// SAVE BUTTON
               _saveButtons(),
             ],
           ),
@@ -166,17 +217,6 @@ class _SettingsPageState extends State<SettingsPage> {
             style: const TextStyle(color: Colors.white70, fontSize: 12)),
       );
 
-  /// BADGE
-  Widget _badge(String text) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child:
-            Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),
-      );
-
   /// LIST TILE
   Widget _tile(
     IconData icon,
@@ -192,9 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
         subtitle: subtitle != null
             ? Text(subtitle, style: const TextStyle(color: Colors.white70))
             : null,
-        trailing: trailing ??
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.white70),
+        trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white70),
         tileColor: AppStyles.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         onTap: onTap,
@@ -216,11 +254,11 @@ class _SettingsPageState extends State<SettingsPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       );
 
-  /// SAVE BUTTONS
+  /// SAVE BUTTON
   Widget _saveButtons() => Column(
         children: [
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: _savePreferences,
             icon: const Icon(Icons.save),
             label: const Text('Save Preferences'),
             style: ElevatedButton.styleFrom(
@@ -228,7 +266,6 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
           ),
-          
         ],
       );
 }

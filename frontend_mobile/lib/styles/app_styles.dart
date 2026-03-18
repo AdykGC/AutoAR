@@ -224,7 +224,7 @@ class AppStyles {
   // GLOBAL THEME
   // =======================================================
 
-  static final ThemeData theme = ThemeData(
+  static final ThemeData darktheme = ThemeData(
 
     fontFamily: fontFamily,
 
