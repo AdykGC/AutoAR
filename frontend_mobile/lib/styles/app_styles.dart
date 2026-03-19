@@ -218,4 +218,145 @@ class AppStyles {
     ),
 
   );
+
+
+  // =======================================================
+  // GLOBAL THEME
+  // =======================================================
+
+  static final ThemeData darktheme = ThemeData(
+
+    fontFamily: fontFamily,
+
+    scaffoldBackgroundColor: background,
+
+    brightness: Brightness.dark,
+
+    // ================= APPBAR =================
+
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primary,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+    ),
+
+    // ================= COLOR SCHEME =================
+
+    colorScheme: const ColorScheme.dark(
+      primary: primary,
+      secondary: accent,
+      surface: secondary,
+    ),
+
+    // ================= CARD =================
+
+    cardTheme: CardThemeData(
+      color: dashboardCard,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+
+    // ================= TEXT =================
+
+    textTheme: const TextTheme(
+
+      titleLarge: pageTitle,
+      titleMedium: sectionTitle,
+
+      bodyLarge: bodyText,
+      bodyMedium: bodyText,
+
+      bodySmall: smallText,
+    ),
+
+    // ================= INPUT FIELD =================
+
+    inputDecorationTheme: InputDecorationTheme(
+
+      filled: true,
+      fillColor: secondary,
+
+      labelStyle: const TextStyle(color: textSecondary),
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.white24),
+      ),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.white24),
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: accent,
+          width: 2,
+        ),
+      ),
+    ),
+
+    // ================= BUTTON =================
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+
+      style: ElevatedButton.styleFrom(
+        backgroundColor: accent,
+        foregroundColor: Colors.white,
+
+        padding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 20,
+        ),
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    ),
+
+    // ================= TEXT BUTTON =================
+
+    textButtonTheme: TextButtonThemeData(
+
+      style: TextButton.styleFrom(
+        foregroundColor: accent,
+      ),
+    ),
+
+    // ================= FAB =================
+
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: fab,
+      foregroundColor: Colors.white,
+    ),
+
+    // ================= BOTTOM NAV =================
+
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: primary,
+      selectedItemColor: selected,
+      unselectedItemColor: unselected,
+      type: BottomNavigationBarType.fixed,
+    ),
+
+    // ================= SNACKBAR =================
+
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: secondary,
+      contentTextStyle: TextStyle(color: Colors.white),
+    ),
+
+    // ================= DIVIDER =================
+
+    dividerTheme: const DividerThemeData(
+      color: Colors.white24,
+      thickness: 1,
+    ),
+
+  );
 }
