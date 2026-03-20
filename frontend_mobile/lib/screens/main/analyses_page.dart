@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 /* [ Models ] */
 import 'package:frontend_mobile/models/machine.dart';
+import 'package:frontend_mobile/models/analytics_data.dart';
 
 /* [ Services ] */
 import 'package:frontend_mobile/services/machine_list_service.dart';
+import 'package:frontend_mobile/services/machine_analytics/analytics_service.dart';
 
 /* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
@@ -24,7 +26,8 @@ class _AnalysesPageState extends State<AnalysesPage> {
   Machine? selectedMachine;
 
   DateTimeRange? selectedRange;
-
+  AnalyticsData? analytics;
+  bool isLoadingAnalytics = false;
   bool isLoading = true;
 
   // 🔥 ДАННЫЕ ДЛЯ ГРАФИКОВ (потом заменишь на API)
@@ -63,38 +66,66 @@ class _AnalysesPageState extends State<AnalysesPage> {
   }
 
   // =======================================================
-  // 🔥 ЗАГРУЗКА АНАЛИТИКИ (подключишь backend сюда)
+  // ЗАГРУЗКА АНАЛИТИКИ (подключишь backend сюда)
   // =======================================================
   Future<void> _loadAnalytics() async {
-    // ❗ Здесь потом будет API:
-    // final data = await MachineAnalyticsService.getAnalytics(...);
+    if (selectedMachine == null || selectedRange == null) return;
 
-    // Пока мок-данные
     setState(() {
-      revenueSpots = [
-        FlSpot(0, 100),
-        FlSpot(1, 200),
-        FlSpot(2, 150),
-        FlSpot(3, 300),
-        FlSpot(4, 250),
-      ];
-
-      salesBars = [
-        BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 10)]),
-        BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 20)]),
-        BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 15)]),
-        BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 25)]),
-      ];
-
-      productPie = [
-        PieChartSectionData(value: 40, title: 'Snacks'),
-        PieChartSectionData(value: 30, title: 'Drinks'),
-        PieChartSectionData(value: 20, title: 'Coffee'),
-        PieChartSectionData(value: 10, title: 'Other'),
-      ];
+      isLoadingAnalytics = true;
+      analytics = null; // сброс старых данных
     });
-  }
 
+    try {
+      final data = await MachineAnalyticsService.getAnalytics(
+        machineId: selectedMachine!.id,
+        startDate: selectedRange!.start,
+        endDate: selectedRange!.end,
+      );
+
+      // Преобразуем данные в формат для графиков
+      setState(() {
+        analytics = data;
+
+        // revenueSpots для LineChart
+        revenueSpots = data.revenue
+            .map((point) => FlSpot(point.day.toDouble(), point.amount))
+            .toList();
+
+        // salesBars для BarChart
+        salesBars = data.sales
+            .map((point) => BarChartGroupData(
+                  x: point.day,
+                  barRods: [
+                    BarChartRodData(toY: point.count.toDouble(), color: Colors.green, width: 18)
+                  ],
+                ))
+            .toList();
+
+        // productPie для PieChart
+        productPie = data.popularity
+            .map((item) => PieChartSectionData(
+                  value: item.percentage,
+                  title: item.productName,
+                  color: _getColorForProduct(item.productName), // функция выбора цвета
+                ))
+            .toList();
+
+        isLoadingAnalytics = false;
+      });
+    } catch (e) {
+      setState(() => isLoadingAnalytics = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Ошибка загрузки аналитики: $e')));
+      }
+    }
+  }
+  Color _getColorForProduct(String productName) {
+    const colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
+    final index = productName.hashCode % colors.length;
+    return colors[index];
+}
   // =======================================================
   // Выбор даты
   // =======================================================
@@ -269,51 +300,15 @@ Widget _cardWrapper(String title, Widget child) {
 // 📈 LineChart — выручка
 // =======================================================
 Widget _buildRevenueChart() {
+  if (revenueSpots.isEmpty) return const SizedBox.shrink();
+
   return _cardWrapper(
     "Выручка",
     LineChart(
       LineChartData(
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          horizontalInterval: 50,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.white24,
-            strokeWidth: 1,
-          ),
-        ),
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, _) => Text(
-                value.toInt().toString(),
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, _) => Text(
-                'День ${value.toInt() + 1}',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-            ),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
-            spots: [
-              FlSpot(0, 100),
-              FlSpot(1, 200),
-              FlSpot(2, 150),
-              FlSpot(3, 300),
-              FlSpot(4, 250),
-              FlSpot(5, 400),
-            ],
+            spots: revenueSpots,
             isCurved: true,
             gradient: LinearGradient(
               colors: [Colors.blueAccent, Colors.lightBlueAccent],
@@ -327,11 +322,16 @@ Widget _buildRevenueChart() {
                 end: Alignment.bottomCenter,
               ),
             ),
-            dotData: FlDotData(
-              show: true,
-            ),
+            dotData: FlDotData(show: true),
           ),
         ],
+        // остальные настройки как у вас (gridData, titlesData и т.д.)
+        gridData: FlGridData(show: true, drawHorizontalLine: true, horizontalInterval: 50, getDrawingHorizontalLine: (value) => FlLine(color: Colors.white24, strokeWidth: 1)),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40, getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: const TextStyle(color: Colors.white70, fontSize: 12)))),
+          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) => Text('День ${value.toInt()}', style: const TextStyle(color: Colors.white70, fontSize: 12)))),
+        ),
+        borderData: FlBorderData(show: false),
       ),
     ),
   );
@@ -341,37 +341,17 @@ Widget _buildRevenueChart() {
 // 📊 BarChart — продажи
 // =======================================================
 Widget _buildSalesChart() {
+  if (salesBars.isEmpty) return const SizedBox.shrink();
+
   return _cardWrapper(
     "Продажи",
     BarChart(
       BarChartData(
-        barGroups: [
-          BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 50, color: const Color.fromARGB(255, 8, 236, 27), width: 18)]),
-          BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 80, color: const Color.fromARGB(255, 8, 236, 27), width: 18)]),
-          BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 60, color: const Color.fromARGB(255, 8, 236, 27), width: 18)]),
-          BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 90, color: const Color.fromARGB(255, 8, 236, 27), width: 18)]),
-        ],
+        barGroups: salesBars,
         gridData: FlGridData(show: true),
         titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 30,
-              getTitlesWidget: (value, _) => Text(
-                value.toInt().toString(),
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, _) => Text(
-                'День ${value.toInt() + 1}',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-            ),
-          ),
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30, getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: const TextStyle(color: Colors.white70, fontSize: 12)))),
+          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) => Text('День ${value.toInt()}', style: const TextStyle(color: Colors.white70, fontSize: 12)))),
         ),
         borderData: FlBorderData(show: false),
       ),
@@ -383,16 +363,13 @@ Widget _buildSalesChart() {
 // 🥧 PieChart — популярность товаров
 // =======================================================
 Widget _buildPieChart() {
+  if (productPie.isEmpty) return const SizedBox.shrink();
+
   return _cardWrapper(
     "Популярность товаров",
     PieChart(
       PieChartData(
-        sections: [
-          PieChartSectionData(value: 40, title: 'Snacks', color: const Color.fromARGB(255, 7, 252, 27), radius: 60),
-          PieChartSectionData(value: 30, title: 'Drinks', color: Colors.blueAccent, radius: 60),
-          PieChartSectionData(value: 20, title: 'Coffee', color: Colors.brown, radius: 60),
-          PieChartSectionData(value: 10, title: 'Others', color: Colors.purpleAccent, radius: 60),
-        ],
+        sections: productPie,
         centerSpaceRadius: 30,
         sectionsSpace: 4,
       ),

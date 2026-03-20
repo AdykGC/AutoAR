@@ -7,6 +7,9 @@ use App\Http\Controllers\User\{
 use App\Http\Controllers\Product\{
     MachineCreateController, MachineListController, MachineUpdateController, MachineDeleteController
 };
+use App\Http\Controllers\MachineAnalytics\{
+    MachineAnalyticsController, getParamsController
+};
 
 
 use App\Http\Controllers\TestController;
@@ -23,7 +26,6 @@ Route::middleware('auth:sanctum')->get('/user', action: function (Request $reque
 Route::prefix('auth')->group(function () {
     Route::post('/register',                  UserRegisterController::class);//->middleware('throttle:5,1')
     Route::post('/login',                     UserLoginController::class)->middleware('throttle:5,1');
-
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout',                             UserLogoutController::class);
         Route::get('/user',                                GetUserController::class);
@@ -36,10 +38,17 @@ Route::prefix('machines')->group(function () {
         Route::get('/',                                     MachineListController::class);
         Route::patch('/update/{id}',                        MachineUpdateController::class);
         Route::post('/delete/{id}',                         MachineDeleteController::class);
-        //Route::get('/machines', [MachineController::class, 'index']);
-        //Route::get('/machines/{id}', [MachineController::class, 'show']);
     });
 });
+Route::prefix('analytics')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/machine/{machine}',                                  getParamsController::class);
+        //Route::post('/create',                              MachineCreateController::class);
+        //Route::patch('/update/{id}',                        MachineUpdateController::class);
+        //Route::post('/delete/{id}',                         MachineDeleteController::class);
+    });
+});
+
 
 
 

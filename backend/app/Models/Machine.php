@@ -24,8 +24,10 @@ class Machine extends Model {
     ];
 
     // Связь с пользователем
-    public function user()
-    {
+    public function user() {
         return $this->belongsTo(User::class);
+    }
+    public function sales() {
+        return $this->hasMany(Sale::class);
     }
 }
