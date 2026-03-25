@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (hasToken && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainScreen()),
+        MaterialPageRoute(builder: (_) => MainScreen()),
       );
     }
   }
