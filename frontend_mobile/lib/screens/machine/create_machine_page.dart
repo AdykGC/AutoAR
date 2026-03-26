@@ -21,6 +21,15 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
   late final TextEditingController locationController;
   late final TextEditingController serialController;
 
+  String? selectedType;
+
+  final List<String> machineTypes = [
+    'Water',
+    'Cofee',
+    'Snack/soda',
+    'Other',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -40,12 +49,12 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
   }
 
   Future<void> _save() async {
-    if (nameController.text.isEmpty || typeController.text.isEmpty) return;
+    if (nameController.text.isEmpty || selectedType == null) return;
 
     try {
       final response = await MachineCreateService.create(
         name: nameController.text,
-        type: typeController.text,
+        type: selectedType!,
         location: locationController.text,
         serialNumber: serialController.text,
       );
@@ -98,7 +107,36 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
           children: [
             _buildField("Название", nameController),
             const SizedBox(height: 10),
-            _buildField("Тип аппарата", typeController),
+            DropdownButtonFormField<String>(
+              value: selectedType,
+              dropdownColor: AppStyles.secondary,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: "Тип аппарата",
+                labelStyle: const TextStyle(color: Colors.white70),
+                filled: true,
+                fillColor: AppStyles.secondary,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.white24),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppStyles.accent, width: 2),
+                ),
+              ),
+              items: machineTypes.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(type),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedType = value;
+                });
+              },
+            ),
             const SizedBox(height: 10),
             _buildField("Локация (опционально)", locationController),
             const SizedBox(height: 10),
