@@ -95,11 +95,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppStyles.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Text(
                     'Добро пожаловать',
-                    style: AppStyles.pageTitle.copyWith(fontSize: 32),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 32),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                        color: AppStyles.textSecondary,
+                        color: Theme.of(context).hintColor,
                       ),
                       onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
                     ),
@@ -147,15 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _login,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: AppStyles.accent,
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       child: _loading
                           ? const SizedBox(
                               height: 20,
@@ -180,8 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Создать аккаунт',
-                      style: TextStyle(
-                        color: AppStyles.accent,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
