@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';
 import 'package:frontend_mobile/services/auth_logout_service.dart';
+import 'package:frontend_mobile/services/notification_service.dart';
 import 'package:frontend_mobile/screens/auth/login_screen.dart';
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,13 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.background,
-
-      /// ===== APPBAR =====
-      appBar: AppBar(
-        backgroundColor: AppStyles.dashboardCard,
-        title: const Text('Settings'),
-      ),
-
+      
       /// ===== BODY =====
       body: SafeArea(
         child: ScrollConfiguration(
@@ -120,9 +115,18 @@ class _SettingsPageState extends State<SettingsPage> {
               //   setState(() => darkMode = v);
               //   _snack(v ? 'Темная тема включена' : 'Темная тема выключена', Colors.blue);
               // }),
-              // _switch(Icons.notifications, 'Push Notifications', pushNotifications, (v) {
+              // _switch(Icons.notifications, 'Push Notifications', pushNotifications, (v) async {
               //   setState(() => pushNotifications = v);
-              //   _snack(v ? 'Push уведомления включены' : 'Push уведомления отключены', Colors.blue);
+
+              //   final prefs = await SharedPreferences.getInstance();
+              //   await prefs.setBool('pushNotifications', v);
+
+              //   await _notificationService.subscribeToNotifications(v);
+
+              //   _snack(
+              //     v ? 'Push уведомления включены' : 'Push уведомления отключены',
+              //     Colors.blue,
+              //   );
               // }),
               // _switch(Icons.auto_graph, 'Auto-Sync Analytics', autoSync, (v) {
               //   setState(() => autoSync = v);

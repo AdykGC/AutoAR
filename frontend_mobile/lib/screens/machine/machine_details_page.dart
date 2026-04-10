@@ -15,6 +15,8 @@ import 'package:frontend_mobile/services/machine_update_service.dart';
 import 'package:frontend_mobile/services/machine_delete_service.dart';
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/machine/select_location_page.dart';
+import 'package:frontend_mobile/screens/machine/qr_scanner_page.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 
 /// Страница деталей аппарата с возможностью редактирования полей
@@ -89,6 +91,64 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                   // ] else
                     // const Text( "Координаты не указаны", style: TextStyle(color: Colors.white54), ), const SizedBox(height: 16),
                   MachineDetailRow( label: "Серийный номер", value: machine.serialNumber?.isNotEmpty == true ? machine.serialNumber! : "", onEdit: () => _editField("Серийный номер", machine.serialNumber ?? "", "serialNumber"), ), const SizedBox(height: 16),
+                  
+                  // ================= QR BLOCK =================
+                  Row(
+                    children: [
+                      const Text(
+                        "QR Code",
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                      const Spacer(),
+
+                      TextButton.icon(
+                        onPressed: _scanQr,
+                        icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                        label: const Text(
+                          "Сканировать",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      const Text(
+                        "QR Code",
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  machine.qrCode != null && machine.qrCode!.isNotEmpty
+                      ? Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: QrImageView(
+                              data: machine.qrCode!, // 👈 что кодируем
+                              version: QrVersions.auto,
+                              size: 200,
+                            ),
+                          ),
+                        )
+                      : const Text(
+                          "QR код не указан",
+                          style: TextStyle(color: Colors.white54),
+                        ),
+
+
+                  const SizedBox(height: 16),
+
                   MachineStatusRow( isActive: machine.isActive ?? false, onChanged: _updateStatus, ),
                 ],
                 ),
@@ -316,4 +376,36 @@ Future<void> _openMap() async {
   }
 
 }
+
+Future<void> _scanQr() async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const QrScannerPage(),
+    ),
+  );
+
+  if (result != null) {
+    setState(() {
+      machine = machine.copyWith(qrCode: result);
+    });
+
+    // если хочешь сохранить на сервер
+    await MachineUpdateService.update(
+      id: machine.id,
+      name: machine.name,
+      type: machine.type,
+      location: machine.location,
+      serialNumber: machine.serialNumber,
+      connectionType: machine.connectionType,
+      priceAdjustment: machine.priceAdjustment,
+      installPrice: machine.installPrice,
+      latitude: machine.latitude,
+      longitude: machine.longitude,
+      isActive: machine.isActive,
+       // 👈 если backend поддерживает
+    );
+  }
+}
+
 }

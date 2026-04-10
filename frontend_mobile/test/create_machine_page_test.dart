@@ -1,67 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:frontend_mobile/screens/machine/create_machine_page.dart';
+import 'package:frontend_mobile/models/machine.dart';
 
 void main() {
-  group('CreateMachinePage Tests', () {
+  Widget makePage({List<Machine>? machines}) {
+    return MaterialApp(
+      home: CreateMachinePage(machines: machines ?? []),
+    );
+  }
 
-    testWidgets('UI отображается корректно', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: CreateMachinePage(),
-        ),
-      );
+  testWidgets('Page loads correctly', (WidgetTester tester) async {
+    await tester.pumpWidget(makePage());
 
-      expect(find.text('Добавить аппарат'), findsOneWidget);
-      expect(find.text('Название'), findsOneWidget);
-      expect(find.text('Тип аппарата'), findsOneWidget);
-      expect(find.text('Сохранить'), findsOneWidget);
-    });
+    expect(find.text('Добавить аппарат'), findsOneWidget);
+    expect(find.text('Название'), findsOneWidget);
+    expect(find.text('Тип аппарата'), findsOneWidget);
+    expect(find.text('Сохранить'), findsOneWidget);
+  });
 
-    testWidgets('Можно ввести название', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: CreateMachinePage(),
-        ),
-      );
+  testWidgets('Shows error when fields are empty', (WidgetTester tester) async {
+    await tester.pumpWidget(makePage());
 
-      await tester.enterText(find.byType(TextField).first, 'Test Machine');
-      await tester.pump();
+    await tester.tap(find.text('Сохранить'));
+    await tester.pump();
 
-      expect(find.text('Test Machine'), findsOneWidget);
-    });
+    expect(
+      find.text('Название или тип аппарата не заполнены'),
+      findsOneWidget,
+    );
+  });
 
-    testWidgets('Работает Dropdown', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: CreateMachinePage(),
-        ),
-      );
+  testWidgets('Detects duplicate machine name', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      makePage(
+        machines: [
+          Machine(
+            id: 1,
+            name: 'TestMachine',
+            type: 'Water',
+            location: '',
+            serialNumber: '',
+          ),
+        ],
+      ),
+    );
 
-      // открыть dropdown
-      await tester.tap(find.byType(DropdownButtonFormField<String>));
-      await tester.pumpAndSettle();
+    // ввод имени
+    await tester.enterText(find.byType(TextField).first, 'TestMachine');
 
-      // выбрать элемент
-      await tester.tap(find.text('Water').last);
-      await tester.pumpAndSettle();
+    // выбираем тип
+    await tester.tap(find.text('Тип аппарата'));
+    await tester.pumpAndSettle();
 
-      expect(find.text('Water'), findsWidgets);
-    });
+    await tester.tap(find.text('Water').last);
+    await tester.pump();
 
-    testWidgets('Кнопка нажимается без ошибок', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: CreateMachinePage(),
-        ),
-      );
+    // сохранить
+    await tester.tap(find.text('Сохранить'));
+    await tester.pump();
 
-      await tester.tap(find.text('Сохранить'));
-      await tester.pump();
-
-      // Проверяем что приложение не упало
-      expect(find.byType(CreateMachinePage), findsOneWidget);
-    });
-
+    expect(find.text('Такое название уже существует'), findsOneWidget);
   });
 }
