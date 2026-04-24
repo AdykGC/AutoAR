@@ -387,7 +387,7 @@ Future<void> _scanQr() async {
 
   if (result != null) {
     setState(() {
-      machine = machine.copyWith(qrCode: result);
+      // machine = machine.copyWith(qrCode: result);
     });
 
     // если хочешь сохранить на сервер

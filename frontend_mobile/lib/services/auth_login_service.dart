@@ -10,11 +10,11 @@ class AuthLoginService {
     static final storage = FlutterSecureStorage();
 
 
-    // ==================== LOGIN ====================
-    static Future<void> login(String email, String password) async {
-        final url = Uri.parse(ConnectApiService.endpoint('auth/login'));
-        try { 
-            final response = await http.post( url, headers: {'Accept': 'application/json'}, body: {'email': email, 'password': password}, ).timeout( Duration(seconds: ConnectApiService.timeout), onTimeout: () { throw Exception('Превышено время ожидания ответа от сервера'); }, );
+// ==================== LOGIN ====================
+static Future<void> login(String email, String password) async {
+    final url = Uri.parse(ConnectApiService.endpoint('auth/login'));
+    try { 
+        final response = await http.post( url, headers: {'Accept': 'application/json'}, body: {'email': email, 'password': password}, ).timeout( Duration(seconds: ConnectApiService.timeout), onTimeout: () { throw Exception('Превышено время ожидания ответа от сервера'); }, );
 
             debugPrint('========== LOGIN DEBUG ==========');
             debugPrint('Статус: ${response.statusCode}');
