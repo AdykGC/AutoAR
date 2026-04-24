@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userData = response;
                 debugPrint('📦 Прямые данные: $userData');
             }
-
+ 
             setState(() { 
                 _userData = response;
                 _nameController.text = userData['name'] ?? ''; 

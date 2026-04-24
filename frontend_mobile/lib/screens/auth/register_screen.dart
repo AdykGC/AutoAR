@@ -144,13 +144,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // -------- TITLE --------
                   Text(
                     'Создать аккаунт',
-                    style: TextStyle(
-                      color: AppStyles.textPrimary,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: AppStyles.fontFamily,
-                    ),
-                  ), const SizedBox(height: 32),
+                    style: AppStyles.pageTitle,
+                  ), const SizedBox(height: 8),
+
+                  Text(
+                    'Введите данные для регистрации',
+                    style: AppStyles.pageSubtitle,
+                  ),
+                  const SizedBox(height: 32),
 
                   // -------- EMAIL --------
                   CustomTextField(

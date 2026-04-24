@@ -4,7 +4,7 @@ class Machine {
   final String type;
   final String? location;
   final String? serialNumber;
-  
+
 
   // Новые поля
   final String? connectionType;
@@ -12,6 +12,7 @@ class Machine {
   final double? priceAdjustment;
   final double? latitude;
   final double? longitude;
+  final String? qrCode;
   final bool isActive;
 
   Machine({
@@ -25,7 +26,8 @@ class Machine {
     this.priceAdjustment,
     this.latitude,
     this.longitude,
-    this.isActive = true, // по умолчанию активный
+    this.isActive = true,
+    this.qrCode,
   });
 
   factory Machine.fromJson(Map<String, dynamic> json) {
@@ -48,7 +50,8 @@ class Machine {
       longitude: json['longitude'] != null
           ? double.tryParse(json['longitude'].toString())
           : null,
-      isActive: json['is_active'] ?? true,
+      qrCode: json['qr_code'],
+      isActive: json['is_active'] == 1 || json['is_active'] == true,
     );
   }
 
@@ -63,6 +66,7 @@ class Machine {
     double? latitude,
     double? longitude,
     bool? isActive,
+    String? qrCode,
   }) {
     return Machine(
       id: id ?? this.id,
@@ -75,6 +79,7 @@ class Machine {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       isActive: isActive ?? this.isActive,
+      qrCode: qrCode ?? this.qrCode,
     );
   }
 }
