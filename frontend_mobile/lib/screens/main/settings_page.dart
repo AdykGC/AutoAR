@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';
 import 'package:frontend_mobile/services/auth_logout_service.dart';
+import 'package:frontend_mobile/services/notification_service.dart';
 import 'package:frontend_mobile/screens/auth/login_screen.dart';
 import 'package:frontend_mobile/screens/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,13 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.background,
-
-      /// ===== APPBAR =====
-      appBar: AppBar(
-        backgroundColor: AppStyles.dashboardCard,
-        title: const Text('Settings'),
-      ),
-
+      
       /// ===== BODY =====
       body: SafeArea(
         child: ScrollConfiguration(
@@ -114,58 +109,67 @@ class _SettingsPageState extends State<SettingsPage> {
               _profileCard(),
               const SizedBox(height: 24),
 
-              /// SYSTEM PREFERENCES
-              _section('SYSTEM PREFERENCES'),
-              _switch(Icons.dark_mode, 'Dark Mode', darkMode, (v) {
-                setState(() => darkMode = v);
-                _snack(v ? 'Темная тема включена' : 'Темная тема выключена', Colors.blue);
-              }),
-              _switch(Icons.notifications, 'Push Notifications', pushNotifications, (v) {
-                setState(() => pushNotifications = v);
-                _snack(v ? 'Push уведомления включены' : 'Push уведомления отключены', Colors.blue);
-              }),
-              _switch(Icons.auto_graph, 'Auto-Sync Analytics', autoSync, (v) {
-                setState(() => autoSync = v);
-                _snack(v ? 'Авто-синхронизация включена' : 'Авто-синхронизация отключена', Colors.blue);
-              }),
+              // /// SYSTEM PREFERENCES
+              // _section('SYSTEM PREFERENCES'),
+              // _switch(Icons.dark_mode, 'Dark Mode', darkMode, (v) {
+              //   setState(() => darkMode = v);
+              //   _snack(v ? 'Темная тема включена' : 'Темная тема выключена', Colors.blue);
+              // }),
+              // _switch(Icons.notifications, 'Push Notifications', pushNotifications, (v) async {
+              //   setState(() => pushNotifications = v);
 
-              const SizedBox(height: 24),
+              //   final prefs = await SharedPreferences.getInstance();
+              //   await prefs.setBool('pushNotifications', v);
 
-              /// SECURITY & PRIVACY
-              _section('SECURITY & PRIVACY'),
-              _switch(Icons.fingerprint, 'Biometric Login', biometricLogin, (v) async {
-                // Проверяем поддержку биометрии
-                bool canCheck = await _auth.canCheckBiometrics;
-                if (canCheck) {
-                  bool authenticated = await _auth.authenticate(
-                    localizedReason: 'Авторизуйтесь для включения биометрии',
-                  );
-                  if (authenticated) {
-                    setState(() => biometricLogin = v);
-                    _snack(v ? 'Вход по отпечатку включен' : 'Вход по отпечатку отключен', Colors.blue);
-                  }
-                } else {
-                  _snack('Биометрия не поддерживается на этом устройстве', Colors.redAccent);
-                }
-              }),
-              _tile(Icons.lock, 'Two-Factor Authentication', 'Secure your account access',
-                  onTap: () => _snack('Откроется экран 2FA', Colors.blue)),
+              //   await _notificationService.subscribeToNotifications(v);
 
-              const SizedBox(height: 24),
+              //   _snack(
+              //     v ? 'Push уведомления включены' : 'Push уведомления отключены',
+              //     Colors.blue,
+              //   );
+              // }),
+              // _switch(Icons.auto_graph, 'Auto-Sync Analytics', autoSync, (v) {
+              //   setState(() => autoSync = v);
+              //   _snack(v ? 'Авто-синхронизация включена' : 'Авто-синхронизация отключена', Colors.blue);
+              // }),
 
-              /// APPLICATION
-              _section('APPLICATION'),
-              _tile(Icons.info, 'About Rubicon', 'Version 2.4.1-build.92',
-                  onTap: () => _snack('Rubicon v2.4.1', Colors.blue)),
-              _tile(Icons.warning, 'Legal & Privacy', 'Terms of service and data policy',
-                  onTap: () => _snack('Откроется политика конфиденциальности', Colors.blue)),
+              // const SizedBox(height: 24),
+
+              // /// SECURITY & PRIVACY
+              // _section('SECURITY & PRIVACY'),
+              // _switch(Icons.fingerprint, 'Biometric Login', biometricLogin, (v) async {
+              //   // Проверяем поддержку биометрии
+              //   bool canCheck = await _auth.canCheckBiometrics;
+              //   if (canCheck) {
+              //     bool authenticated = await _auth.authenticate(
+              //       localizedReason: 'Авторизуйтесь для включения биометрии',
+              //     );
+              //     if (authenticated) {
+              //       setState(() => biometricLogin = v);
+              //       _snack(v ? 'Вход по отпечатку включен' : 'Вход по отпечатку отключен', Colors.blue);
+              //     }
+              //   } else {
+              //     _snack('Биометрия не поддерживается на этом устройстве', Colors.redAccent);
+              //   }
+              // }),
+              // _tile(Icons.lock, 'Two-Factor Authentication', 'Secure your account access',
+              //     onTap: () => _snack('Откроется экран 2FA', Colors.blue)),
+
+              // const SizedBox(height: 24),
+
+              // /// APPLICATION
+              // _section('APPLICATION'),
+              // _tile(Icons.info, 'About Rubicon', 'Version 2.4.1-build.92',
+              //     onTap: () => _snack('Rubicon v2.4.1', Colors.blue)),
+              // _tile(Icons.warning, 'Legal & Privacy', 'Terms of service and data policy',
+              //     onTap: () => _snack('Откроется политика конфиденциальности', Colors.blue)),
               _tile(Icons.logout, 'Log Out', 'Safely exit your current session',
                   iconColor: Colors.redAccent, onTap: _logout),
 
               const SizedBox(height: 24),
 
-              /// SAVE BUTTON
-              _saveButtons(),
+              // /// SAVE BUTTON
+              // _saveButtons(),
             ],
           ),
         ),

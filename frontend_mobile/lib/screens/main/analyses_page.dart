@@ -102,15 +102,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
                 ))
             .toList();
 
-        // productPie для PieChart
-        productPie = data.popularity
-            .map((item) => PieChartSectionData(
-                  value: item.percentage,
-                  title: item.productName,
-                  color: _getColorForProduct(item.productName), // функция выбора цвета
-                ))
-            .toList();
-
         isLoadingAnalytics = false;
       });
     } catch (e) {
@@ -121,11 +112,7 @@ class _AnalysesPageState extends State<AnalysesPage> {
       }
     }
   }
-  Color _getColorForProduct(String productName) {
-    const colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
-    final index = productName.hashCode % colors.length;
-    return colors[index];
-}
+  
   // =======================================================
   // Выбор даты
   // =======================================================
@@ -219,9 +206,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
                   : SingleChildScrollView(
                       child: Column(
                         children: [
-                          _buildInfoCard("Название", selectedMachine!.name),
-                          const SizedBox(height: 10),
-
                           _buildInfoCard("Тип", selectedMachine!.type),
                           const SizedBox(height: 10),
 
@@ -236,8 +220,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
 
                           _buildSalesChart(),
                           const SizedBox(height: 20),
-
-                          _buildPieChart(),
                         ],
                       ),
                     ),
@@ -359,22 +341,5 @@ Widget _buildSalesChart() {
   );
 }
 
-// =======================================================
-// 🥧 PieChart — популярность товаров
-// =======================================================
-Widget _buildPieChart() {
-  if (productPie.isEmpty) return const SizedBox.shrink();
-
-  return _cardWrapper(
-    "Популярность товаров",
-    PieChart(
-      PieChartData(
-        sections: productPie,
-        centerSpaceRadius: 30,
-        sectionsSpace: 4,
-      ),
-    ),
-  );
-}
 
 }
