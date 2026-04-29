@@ -36,7 +36,7 @@ class Machine {
       name: json['name'],
       type: json['type'],
       location: json['location'],
-      serialNumber: json['serial_number'],
+      serialNumber: json['mac_address'],
       connectionType: json['connection_type'],
       installPrice: json['install_price'] != null
           ? double.tryParse(json['install_price'].toString())

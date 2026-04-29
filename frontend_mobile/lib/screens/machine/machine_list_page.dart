@@ -16,7 +16,7 @@ import 'package:frontend_mobile/widgets/widget_for_machines/search_field.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';
 
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_list_service.dart';
+import 'package:frontend_mobile/services/machine/machine_list_service.dart';
 
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/machine/create_machine_page.dart';

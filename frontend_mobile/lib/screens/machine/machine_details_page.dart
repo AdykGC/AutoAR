@@ -11,8 +11,8 @@ import 'package:frontend_mobile/widgets/widget_for_machines/machine_map_widget.d
 /* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_update_service.dart';
-import 'package:frontend_mobile/services/machine_delete_service.dart';
+import 'package:frontend_mobile/services/machine/machine_update_service.dart';
+import 'package:frontend_mobile/services/machine/machine_delete_service.dart';
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/machine/select_location_page.dart';
 import 'package:frontend_mobile/screens/machine/qr_scanner_page.dart';
@@ -229,9 +229,9 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
       );
 
       // Обновляем локальную модель
-      final updatedMachine = Machine.fromJson(response['data']['machine']);
+      final updatedMachine = Machine.fromJson(response);
       setState(() {
-        machine = Machine.fromJson(response['data']['machine']);
+        machine = updatedMachine;
       });
     } catch (e) {
       // Показываем ошибку, если есть
@@ -264,7 +264,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
       );
 
       // Обновляем локальную модель
-      final updatedMachine = Machine.fromJson(response['data']['machine']);
+      final updatedMachine = Machine.fromJson(response);
       setState(() {
         machine = updatedMachine;
       });
@@ -296,7 +296,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
       );
 
       setState(() {
-        machine = Machine.fromJson(response['data']['machine']);
+        machine = Machine.fromJson(response);
       });
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -387,7 +387,7 @@ Future<void> _scanQr() async {
 
   if (result != null) {
     setState(() {
-      // machine = machine.copyWith(qrCode: result);
+      machine = machine.copyWith(qrCode: result);
     });
 
     // если хочешь сохранить на сервер

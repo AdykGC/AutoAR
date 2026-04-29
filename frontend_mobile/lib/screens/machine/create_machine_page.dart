@@ -10,7 +10,7 @@ import 'package:frontend_mobile/models/machine.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';
 
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_create_service.dart';
+import 'package:frontend_mobile/services/machine/machine_create_service.dart';
 /* [ Widgets ] */
 import 'package:frontend_mobile/widgets/common_widgets.dart';
 
@@ -105,7 +105,7 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
       );
 
       // Преобразование JSON в объект
-      final machine = Machine.fromJson(response['data']['machine']);
+      final machine = Machine.fromJson(response['machine']);
 
       // Возврат назад с результатом
       if (mounted) {
