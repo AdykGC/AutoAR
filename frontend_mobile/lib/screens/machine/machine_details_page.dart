@@ -11,8 +11,9 @@ import 'package:frontend_mobile/widgets/widget_for_machines/machine_map_widget.d
 /* [ Styles ] */
 import 'package:frontend_mobile/styles/app_styles.dart';
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_update_service.dart';
-import 'package:frontend_mobile/services/machine_delete_service.dart';
+import 'package:frontend_mobile/services/machine/machine_update_service.dart';
+import 'package:frontend_mobile/services/machine/machine_delete_service.dart';
+import 'package:flutter/services.dart';
 /* [ Screens ] */
 import 'package:frontend_mobile/screens/machine/select_location_page.dart';
 import 'package:frontend_mobile/screens/machine/qr_scanner_page.dart';
@@ -74,6 +75,14 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                 children: [
                   MachineDetailRow( label: "Название", value: machine.name, onEdit: () => _editField("Название", machine.name, "name"), ), const SizedBox(height: 16),
                   MachineDetailRow( label: "Тип", value: machine.type, onEdit: () => _editField("Тип", machine.type, "type"), ), const SizedBox(height: 16),
+                  // ✅ Поставь это:
+                  MachineDetailRow(
+                   label: "MAC-адрес",
+                    value: machine.macAddress?.isNotEmpty == true ? machine.macAddress! : "",
+                    onEdit: () => _editField("MAC-адрес", machine.macAddress ?? "", "macAddress"),
+                  ),
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   MachineDetailRow( label: "Тип соединения", value: machine.connectionType?.isNotEmpty == true ? machine.connectionType! : "", onEdit: () => _editField("Тип соединения", machine.connectionType ?? "", "connectionType"), ), const SizedBox(height: 16),
                   MachineDetailRow( label: "Регулировка цены (%)", value: machine.priceAdjustment != null ? "${machine.priceAdjustment} %" : "", onEdit: () => _editField("Регулировка цены (%)", machine.priceAdjustment?.toString() ?? "", "priceAdjustment"), ), const SizedBox(height: 16),
                   MachineDetailRow( label: "Локация", value: machine.location?.isNotEmpty == true ? machine.location! : "", onEdit: () => _editField("Локация", machine.location ?? "", "location"), ), const SizedBox(height: 16),
@@ -81,17 +90,6 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
                   Row( children: [ const Text( "Координаты", style: TextStyle( color: Colors.white70, fontSize: 14, ), ), const Spacer(),
                   TextButton.icon( onPressed: _openMap, icon: const Icon(Icons.map, color: Colors.white), label: const Text( "Изменить на карте", style: TextStyle(color: Colors.white), ), ), ], ), const SizedBox(height: 8),
                   Text( machine.latitude != null && machine.longitude != null ? "${machine.latitude}, ${machine.longitude}" : "Координаты не указаны", style: const TextStyle( color: Colors.white, fontSize: 16, ), ),
-
-                  // MachineDetailRow( label: "Latitude", value: machine.latitude?.toString() ?? "", onEdit: () => _editField("Latitude", machine.latitude?.toString() ?? "", "latitude"), ), const SizedBox(height: 16),
-                  // MachineDetailRow( label: "Longitude", value: machine.longitude?.toString() ?? "", onEdit: () => _editField("Longitude", machine.longitude?.toString() ?? "", "longitude"), ), const SizedBox(height: 16),
-                  
-                  // if (machine.latitude != null && machine.longitude != null) ...[ 
-                    // MachineMapWidget( latitude: machine.latitude!, longitude: machine.longitude!, onTap: (point) { setState(() { machine = machine.copyWith( latitude: point.latitude, longitude: point.longitude, ); }); }, ), const SizedBox(height: 12),
-                    // ElevatedButton( onPressed: _updateCoordinates, style: ElevatedButton.styleFrom( backgroundColor: AppStyles.primary, foregroundColor: Colors.white, ), child: const Text("Сохранить координаты"), ),
-                  // ] else
-                    // const Text( "Координаты не указаны", style: TextStyle(color: Colors.white54), ), const SizedBox(height: 16),
-                  MachineDetailRow( label: "Серийный номер", value: machine.serialNumber?.isNotEmpty == true ? machine.serialNumber! : "", onEdit: () => _editField("Серийный номер", machine.serialNumber ?? "", "serialNumber"), ), const SizedBox(height: 16),
-                  
                   // ================= QR BLOCK =================
                   Row(
                     children: [
@@ -219,7 +217,7 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
         type: fieldKey == "type" ? newValue : machine.type,
         location: fieldKey == "location" ? newValue : machine.location,
         serialNumber: fieldKey == "serialNumber" ? newValue : machine.serialNumber,
-
+        macAddress: fieldKey == "macAddress" ? newValue : machine.macAddress, // ✅
         connectionType: fieldKey == "connectionType" ? newValue : machine.connectionType,
         priceAdjustment: fieldKey == "priceAdjustment" ? double.tryParse(newValue) : machine.priceAdjustment,
         installPrice: machine.installPrice,
@@ -227,12 +225,9 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
         longitude: fieldKey == "longitude" ? double.tryParse(newValue) : machine.longitude,
         isActive: machine.isActive,
       );
-
-      // Обновляем локальную модель
-      final updatedMachine = Machine.fromJson(response['data']['machine']);
-      setState(() {
-        machine = Machine.fromJson(response['data']['machine']);
-      });
+      print('RAW RESPONSE: $response');
+      final updatedMachine = Machine.fromJson(response); // ✅
+      setState(() => machine = updatedMachine);
     } catch (e) {
       // Показываем ошибку, если есть
       if (mounted) {
@@ -249,25 +244,22 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
     try {
       // Отправляем обновление на сервер (тут логика без изменения полей, кроме isActive на сервере)
       final response = await MachineUpdateService.update(
-        id: machine.id,
-        name: machine.name,
-        type: machine.type,
-        location: machine.location,
-        serialNumber: machine.serialNumber,
+  id: machine.id,
+  name: machine.name,
+  type: machine.type,
+  location: machine.location,
+  serialNumber: machine.serialNumber,
+  macAddress: machine.macAddress, // ✅
+  connectionType: machine.connectionType,
+  installPrice: machine.installPrice,
+  priceAdjustment: machine.priceAdjustment,
+  latitude: machine.latitude,
+  longitude: machine.longitude,
+  isActive: value,
+);
 
-        connectionType: machine.connectionType,
-        installPrice: machine.installPrice,
-        priceAdjustment: machine.priceAdjustment,
-        latitude: machine.latitude,
-        longitude: machine.longitude,
-        isActive: value,
-      );
-
-      // Обновляем локальную модель
-      final updatedMachine = Machine.fromJson(response['data']['machine']);
-      setState(() {
-        machine = updatedMachine;
-      });
+final updatedMachine = Machine.fromJson(response); // ✅
+setState(() => machine = updatedMachine);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -282,22 +274,21 @@ class _MachineDetailsPageState extends State<MachineDetailsPage> {
   Future<void> _updateCoordinates() async {
     try {
       final response = await MachineUpdateService.update(
-        id: machine.id,
-        name: machine.name,
-        type: machine.type,
-        location: machine.location,
-        serialNumber: machine.serialNumber,
-        connectionType: machine.connectionType,
-        installPrice: machine.installPrice,
-        priceAdjustment: machine.priceAdjustment,
-        latitude: machine.latitude,
-        longitude: machine.longitude,
-        isActive: machine.isActive,
-      );
+  id: machine.id,
+  name: machine.name,
+  type: machine.type,
+  location: machine.location,
+  serialNumber: machine.serialNumber,
+  macAddress: machine.macAddress, // ✅
+  connectionType: machine.connectionType,
+  installPrice: machine.installPrice,
+  priceAdjustment: machine.priceAdjustment,
+  latitude: machine.latitude,
+  longitude: machine.longitude,
+  isActive: machine.isActive,
+);
 
-      setState(() {
-        machine = Machine.fromJson(response['data']['machine']);
-      });
+setState(() => machine = Machine.fromJson(response)); // ✅
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -387,7 +378,7 @@ Future<void> _scanQr() async {
 
   if (result != null) {
     setState(() {
-      // machine = machine.copyWith(qrCode: result);
+      machine = machine.copyWith(qrCode: result);
     });
 
     // если хочешь сохранить на сервер

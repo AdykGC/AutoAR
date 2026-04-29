@@ -201,10 +201,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     Text('Profile',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
-                    Text('Administrator',
+                    Text('Settings',
                         style: TextStyle(color: Colors.white)),
-                    Text('Enterprise Plan',
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
+                    
                   ],
                 ),
               ),

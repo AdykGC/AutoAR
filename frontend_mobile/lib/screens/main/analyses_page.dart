@@ -6,7 +6,7 @@ import 'package:frontend_mobile/models/machine.dart';
 import 'package:frontend_mobile/models/analytics_data.dart';
 
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_list_service.dart';
+import 'package:frontend_mobile/services/machine/machine_list_service.dart';
 import 'package:frontend_mobile/services/machine_analytics/analytics_service.dart';
 
 /* [ Styles ] */
@@ -30,7 +30,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
   bool isLoadingAnalytics = false;
   bool isLoading = true;
 
-  // 🔥 ДАННЫЕ ДЛЯ ГРАФИКОВ (потом заменишь на API)
   List<FlSpot> revenueSpots = [];
   List<BarChartGroupData> salesBars = [];
   List<PieChartSectionData> productPie = [];
@@ -46,35 +45,37 @@ class _AnalysesPageState extends State<AnalysesPage> {
   // =======================================================
   Future<void> _loadMachines() async {
     try {
-      final data = await MachineListService.fetchMachines();
+      print('🚀 _loadMachines started');
+      final list = await MachineListService.fetchMachines();
+      print('✅ fetchMachines returned: $list');
 
-      final loadedMachines =
-          data.map((json) => Machine.fromJson(json)).toList();
+      final loadedMachines = list
+        .map((json) => Machine.fromJson(json))
+        .toList();
+      print('✅ loadedMachines: $loadedMachines');
 
       setState(() {
         machines = loadedMachines;
         isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ ERROR: $e');
+      print('❌ STACK: $stackTrace');
       setState(() => isLoading = false);
-
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+          .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
 
   // =======================================================
-  // ЗАГРУЗКА АНАЛИТИКИ (подключишь backend сюда)
+  // Загрузка аналитики
   // =======================================================
   Future<void> _loadAnalytics() async {
     if (selectedMachine == null || selectedRange == null) return;
 
-    setState(() {
-      isLoadingAnalytics = true;
-      analytics = null; // сброс старых данных
-    });
+    setState(() => isLoadingAnalytics = true);
 
     try {
       final data = await MachineAnalyticsService.getAnalytics(
@@ -83,21 +84,28 @@ class _AnalysesPageState extends State<AnalysesPage> {
         endDate: selectedRange!.end,
       );
 
-      // Преобразуем данные в формат для графиков
+      // ✅ Сохраняем и строим графики из реальных данных
       setState(() {
         analytics = data;
 
-        // revenueSpots для LineChart
+        // Индекс по порядку (1, 2, 3...) для оси X графика
         revenueSpots = data.revenue
-            .map((point) => FlSpot(point.day.toDouble(), point.amount))
+            .asMap()
+            .entries
+            .map((e) => FlSpot(e.key.toDouble(), e.value.amount))
             .toList();
 
-        // salesBars для BarChart
         salesBars = data.sales
-            .map((point) => BarChartGroupData(
-                  x: point.day,
+            .asMap()
+            .entries
+            .map((e) => BarChartGroupData(
+                  x: e.key,
                   barRods: [
-                    BarChartRodData(toY: point.count.toDouble(), color: Colors.green, width: 18)
+                    BarChartRodData(
+                      toY: e.value.count.toDouble(),
+                      color: Colors.green,
+                      width: 18,
+                    )
                   ],
                 ))
             .toList();
@@ -108,11 +116,23 @@ class _AnalysesPageState extends State<AnalysesPage> {
       setState(() => isLoadingAnalytics = false);
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ошибка загрузки аналитики: $e')));
+            .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
-  
+
+  void _buildFallbackCharts() {
+    final machine = selectedMachine!;
+    setState(() {
+      revenueSpots = [FlSpot(1, machine.balance ?? 0)];
+      salesBars = [
+        BarChartGroupData(x: 1, barRods: [
+          BarChartRodData(toY: 4, color: Colors.green, width: 18)
+        ]),
+      ];
+    });
+  }
+
   // =======================================================
   // Выбор даты
   // =======================================================
@@ -130,7 +150,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
       setState(() {
         selectedRange = result;
       });
-
       _loadAnalytics();
     }
   }
@@ -187,7 +206,6 @@ class _AnalysesPageState extends State<AnalysesPage> {
                 setState(() {
                   selectedMachine = value;
                 });
-
                 _loadAnalytics();
               },
             ),
@@ -204,21 +222,24 @@ class _AnalysesPageState extends State<AnalysesPage> {
                       ),
                     )
                   : SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
                       child: Column(
                         children: [
                           _buildInfoCard("Тип", selectedMachine!.type),
                           const SizedBox(height: 10),
-
                           _buildInfoCard(
                               "Локация",
                               selectedMachine!.location ?? "Не указана"),
-
+                          const SizedBox(height: 10),
+                          _buildInfoCard(
+                              "MAC аддресс",
+                              selectedMachine!.macAddress ?? "Не указана"),
                           const SizedBox(height: 20),
-
                           _buildRevenueChart(),
                           const SizedBox(height: 20),
-
                           _buildSalesChart(),
+                          const SizedBox(height: 10),
+                          _buildTextStats(),             // ← добавь
                           const SizedBox(height: 20),
                         ],
                       ),
@@ -253,27 +274,44 @@ class _AnalysesPageState extends State<AnalysesPage> {
       ),
     );
   }
+  // =======================================================
+  // Карточка с графиком
+  // =======================================================
+  Widget _cardWrapper(String title, Widget child) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: AppStyles.dashboardCard,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          SizedBox(height: 250, child: child),
+        ],
+      ),
+    );
+  }
 
   // =======================================================
-// ВСПОМОГАТЕЛЬНЫЙ МЕТОД — Карточка с графиком
+// Заглушка "нет данных"
 // =======================================================
-Widget _cardWrapper(String title, Widget child) {
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(12),
-    margin: const EdgeInsets.only(bottom: 20),
-    decoration: BoxDecoration(
-      color: AppStyles.dashboardCard,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        SizedBox(height: 250, child: child),
-      ],
+Widget _buildEmptyChart(String title) {
+  return _cardWrapper(
+    title,
+    const Center(
+      child: Text(
+        'Нет данных за выбранный период',
+        style: TextStyle(color: Colors.white38, fontSize: 14),
+      ),
     ),
   );
 }
@@ -282,36 +320,95 @@ Widget _cardWrapper(String title, Widget child) {
 // 📈 LineChart — выручка
 // =======================================================
 Widget _buildRevenueChart() {
-  if (revenueSpots.isEmpty) return const SizedBox.shrink();
+  if (revenueSpots.isEmpty) return _buildEmptyChart("Выручка");
+
+  final maxY = revenueSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
   return _cardWrapper(
     "Выручка",
     LineChart(
       LineChartData(
+        minY: 0,
+        maxY: maxY * 1.2,
+        lineTouchData: LineTouchData(
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipItems: (spots) => spots
+                .map((s) => LineTooltipItem(
+                      '${s.y.toStringAsFixed(0)} ₸',
+                      const TextStyle(color: Colors.white),
+                    ))
+                .toList(),
+          ),
+        ),
         lineBarsData: [
           LineChartBarData(
             spots: revenueSpots,
             isCurved: true,
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.blueAccent, Colors.lightBlueAccent],
             ),
-            barWidth: 4,
+            barWidth: 3,
             belowBarData: BarAreaData(
               show: true,
               gradient: LinearGradient(
-                colors: [Colors.blueAccent.withOpacity(0.3), Colors.lightBlueAccent.withOpacity(0.1)],
+                colors: [
+                  Colors.blueAccent.withOpacity(0.3),
+                  Colors.transparent,
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
             ),
-            dotData: FlDotData(show: true),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, bar, index) =>
+                  FlDotCirclePainter(
+                radius: 4,
+                color: Colors.lightBlueAccent,
+                strokeWidth: 2,
+                strokeColor: Colors.white,
+              ),
+            ),
           ),
         ],
-        // остальные настройки как у вас (gridData, titlesData и т.д.)
-        gridData: FlGridData(show: true, drawHorizontalLine: true, horizontalInterval: 50, getDrawingHorizontalLine: (value) => FlLine(color: Colors.white24, strokeWidth: 1)),
+        gridData: FlGridData(
+          show: true,
+          drawHorizontalLine: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY / 4 > 0 ? maxY / 4 : 1,
+          getDrawingHorizontalLine: (_) =>
+              const FlLine(color: Colors.white12, strokeWidth: 1),
+        ),
         titlesData: FlTitlesData(
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40, getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: const TextStyle(color: Colors.white70, fontSize: 12)))),
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) => Text('День ${value.toInt()}', style: const TextStyle(color: Colors.white70, fontSize: 12)))),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 50,
+              getTitlesWidget: (value, _) => Text(
+                _formatAmount(value),
+                style: const TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+            ),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, _) {
+                final index = value.toInt();
+                if (analytics == null || index < 0 || index >= analytics!.sales.length) return const SizedBox();
+                final d = analytics!.sales[index].date;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    '${d.day.toString().padLeft(2,'0')}.${d.month.toString().padLeft(2,'0')}',
+                    style: const TextStyle(color: Colors.white54, fontSize: 11),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
         borderData: FlBorderData(show: false),
       ),
@@ -323,17 +420,80 @@ Widget _buildRevenueChart() {
 // 📊 BarChart — продажи
 // =======================================================
 Widget _buildSalesChart() {
-  if (salesBars.isEmpty) return const SizedBox.shrink();
+  if (salesBars.isEmpty) return _buildEmptyChart("Продажи");
+
+  final maxY = salesBars
+      .expand((g) => g.barRods.map((r) => r.toY))
+      .reduce((a, b) => a > b ? a : b);
 
   return _cardWrapper(
     "Продажи",
     BarChart(
       BarChartData(
-        barGroups: salesBars,
-        gridData: FlGridData(show: true),
+        maxY: maxY * 1.2,
+        barTouchData: BarTouchData(
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipItem: (group, groupIndex, rod, rodIndex) =>
+                BarTooltipItem(
+              '${rod.toY.toInt()} шт.',
+              const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        barGroups: salesBars
+            .map((g) => BarChartGroupData(
+                  x: g.x,
+                  barRods: g.barRods
+                      .map((r) => BarChartRodData(
+                            toY: r.toY,
+                            width: 16,
+                            borderRadius: BorderRadius.circular(4),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00C853), Color(0xFF69F0AE)],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
+                          ))
+                      .toList(),
+                ))
+            .toList(),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY / 4 > 0 ? maxY / 4 : 1,
+          getDrawingHorizontalLine: (_) =>
+              const FlLine(color: Colors.white12, strokeWidth: 1),
+        ),
         titlesData: FlTitlesData(
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30, getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: const TextStyle(color: Colors.white70, fontSize: 12)))),
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) => Text('День ${value.toInt()}', style: const TextStyle(color: Colors.white70, fontSize: 12)))),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, _) => Text(
+                value.toInt().toString(),
+                style: const TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+            ),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, _) {
+                final index = value.toInt();
+                if (analytics == null || index < 0 || index >= analytics!.revenue.length) return const SizedBox();
+                final d = analytics!.revenue[index].date;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    '${d.day.toString().padLeft(2,'0')}.${d.month.toString().padLeft(2,'0')}',
+                    style: const TextStyle(color: Colors.white54, fontSize: 11),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
         borderData: FlBorderData(show: false),
       ),
@@ -341,5 +501,69 @@ Widget _buildSalesChart() {
   );
 }
 
+// Хелпер: форматирует числа (1200 → 1.2K)
+String _formatAmount(double value) {
+  if (value >= 1000) return '${(value / 1000).toStringAsFixed(1)}K';
+  return value.toInt().toString();
+}
 
+  // =======================================================
+// 📋 Текстовая статистика под графиками
+// =======================================================
+Widget _buildTextStats() {
+  if (analytics == null) return const SizedBox.shrink();
+
+  final totalRevenue = analytics!.revenue.fold(0.0, (sum, p) => sum + p.amount);
+  final totalSales = analytics!.sales.fold(0, (sum, p) => sum + p.count);
+  final avgCheck = totalSales > 0 ? totalRevenue / totalSales : 0.0;
+
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: AppStyles.dashboardCard,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Итого за период',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildStatRow(Icons.attach_money, 'Выручка', '${_formatAmount(totalRevenue)} ₸', const Color(0xFF69F0AE)),
+        const Divider(color: Colors.white12, height: 20),
+        _buildStatRow(Icons.receipt_long, 'Транзакций', '$totalSales шт.', Colors.lightBlueAccent),
+        if (totalSales > 0) ...[
+          const Divider(color: Colors.white12, height: 20),
+          _buildStatRow(Icons.trending_up, 'Средний чек', '${avgCheck.toStringAsFixed(0)} ₸', Colors.orangeAccent),
+        ],
+      ],
+    ),
+  );
+}
+
+Widget _buildStatRow(IconData icon, String label, String value, Color color) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Row(
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 8),
+          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 14)),
+        ],
+      ),
+      Text(
+        value,
+        style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w600),
+      ),
+    ],
+  );
+}
 }

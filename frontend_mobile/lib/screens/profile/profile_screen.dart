@@ -209,10 +209,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             const SizedBox(height: 20),
                                             
                                             Text(
-                                                '${_nameController.text} ${_companyController.text}'.trim(),
+                                                '${_nameController.text} '.trim(),
                                                 style: TextStyle(
                                                     color: AppStyles.textPrimary,
                                                     fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                ),
+                                            ),
+                                            const SizedBox(height: 4),
+
+                                            Text(
+                                                ' ${_companyController.text}'.trim(),
+                                                style: TextStyle(
+                                                    color: AppStyles.textPrimary,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.bold,
                                                 ),
                                             ),

@@ -10,7 +10,7 @@ import 'package:frontend_mobile/models/machine.dart';
 import 'package:frontend_mobile/styles/app_styles.dart';
 
 /* [ Services ] */
-import 'package:frontend_mobile/services/machine_create_service.dart';
+import 'package:frontend_mobile/services/machine/machine_create_service.dart';
 /* [ Widgets ] */
 import 'package:frontend_mobile/widgets/common_widgets.dart';
 
@@ -37,7 +37,7 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
   // ---------- Controllers для полей ----------
   late final TextEditingController nameController;
   late final TextEditingController locationController;
-  late final TextEditingController serialController;
+  late final TextEditingController macAddressController;
 
   // ---------- Выбранный тип ----------
   String? selectedType;
@@ -60,7 +60,7 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
     // Инициализация контроллеров
     nameController = TextEditingController();
     locationController = TextEditingController();
-    serialController = TextEditingController();
+    macAddressController = TextEditingController();
   }
 
   @override
@@ -68,7 +68,7 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
     // Освобождение памяти (очень важно!)
     nameController.dispose();
     locationController.dispose();
-    serialController.dispose();
+    macAddressController.dispose();
     super.dispose();
   }
 
@@ -101,11 +101,11 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
         name: name,
         type: selectedType!,
         location: locationController.text,
-        serialNumber: serialController.text,
+        macAddress: macAddressController.text,
       );
 
       // Преобразование JSON в объект
-      final machine = Machine.fromJson(response['data']['machine']);
+      final machine = Machine.fromJson(response['machine']);
 
       // Возврат назад с результатом
       if (mounted) {
@@ -284,11 +284,11 @@ class _CreateMachinePageState extends State<CreateMachinePage> {
 
           const SizedBox(height: 20),
 
-          // ---------- Серийный номер ----------
+          // ---------- MAC address ----------
           CustomTextField(
-            label: 'Серийный номер (опционально)',
-            controller: serialController,
-            prefixIcon: Icons.confirmation_number_outlined,
+            label: 'MAC-адрес (опционально)',
+            controller: macAddressController,
+            prefixIcon: Icons.wifi,
           ),
 
           const SizedBox(height: 30),

@@ -12,7 +12,5 @@ open ios/Runner.xcworkspace
 ekole@issejub.jm
 KiribatiZucocerit185
 
-
-
 ipconfig getifaddr en0
 php artisan serve --host=0.0.0.0 --port=8000

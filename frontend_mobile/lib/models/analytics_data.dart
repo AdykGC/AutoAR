@@ -10,38 +10,51 @@ class AnalyticsData {
   });
 
   factory AnalyticsData.fromJson(Map<String, dynamic> json) {
-    return AnalyticsData(
-      revenue: (json['revenue'] as List)
-          .map((e) => RevenuePoint.fromJson(e))
-          .toList(),
-      sales: (json['sales'] as List)
-          .map((e) => SalesPoint.fromJson(e))
-          .toList(),
-      popularity: (json['popularity'] as List)
-          .map((e) => ProductPopularity.fromJson(e))
-          .toList(),
-    );
+  final analyticsJson = json['analytics'] as Map<String, dynamic>;
+
+  final totalRevenue = (analyticsJson['total_revenue'] ?? 0).toDouble();
+  final txCount = (analyticsJson['transactions_count'] ?? 0) as int;
+
+  // ✅ Если бэк уже отдаёт daily — используем, иначе fallback на агрегат
+  List<RevenuePoint> revenue;
+  List<SalesPoint> sales;
+
+  if (analyticsJson.containsKey('daily') && analyticsJson['daily'] != null) {
+    final daily = analyticsJson['daily'] as List<dynamic>;
+    revenue = daily
+        .map((d) => RevenuePoint(
+              date: DateTime.parse(d['date']),
+              amount: (d['revenue'] ?? 0).toDouble(),
+            ))
+        .toList();
+    sales = daily
+        .map((d) => SalesPoint(
+              date: DateTime.parse(d['date']),
+              count: (d['count'] ?? 0) as int,
+            ))
+        .toList();
+  } else {
+    // Старый fallback — одна точка с агрегатом
+    revenue = [RevenuePoint(date: DateTime.now(), amount: totalRevenue)];
+    sales = [SalesPoint(date: DateTime.now(), count: txCount)];
   }
+
+  return AnalyticsData(revenue: revenue, sales: sales, popularity: []);
+}
 }
 
 class RevenuePoint {
-  final int day;     // или timestamp
+  final DateTime date;
   final double amount;
 
-  RevenuePoint({required this.day, required this.amount});
-
-  factory RevenuePoint.fromJson(Map<String, dynamic> json) =>
-      RevenuePoint(day: json['day'], amount: json['amount'].toDouble());
+  RevenuePoint({required this.date, required this.amount});
 }
 
 class SalesPoint {
-  final int day;
+  final DateTime date;
   final int count;
 
-  SalesPoint({required this.day, required this.count});
-
-  factory SalesPoint.fromJson(Map<String, dynamic> json) =>
-      SalesPoint(day: json['day'], count: json['count']);
+  SalesPoint({required this.date, required this.count});
 }
 
 class ProductPopularity {
